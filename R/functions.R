@@ -138,7 +138,7 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
   P <- df |>
     left_join(N, by = c("Year", "Age")) |>
     left_join(mortality, by = c("Age", "Year")) |>
-    left_join(retirement, by = "Age") |>
+    left_join(retirements, by = "Age") |>
     mutate(
       retire_prob = if_else(is.na(retire_prob), 0, retire_prob),
       Retirees = retire_prob * Working,
@@ -167,7 +167,7 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
 
 # Forecast function
 
-forecast_pop <- function(df, graduates, completions, retirements, mortality, arma_coef, h = 20, nsim = 500) {
+forecast_pop_discipline <- function(df, graduates, completions, retirements, mortality, arma_coef, h = 20, nsim = 500) {
   # Last year of available population data
   last_yr <- max(df$Year)
 
@@ -227,7 +227,7 @@ forecast_pop <- function(df, graduates, completions, retirements, mortality, arm
     .rep = unique(future_graduates$.rep)
   ) |>
     left_join(future_graduates, by = c(".rep", "Year")) |>
-    left_join(ave_completions, by = "Age") |>
+    left_join(completions, by = "Age") |>
     mutate(
       pc = if_else(is.na(pc), 0, pc),
       Graduates = pc * Graduates / 100
