@@ -1,0 +1,2764 @@
+---
+title: "The future age structure of scientific disciplines"
+author:
+- name: Rob J Hyndman
+  affiliations:
+    - name: Monash University
+      department: Department of Econometrics & Business Statistics
+      city: Clayton
+      country: Australia
+      postal-code: 3800
+  email: Rob.Hyndman@monash.edu
+  corresponding: true
+- name: Kelly Vanh Nguyen
+  affiliations:
+    - name: Monash University
+      department: Department of Econometrics & Business Statistics
+      city: Clayton VIC
+      country: Australia
+      postal-code: 3800
+abstract: |
+  A brief summary of our ideas
+keywords: [blah, blah]
+bibliography: refs.bib
+wpnumber: no/yr
+jelcodes: C10,C14,C22
+blind: false
+cover: true
+linestretch: 1.5
+format:
+  wp-pdf:
+    keep-tex: true
+filters:
+  - blindable-div
+execute:
+  eval: false
+---
+
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(patchwork)
+library(vital)
+library(fable)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(forcats)
+library(knitr)
+library(purrr)
+library(kableExtra)
+library(gganimate)
+library(ggokabeito)
+
+# Set default colors
+options(
+  ggplot2.discrete.colour = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442"),
+  ggplot2.discrete.fill = c("#D55E00", "#0072B2", "#009E73", "#CC79A7", "#E69F00", "#56B4E9", "#F0E442")
+)
+```
+
+
+# Introduction
+
+The @AAS is dedicated to advancing Australia’s scientific knowledge by providing evidence-informed advice and advocacy to support decision-making in government. As part of this mission, it has launched _Australian Science, Australia’s Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia’s ambitions [@AAS2035]. This report supports this initiative by forecasting future science workforce age structures, providing data-driven insights on how Australia’s science workforce will change over the next decade.
+
+This analysis primarily focuses on Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED (ABS). For consistency, the report refers to ASCED’s Narrow Fields as "disciplines".
+
+The report forecasts the number of individuals in each one-year age group who are active in the workforce and hold a bachelor’s degree or higher in the following scientific disciplines: Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.).
+
+Projections extend over a 20-year period to 2041, with particular focus on workforce composition in 2035. These estimates account for key demographic factors, including mortality, retirement, graduation, and migration.
+
+The report begins by outlining the [Methodology](#methodology), [Data Sources](#data-sources), and statistical techniques used to generate the forecasts. A [Worked Example](#physics-and-astronomy) using Physics and Astronomy illustrates the application of these methods in detail, providing a foundation for understanding the approach. The [Findings](#findings) section then extends this analysis to all other disciplines, focusing on comparison and contrast rather than procedural details. Finally, the report explores [Broader Applications](#broader-applications) beyond science, considering how these forecasting methods could be applied to other fields. The results aim to inform future workforce planning and policy decisions to support the growth of Australia’s scientific community.
+
+\newpage
+
+# Methodology {#methodology}
+
+Let $P_{i,x,t}$ denote the number of equivalent full-time workers in scientific discipline $i$ who are aged $x$ at the start of year $t$, where $i=1,\dots,I$ and $x=15,16,\dots$. The starting age of 15 is the minimum age at which individuals are counted as part of the labour force in the Australian Census [@ABSLFSP]. Forecasts are generated for $P_{i,x,T+h}$ across all ages and disciplines, for some forecast horizon $h>0$.
+
+Let $D_{i,x,t}$ denote the number of deaths, and $R_{i,x,t}$ the number of retirements, of people aged $x$ in scientific discipline $i$ in year $t$. This is the number of equivalent full-time workers leaving the workforce during year $t$ who were aged $x$ *at the start* of year $t$.
+
+Two migration processes are required: one representing new Australian workers in the discipline graduating from university courses ($N_{i,x,t}$), and the other representing the net migration process resulting from scientists leaving or arriving in Australia ($G_{i,x,t}$). New workers are treated as a migration process because they can be of any age (unlike births).
+
+The population can be forecasted using a model similar to the stochastic population model of @HB08, excluding the birth process. The demographic growth-balance equation can be written as: $$
+P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + N_{i,x,t} + G_{i,x,t}, \quad x = 15,16,\dots
+$$ {#eq-dgb} That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus the net migrants (which may be negative). The assumption is that $D_{i,x,t} + R_{i,x,t} \le P_{i,x,t}$ and $N_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, they will not be replaced through new graduates or migrants of the same age.
+
+As a first approximation, the components $D$, $R$, $N$ and $G$ can be assumed to behave independently. In reality, there may be a negative correlation between $G$ and $N$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
+
+Data on $D$, $N$, and $R$ is required, and the remaining component $G$ will be estimated using @eq-dgb.
+
+To obtain forecasts of $P$, forecasts of $D$, $R$, $N$, and $G$ must then be computed. Each of these can be estimated using a functional data model [@HU07].
+
+\newpage
+
+# Data {#data-sources}
+
+## Data Sources
+
+This analysis utilises Australian data sources to generate accurate forecasts. These include the ABS, the Human Mortality Database (HMD), and the Department of Education.
+
+Specifically, the *Census of Population and Housing* (2006, 2011, 2016, and 2021) [@ABSCensus] provides data on the population of individuals with bachelor's degrees or higher who are active in the labour market. This dataset encompasses labour force participation status, age group, educational qualification level (QALLP), discipline (QALFP), and the industries in which individuals work. Labour force participation data is available only for 2016 and 2021 [@ABSLFFP]. QALLP captures the highest level of completed non-school qualification, while QALFP identifies the corresponding field of study [@ABSQALFP]. 
+
+Australian age-specific death counts and population exposures from 1971 to 2021 were sourced from the @HMD. This dataset includes death counts and population exposures categorised by age.
+
+Retirement data is sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022–2023 financial year [@ABS6238]. It provides insights into expected retirement ages for workers in age groups ranging from 45 to 70 across various industries. 
+
+Graduate completion statistics from 2006 to 2023, categorised by age group and including individuals with a bachelor’s degree or higher, are derived from the *Award Course Completions* dataset [@DeptEdu]. Additionally, the Department of Education provides data on the number of graduates with a bachelor’s degree or higher, categorised by discipline and year, for the same period [@DeptEdu_Private]. These datasets include both domestic and international students.
+
+Data limitations include the availability of labour force participation data only for 2016 and 2021, the absence of full-time worker data outside census years, and the aggregated nature of retirement intentions data. These gaps are addressed using specific handling of labour force participation data, cohort interpolation methods, and smoothed disaggregation, as detailed in Sections [3.2](#labour), [3.3](#cohort), and [3.4](#smooth).
+
+Another limitation is that retirement intentions data is unavailable by educational discipline, with industry-level data serving as the closest proxy. Since scientists work across multiple industries, this does not capture discipline-specific retirement patterns but is used in this context through methods outlined in Section [3.5](#retirement).
+
+## Labour Force Participation {#labour}
+
+Labour force participation data is available for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from these later years are applied, assuming overall patterns remain consistent. While participation rates were generally stable between 2016 and 2021, smaller groups experienced more volatility.
+
+Younger and older age groups within some disciplines were particularly affected by this volatility, especially when sample sizes were small. For example, in a group of five 15–19-year-olds, a single individual's employment status change could significantly shift the participation rate. Similarly, fluctuations in smaller cohorts of older scientists impacted participation rates. Averaging the rates from 2016 and 2021 helps mitigate this volatility and provides a more stable estimate for 2006 and 2011. Any discrepancies in participation rates are minimal due to the small cohort sizes, making this a more reliable approach than relying on a single year.
+
+@fig-labour-force displays the labour force participation rates for the broader category of Natural and Physical Sciences for 2016, 2021, and their average, which serves as a proxy for 2006 and 2011. While estimation is conducted separately at both the discipline and category levels, the figure below illustrates this approach using the broader category as an example.
+
+```{r}
+#| label: fig-labour-force
+#| fig-cap: Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
+
+census_science <- census |>
+  filter(category == "Natural and Physical Sciences")
+
+cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF", "#000000")
+names(cols) <- c(unique(census_science$Year), "Average")
+
+census_science <- census_science |>
+  mutate(
+    age_group = fct_relevel(age_group, "100+", after = Inf),
+    Year = factor(Year, levels = c(2006, 2011, 2016, 2021))
+  )
+
+census_participation <- census_science |>
+  mutate(
+    Year = case_when(
+      Year == 2011 ~ "Average",
+      TRUE ~ as.character(Year)
+    ),
+    age_group = fct_relevel(age_group, "100+", after = Inf),
+    Year = factor(Year, levels = c(2006, "Average", 2016, 2021))
+  )
+
+ggplot(census_participation |> filter(Year %in% c("Average", 2016, 2021)), 
+       aes(x = as.numeric(gsub("\\+", "", age_group)), y = participation, 
+           shape = as.factor(Year), color = as.factor(Year))) +
+  geom_point(size = 1.5) +
+  labs(
+    title = "Labour Force Participation",
+    subtitle = "Natural and Physical Sciences",
+    x = "One-year age groups",
+    y = "Participation rate",
+    shape = "Census Year",
+    color = "Census Year"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10), labels = c(seq(20, 90, by = 10), "100+")) +
+  scale_shape_manual(values = c(1, 2, 0)) +
+  scale_color_manual(values = cols) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+## Cohort Interpolation {#cohort}
+
+The Census data on scientists active in the labour market, provided by the ABS in one-year age groups, is shown in @fig-census as a line graph to highlight differences across Census years.
+
+As data is only available in Census years (2006, 2011, 2016, 2021), cohort interpolation will be used to estimate intercensal values for the intervening years. These are the years between Census points (e.g., 2007, 2008, 2009, etc.), for which direct population data are unavailable.
+
+Cohort interpolation methods, as described by @STUPP88, approximate these missing values by leveraging available Census data. For this analysis, linear interpolation is applied to estimate the population distribution for the years between Census points, as it provides reasonable approximations given the available data. In this context, linear interpolation produces gradual transitions that reflect realistic population growth and decline.
+
+The completed historical dataset forms the basis for forecasting future workforce trends. The results of this interpolation are shown in @fig-cohort-interpolation.
+
+```{r}
+#| label: fig-census
+#| fig-cap: Distribution of scientists active in the labour market by age across Census years (2006, 2011, 2016, 2021).
+years <- seq(2006, 2021, by = 5)
+cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF")
+names(cols) <- years
+natural_and_physical_sciences |>
+  as_tibble() |>
+  filter(Year %in% years) |>
+  mutate(Year = factor(Year, levels = rev(years))) |>
+  ggplot() +
+  aes(x = Age, y = Working, color = Year, group = Year) +
+  geom_line() +
+  labs(y = "Number of active scientists") +
+  scale_color_manual(values = cols, name = "Census Year") +
+  labs(
+    title = "Working Population",
+    subtitle = "Natural and Physical Sciences"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+```{r}
+#| label: fig-cohort-interpolation
+#| fig-cap: Interpolated number of scientists in Australia, 2006–2021, using linear cohort interpolation.
+
+natural_and_physical_sciences  |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = "Natural and Physical Sciences\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+## Smoothed Disaggregation {#smooth}
+
+Retirement intentions data is categorised by the industry of an individual's main job and is provided in broad age groups, as shown in @fig-beforedisaggregation. While the ABS dataset covers 19 industries, only the key industries relevant to this study are displayed in the figure.
+
+To estimate single-year age distributions, a monotonic cubic spline [@SHW04] is applied directly to the cumulative values of these age groups, ensuring a smooth transition between them. This method preserves the overall distribution while generating continuous single-year estimates, as shown in @fig-afterdisaggregation. 
+
+```{r}
+#| label: fig-beforedisaggregation
+#| fig-cap: Retirement intentions for key industries before smoothed disaggregation.
+
+industry_retirement <- bind_rows(
+  retirement_data |> mutate(industry = "Professional, scientific and technical services"),
+  industry_retirement  
+)
+
+ggplot(industry_retirement, aes(x = age_group, y = pc)) +
+  geom_col(alpha=0.6) +
+  facet_wrap(~industry, ncol=2) +
+  labs(
+    title = "Retirement Intentions Across Key Industries",
+    subtitle = "2022–23 Financial Year",
+    x = "Age group",
+    y = "Percentage of retirement intentions"
+  ) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+```
+
+```{r}
+#| label: fig-afterdisaggregation
+#| fig-cap: Retirement intentions across key industries after smoothed disaggregation.
+
+all_retirement |> 
+  ggplot(aes(x = Age, y = pc, group = industry)) +
+  geom_line() +
+  facet_wrap(~industry, ncol=2) +
+  labs(
+    y = "Percentage of retirement intentions",
+    title = "Retirement Intentions Across Key Industries",
+    subtitle = "2022–23 Financial Year"
+  ) +
+  scale_x_continuous(breaks = seq(40, 100, by = 10)) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+
+
+## Retirement Distribution by Age {#retirement}
+
+After smoothing the retirement intentions data, the appropriate industry-level retirement distribution or combination of distributions must be selected. Since scientists work across multiple industries, industry-level data must be adapted to reflect discipline-specific trends. While distributions may vary, retirement trends generally follow similar patterns across sectors. By focusing on the top industries, which account for the majority of workers in each discipline, a stable foundation for analysis is ensured, minimising unnecessary variability arising from changing worker proportions in different industries over time.
+
+For the Natural and Physical Sciences, the three primary industries in which the workforce is employed are Education and Training, Professional, Scientific and Technical Services, and Health Care and Social Assistance, representing 15.81%, 15.48%, and 14.65%, respectively. The proportions in other industries decrease significantly beyond this point. To estimate retirement intentions, a weighted average was calculated using these top three industries, with proportions rescaled to sum to 1.
+
+The data show that a significant portion of workers plan to retire between the ages of 60 and 70. This distribution of retirement ages exhibits positive kurtosis, with the highest peak at age 67, where 13.16% of workers indicate their intention to retire, as shown in @fig-retirements and summarised in @tbl-retirements.
+
+```{r}
+#| label: fig-retirements
+#| fig-cap: Age distribution of retirement intentions for the 2022--2023 Australian financial year.
+ggplot(retirement_science) +
+  aes(x = Age, y = pc) +
+  geom_line() +
+  labs(y = "Percentage of retirement intentions",
+       title = "Retirement Intentions",
+       subtitle = "Natural and Physical Sciences\n2022–23 Financial Year") +
+  scale_x_continuous(breaks = seq(40, 100, by = 10)) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+```{r}
+#| label: tbl-retirements
+#| tbl-cap: Percentage distribution of retirement intentions for ages 64-69 for the Australian financial year 2022--2023.
+
+retirement_science |>
+  filter(Age >= 64 & Age <= 69) |>
+  mutate(pc = paste0(round(pc, 2), "%")) |>
+  select(Age, pc) |>
+  kable(col.names = c("Age", "Percentage of Retirement Intentions"), align = "c") |>
+  add_header_above(c("Percentage of Retirement Intentions Ages 64–69" = 2), bold = TRUE) |>
+  kable_styling(latex_options = c("striped"))
+```
+
+From this distribution, the empirical probability of retirement at each age can be calculated using standard life table methods [@MRC18]. These probabilities are shown in @fig-retirements2. These probabilities, which exhibit a significant increase after age 59, are used to estimate $R_{i,x,t}$ from $P_{i,x,t}$​, and are treated as fixed for the simulation, assuming that retirement patterns will remain stable over time.
+
+```{r}
+#| label: fig-retirements2
+#| fig-cap: Age-specific probability of retirement based on the 2022--2023 Australian financial year.
+retirement_science |>
+  filter(Age < 100) |>
+  ggplot() +
+  aes(x = Age, y = retire_prob) +
+  geom_line() +
+  labs(y = "Probability of retirement",
+    title = "Probability of Retirement",
+    subtitle = "Natural and Physical Sciences\n2022–23 Financial Year"
+  ) +
+  scale_x_continuous(breaks = seq(40, 100, by = 10)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+\newpage
+
+In this approach, retirement is treated as a final state, meaning that once a scientist retires, they are not reintroduced into the workforce. This assumption considers workforce exit to be final. Mortality data, discussed in the next section, is incorporated into the calculation of the total probability of leaving the workforce, adjusting for the possibility of death before retirement. This ensures that the combined probability of exiting the workforce (through retirement or death) does not exceed 100%.
+
+## Death Probabilities by Age
+
+Age-specific mortality rates from 1971 to 2021 are obtained from the @HMD. Using standard life table methods, these rates are converted into age-specific probabilities of death, as shown in @fig-death-probs. Over time, mortality probabilities have generally declined across all age groups, reflecting improvements in Australian life expectancy. Consequently, fewer scientists are expected to exit the workforce due to death, illness, or related factors. Similar to retirement, death is treated as a final state; once a scientist dies, they are no longer part of the workforce.
+
+```{r}
+#| label: fig-death-probs
+#| fig-cap: Age-specific probabilities of death (on a logarithmic scale) for each year from 1971 to 2021.
+aus_death_prob |>
+  autoplot(death_prob) +
+  scale_y_log10(labels = scales::label_number()) +
+  labs(y = "Log-scaled probability of death") +
+  labs(
+    title = "Australian Mortality-Based Death Probabilities",
+    subtitle = "1971 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(0, 100, by = 10)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+Although the final workforce forecasts focus on individuals aged 15 and older, mortality probability estimates are derived from data covering ages 0 to 100. These probabilities serve as inputs for estimating $D_{i,x,t}$, the number of deaths among full-time equivalent workers in scientific discipline $i$ at age $x$ in year $t$, based on $P_{i,x,t}$, the corresponding population of such workers. Death estimates are calculated by applying the forecasted mortality probabilities to the workforce population.
+
+## Graduate Completions by Age
+
+Data on graduate completions by age and year is not available for individual disciplines. However, it is available in aggregate across all disciplines, allowing for an analysis of how the age distribution of graduates has changed over time.
+
+@fig-completions1 shows the percentage distribution of graduate completions by age for each year from 2006 to 2023. Some missing values result in gaps in certain lines, but the overall pattern remains highly consistent across years. Given this consistency, the data is averaged across all available years to construct a representative age distribution of graduates at the bachelor's level and higher.
+
+```{r}
+#| label: fig-completions1
+#| fig-cap: Percentage distribution of graduate completions by age for each year from 2006 to 2023.
+
+completions_step |>
+  ggplot() +
+  aes(x = Age, y = pc, colour = Year, group = Year) +
+  geom_line() +
+  scale_color_gradientn(colours = rainbow(10)[1:8]) +
+  labs(
+    y = "Percentage of graduates",
+    title = "Graduate Completions by Year and Age",
+    subtitle = "2006 - 2023"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  scale_y_continuous(
+    labels = scales::percent_format(scale = 1)
+  ) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+The resulting averaged distribution, shown in @fig-completions2, smooths out year-to-year fluctuations and provides a stable estimate of graduate completions by age. This transformation assumes that the overall age distribution of graduates remains relatively stable over time, allowing for a more reliable estimate when applied to specific disciplines.
+
+```{r}
+#| label: fig-completions2
+#| fig-cap: Percentage distribution of graduate completions by age, aggregated over the years 2006 to 2023.
+ave_completions |>
+  ggplot() +
+  aes(x = Age, pc) +
+  geom_line() +
+  labs(y = "Percentage of graduates") +
+  labs(
+    title = "Graduate Completions by Age",
+    subtitle = "2006 - 2023"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+@tbl-completions highlights the percentage distribution of graduates aged 20 to 25, demonstrating a pronounced peak in this range, with the highest percentage observed at age 21. This reflects the typical age at which students complete their tertiary education.
+
+\newpage
+
+```{r}
+#| label: tbl-completions
+#| tbl-cap: Percentage distribution of graduate completions for ages 20-25 for the years 2006 to 2023.
+
+ave_completions |>
+  filter(Age >= 20 & Age <= 25) |>
+  mutate(pc = paste0(round(pc, 2), "%")) |>
+  select(Age, pc) |>
+  kable(col.names = c("Age", "Percentage of Graduates"), align = "c") |>
+  add_header_above(c("Percentage of Graduates Ages 20-25" = 2), bold = TRUE) |>
+  kable_styling(latex_options = c("striped"))
+```
+
+## Net Migration
+
+The demographic growth-balance equation (@eq-dgb), when rearranged, provides an estimate of net migration: $$
+G_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} + D_{i,x,t} + R_{i,x,t} - N_{i,x,t}, \quad x = 15,16,\dots
+$$ {#eq-netmigration}
+
+In this equation, $G$ represents the difference required to balance population changes over time after accounting for deaths ($D$), retirements ($R$), new graduates ($N$), and the population at time $t$. It serves as the residual value, reflecting the components influencing the workforce's age structure.
+
+\newpage
+
+# Worked Example: Physics and Astronomy {#physics-and-astronomy}
+
+This section provides a detailed demonstration of the forecasting process using Physics and Astronomy as a case study.
+
+The analysis begins by interpolating the working population from available data, followed by the estimation of graduate completions and calculation of net migration. These data points are then used to simulate multiple future scenarios, applying demographic processes of death and retirement. The final step is to compile these components into a projection of the age structure of scientists in Physics and Astronomy for the next 20 years.
+
+This case study establishes the approach, which is later applied across all disciplines for comparison in the [Findings](#findings) section.
+
+## Working Population
+
+To estimate the future working population accurately, historical data is required. The Australian Census provides such data, but it is only available every five years. @fig-physicists shows the population of physicists and astronomers active in the labour market as recorded in the Census for the years 2006, 2011, 2016, and 2021.
+
+Visually, the distribution for each year is positively skewed, with a long right tail. Over time, the distribution has shifted upward, indicating an increase in the total number of working physicists and astronomers. The right tail has gradually grown heavier, reflecting an increasing proportion of older scientists, while the distribution has also become wider, indicating a broader age range in the workforce.
+
+As shown in @tbl-stats-physics, physicists and astronomers have a median age of approximately 44 years, which suggests a concentration of workers in mid-career stages. The 10th and 90th percentiles, representing the typical adult working age range, indicate that the 10th percentile is in the late 20s and the 90th percentile is in the early 60s. This age range has progressively widened from the first to the last Census.
+
+After estimating the intervening years using linear cohort interpolation [@STUPP88], the resulting population estimates are shown in @fig-physicists2. These interpolated values form the basis for forecasting the future working population, representing the values of $P_{i,x,t}$ for physicists and astronomers. The projected changes in age distribution are visible.
+
+```{r}
+#| label: fig-physicists
+#| fig-cap: The number of scientists in Physics and Astronomy active in the Australian labour market, shown by age, as recorded in the Australian Census for the years 2006, 2011, 2016, and 2021.
+years <- seq(2006, 2021, by = 5)
+cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF")
+names(cols) <- years
+physics_and_astronomy |>
+  as_tibble() |>
+  filter(Year %in% years) |>
+  mutate(Year = factor(Year, levels = rev(years))) |>
+  ggplot() +
+  aes(x = Age, y = Working, color = Year, group = Year) +
+  geom_line() +
+  labs(y = "Number of active scientists") +
+  scale_color_manual(values = cols, name = "Census Year") +
+  labs(
+    title = "Working Population",
+    subtitle = "Physics and Astronomy"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+```{r}
+#| label: fig-physicists2
+#| fig-cap: Interpolated number of scientists in Physics and Astronomy active in the Australian labour market, 2006–2021, using linear cohort interpolation.
+physics_and_astronomy |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = "Physics and Astronomy\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+\newpage
+
+```{r}
+#| label: tbl-stats-physics
+#| tbl-cap: Summary statistics of physicists and astronomers active in the Australian labour market as recorded in the Australian Census for the years 2006, 2011, 2016, and 2021.
+
+weighted_percentile <- function(x, w, prob) {
+  o <- order(x)
+  x <- x[o]
+  w <- w[o]
+  cumsum_w <- cumsum(w) / sum(w)
+  x[min(which(cumsum_w >= prob))]
+}
+
+statistics <- physics_and_astronomy |>
+  as_tibble() |>
+  filter(Year %in% years) |>
+  mutate(Age = as.numeric(as.character(Age))) |>
+  group_by(Year) |>
+  summarise(
+    `10th Percentile Age` = weighted_percentile(Age, Working, prob = 0.1),
+    `90th Percentile Age` = weighted_percentile(Age, Working, prob = 0.9),
+    `Weighted Average Age` = round(sum(Age * Working, na.rm = TRUE) / sum(Working, na.rm = TRUE), 1),
+    `Weighted Median Age` = weighted_percentile(Age, Working, prob = 0.5)
+  )
+
+kable(statistics, align = "c") |>
+  add_header_above(c("Summary Statistics of Physics and Astronomy" = ncol(statistics)), bold = TRUE) |>
+  kable_styling(latex_options = c("striped"))
+```
+
+## Graduate Completions
+
+To estimate the number of new graduates entering the workforce, trends in graduate numbers from 2006 to 2023 are examined. As shown in @fig-physics-leavers, the number of graduates majoring in Physics and Astronomy fluctuated around 375 to 500 annually, with no consistent trend, seasonality, or cyclical pattern. These figures represent total graduate completions ($\sum_x N_{i,x,t}$) in Physics and Astronomy.
+
+To forecast future graduate numbers, a global ARIMA model was employed, following the principles outlined by @HM21. ARIMA is a time series forecasting method that identifies underlying trends in past data, assuming these trends will continue. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves robustness by incorporating information across disciplines. The model is then used to generate discipline-specific forecasts, with simulations run 500 times to account for variability and generate 90% prediction intervals. The results, along with these intervals, are shown in @fig-future-grads-physics for Physics and Astronomy.
+
+```{r}
+#| label: fig-physics-leavers
+#| fig-cap: Annual number of graduates in Physics and Astronomy, 2006–2023.
+ggplot(course_leavers_lvl4 |> filter(discipline == "Physics and Astronomy"), aes(x = Year, y = Graduates)) +
+  geom_line() +
+  scale_x_continuous(breaks = seq(2006, 2023, by = 2)) +
+  labs(
+    title = "Graduates",
+    subtitle = "Physics and Astronomy\n2006–2023",
+    y = "Number of graduates"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-physics
+#| fig-cap: Projected number of Physics and Astronomy graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023.
+physics_grads <- future_course_leavers_science |>
+  filter(discipline == "Physics and Astronomy") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(physics_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Physics and Astronomy"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+       title = "Forecast of Graduates",
+    subtitle = "Physics and Astronomy\nForecasted Years: 2024–2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+Since workforce projections require not only total graduate numbers but also their age distribution, the forecasted totals (depicted in @fig-future-grads-physics) are disaggregated using the percentage distribution of graduate completions by age across all disciplines (as shown in @fig-completions2). This enables an estimation of how many graduates will enter each age group in future years, ensuring consistency with observed patterns in the broader graduate population.
+
+## Net Migration
+
+Net migration ($G_{i,x,t}$) is estimated using the demographic growth-balance equation, which is rearranged to calculate the net number of migrants each year (@eq-netmigration). @fig-net-migrants shows the age distribution of net migration among scientists in Physics and Astronomy between 2006 and 2020.
+
+Significant emigration is observed between the ages of 20 and 27, primarily driven by international students leaving Australia after completing their studies, with some domestic graduates also seeking employment overseas. As the graduate data includes both domestic and international students, this emigration is largely influenced by international students returning home.
+
+Beyond this age range, net migration fluctuates between small levels of immigration and emigration. However, these variations are relatively minor, with annual net migration reaching no more than approximately 15 individuals per age group. Given the small magnitudes, these fluctuations may not reflect meaningful migration patterns but rather noise or systematic cohort effects due to input data limitations.
+
+As outlined in the methodology, these estimates rely on forecasting the other components ($D$, $N$, and $R$). Therefore, only estimated historical values up to 2020 are shown here. While historical data on the working population extends to 2021, net migration values for 2021 can only be obtained by incorporating forecasted components due to the structure of the equation.
+
+```{r}
+#| label: fig-net-migrants
+#| fig-cap: Net migration of scientists in Physics and Astronomy by age, 2006–2020.
+physics_and_astronomy |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Physics and Astronomy\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+## Simulating Future Populations
+
+To forecast the future age structure of the scientific workforce in Australia, a simulation-based approach is employed. This approach uses a stochastic population model, adapted from the demographic growth-balance model described in @HB08 and excluding birth processes, to project future populations. This model incorporates uncertainties in demographic processes, generating a range of potential future scenarios for the scientific workforce. The following steps outline the process for projecting the future working population:
+
+1.  **Death Probabilities:** Fit a functional data model [@HU07] to the death probabilities shown in @fig-death-probs, with ARIMA models for the coefficients. This model is used to simulate values of age-specific death probabilities in future years.
+2.  **Net Migration:** Fit a separate functional data model to the age-specific migrant numbers shown in @fig-net-migrants, with ARIMA models for the coefficients. This model simulates values of age-specific net migrant numbers in future years.
+3.  **Graduate Numbers:** Fit an ARIMA model [@fpp3] to simulate total numbers of graduates in each future year from the numbers shown in @fig-physics-leavers. These graduate numbers will then be disaggregated by age using the age distribution shown in @fig-completions2 to estimate age-specific graduate numbers in each year.
+4.  **Retirements:** Estimate retirements in each year by multiplying the number of people of working age in each age bracket (@fig-physicists2) by the retirement probabilities shown in @fig-retirements2. Fixed age-specific retirement probabilities are used.
+5.  **Deaths:** Estimate deaths in each year by multiplying the number of people of working age in each age bracket by the forecast death probabilities. 
+6.  **Demographic Growth-Balance:** Use the demographic growth-balance equation [@eq-dgb] to obtain the next year's age-specific population values. This step incorporates the graduate numbers, net migration, retirements, and deaths, to produce the forecasted population for the next year.
+
+A total of 500 simulations are run to obtain a distribution of possible future population scenarios, allowing for quantification of forecast uncertainty. @fig-future-physics shows two example simulations. Historical data (2006--2021) are shown in gray, with simulated future populations (2022--2041) in colour. While both simulations exhibit similar trends, differences arise due to inherent uncertainties in model inputs, including variations in graduate numbers, migration patterns, and workforce exits through death and retirement. These sources of uncertainty are incorporated into the model, contributing to the range of possible future trajectories.
+
+```{r}
+#| label: fig-future-physics
+#| fig-height: 3
+#| fig-cap: Two example simulations from a set of 500, using historical data from 2006-2021 to forecast age-specific population distributions for 2022-2041.
+p <- physics_and_astronomy |>
+  ggplot() +
+  aes(x = Age, y = Working, group = Year) +
+  geom_line(colour = "gray")
+p1 <- p +
+  geom_line(data = future_physics_and_astronomy |> filter(.rep == "1"), aes(colour = Year)) +
+  labs(y = "Number of working scientists") +
+  scale_color_gradientn(colors = rainbow(10)[1:8]) +
+  labs(
+    title = "Simulation 1",
+    subtitle = "Forecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none"  # Remove legend
+  )
+
+p2 <- p +
+  geom_line(data = future_physics_and_astronomy |> filter(.rep == "2"), aes(colour = Year)) +
+  labs(y = NULL) +  # Remove y-axis label
+  scale_color_gradientn(colors = rainbow(10)[1:8]) +
+  labs(
+    title = "Simulation 2",
+    subtitle = "Forecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+
+p1 + p2
+```
+
+## Forecast Results
+
+The average of the 500 simulations provides the mean age-specific forecast, while quantiles estimate forecast uncertainty. @fig-future-physics-2035 presents the mean and 90% prediction intervals for 2025 and 2035.
+
+In 2035, forecast variability is highest at younger ages, starting from 15 and widening before gradually narrowing as the workforce ages. The prediction interval becomes especially narrow during the retirement phase, where the workforce dynamics become more predictable, indicating greater certainty in this portion of the forecast.
+
+Prediction intervals are also shown for 2025, as it represents a forecast rather than observed workforce data. This comparison helps illustrate how the age distribution is expected to evolve over the next decade.
+
+Between 2025 and 2035, the forecasts indicate an aging workforce, with increases in the number of scientists in their late 30s, and from ages 45 to 80. This trend is particularly evident in the wider gap at ages 45-60 between the forecasted distributions over the ten-year period.
+
+Additionally, patterns in the age distribution persist over time. A dip or trough observed at a given age in 2025 reappears 10 years later as the same cohort progresses through the workforce. While these shifts may be harder to distinguish due to the structure of single-year age cohort data, they reveal how workforce cohorts evolve and how observed patterns carry through in future projections.
+
+Summing over age groups allows for estimating the total number of working scientists in each future year, as shown in @fig-total-future-physics. This highlights whether the workforce is growing, stabilising, or declining. On average, projections indicate continued growth, but at a gradually slower pace. The lower bound remains nearly flat, suggesting workforce stagnation in a conservative scenario. Even in an optimistic scenario, growth only slightly exceeds the current pace.
+
+```{r}
+#| label: fig-future-physics-2035
+#| fig-cap: Forecasted age distribution of the working population for Physics and Astronomy in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+
+# 2025 and 2035
+eg_forecast <- future_physics_and_astronomy |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.75) +
+    labs(
+      y = "Number of working scientists",
+      title = "Forecast of Working Population",
+      subtitle = "Physics and Astronomy",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.position = "top"
+    )
+```
+
+```{r}
+#| label: fig-total-future-physics
+#| fig-cap: Forecasted total number of working scientists for Physics and Astronomy (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+
+
+sum_physics_and_astronomy <- physics_and_astronomy |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_physics_and_astronomy <- future_physics_and_astronomy |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_physics_and_astronomy) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_physics_and_astronomy, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Physics and Astronomy\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+
+\newpage
+
+# Findings: Natural and Physical Sciences {#findings}
+
+The forecasting process applied to Physics and Astronomy is now extended to all scientific disciplines. Rather than reiterating the methodological details, this section presents key findings, highlighting differences and comparisons across disciplines. The analysis follows the same structure, covering the working population, graduate completions, net migration, and forecast results based on future population simulations.
+
+@tbl-disciplines lists the scientific disciplines (ASCED Narrow Fields) included in this analysis, along with their corresponding Detailed Fields. This table provides essential context for understanding the specific areas classified under each discipline. "n.f.d." stands for "Not Further Defined," and "n.e.c." stands for "Not Elsewhere Classified."
+
+```{r}
+#| label: tbl-disciplines
+#| tbl-cap: Classification of scientific disciplines, based on the ASCED Narrow Fields of Education within the Broad Field of Natural and Physical Sciences. The table lists their corresponding Detailed Fields.
+
+discipline_table <- tibble(
+  Narrow_Discipline = c(
+    "Physics and Astronomy", "Mathematical Sciences", "Chemical Sciences",
+    "Earth Sciences", "Biological Sciences", "Other Natural and Physical Sciences",
+    "Natural and Physical Sciences n.f.d."
+  ),
+  Detailed_Field = c(
+    "Physics, Astronomy.",
+    "Mathematics, Statistics, Mathematical Sciences, n.e.c.",
+    "Organic Chemistry, Inorganic Chemistry, Chemical Sciences, n.e.c.",
+    "Atmospheric Sciences, Geology, Geophysics, Geochemistry, Soil Science, Hydrology, Oceanography, Earth Sciences, n.e.c.",
+    "Biochemistry and Cell Biology, Botany, Ecology and Evolution, Marine Science, Genetics, Microbiology, Human Biology, Zoology, Biological Sciences, n.e.c.",
+    "Medical Science, Forensic Science, Food Science and Biotechnology, Pharmacology, Laboratory Technology, Natural and Physical Sciences, n.e.c.",
+    " "
+  )
+)
+
+discipline_table |>
+  kable(col.names = c("Narrow Fields", "Detailed Fields")) |>
+  add_header_above(c("Broad Field: Natural and Physical Sciences" = 2), bold = TRUE) |>
+  kable_styling(latex_options = c("striped"), full_width = FALSE) |>
+  column_spec(2, width = "20em")
+```
+
+## Working Population
+
+The age distribution of the working population across different scientific disciplines is shown in @fig-working-population. Similar to Physics and Astronomy, the age distributions in these disciplines are positively skewed, with a growing proportion of older workers and a widening age range. Moreover, the number of working scientists has increased over time, especially in Mathematical Sciences in the latest 2021 Census, as well as in Biological Sciences and Other Natural and Physical Sciences. While the Y-axis scales vary across disciplines to reflect differences in population sizes, the data nonetheless indicate a substantial shift in working populations over time within these disciplines.
+
+```{r}
+#| label: fig-working-population
+#| fig-cap: "Age distribution of the working population across scientific disciplines based on Census data from 2006, 2011, 2016, and 2021. Each panel represents a different discipline, with lines indicating the number of active scientists in the Australian labour market by age for each Census year."
+#| fig-height: 5.5
+disciplines_combined <- bind_rows(
+  as_tibble(physics_and_astronomy) |> mutate(Discipline = "Physics and Astronomy"),
+  as_tibble(mathematical_sciences) |> mutate(Discipline = "Mathematical Sciences"),
+  as_tibble(chemical_sciences) |> mutate(Discipline = "Chemical Sciences"),
+  as_tibble(earth_sciences) |> mutate(Discipline = "Earth Sciences"),
+  as_tibble(biological_sciences) |> mutate(Discipline = "Biological Sciences"),
+  as_tibble(other_natural_and_physical_sciences) |> mutate(Discipline = "Other Natural and Physical Sciences"),
+  as_tibble(natural_and_physical_sciences__nfd) |> mutate(Discipline = "Natural and Physical Sciences (n.f.d.)")
+)
+
+disciplines_combined$Discipline <- factor(
+  disciplines_combined$Discipline,
+  levels = c("Physics and Astronomy", "Mathematical Sciences", "Chemical Sciences", "Earth Sciences", "Biological Sciences", "Other Natural and Physical Sciences", "Natural and Physical Sciences (n.f.d.)")
+)
+
+disciplines_combined |>
+  filter(Year %in% years) |>
+  mutate(Year = factor(Year, levels = rev(years))) |>
+  ggplot() +
+  aes(x = Age, y = Working, color = Year, group = Year) +
+  geom_line() +
+  scale_color_manual(values = cols, name = "Census Year") +
+  labs(
+    y = "Number of active scientists",
+    title = "Working Population by Discipline",
+    subtitle = "Natural and Physical Sciences"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  facet_wrap(~Discipline, scales = "free_y") +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
+```
+
+In terms of age structure, most disciplines have median ages in the mid-forties. However, a few disciplines show lower median ages, including Biological Sciences with an approximate median age of 40, Other Natural and Physical Sciences at 34, and Natural and Physical Sciences (n.f.d.) at 39. A table summarising the statistics for each discipline is provided in @tbl-disciplines-stats in the appendix for further reference.
+
+Additionally, the graph with interpolated data, shown in @fig-interpolated-working-population, provides a smoother representation of trends and highlights changes within each discipline.
+
+```{r}
+#| label: fig-interpolated-working-population
+#| fig-cap: "Age distribution of the working population across scientific disciplines, interpolated from Census data between 2006 and 2021. Each panel represents a different discipline, with lines indicating the number of active scientists in the Australian labour market by age and year."
+#| fig-height: 6
+ggplot(disciplines_combined) +
+  aes(x = Age, y = Working, group = Year, color = Year) +
+  geom_line() +
+  facet_wrap(~Discipline, scales = "free_y") +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  scale_color_gradientn(
+    colours = rainbow(10)
+  ) +
+  labs(
+    y = "Number of active scientists",
+    title = "Interpolated Working Population by Discipline",
+    subtitle = "Natural and Physical Sciences\n2006 - 2021"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
+```
+
+## Graduate Completions
+
+@fig-graduates-disciplines shows the number of graduates across disciplines from 2006 to 2023. A significant positive trend is observed in three disciplines: Mathematical Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.). Note that the Y-axis scales vary across disciplines to reflect differences in the number of completions.
+
+```{r}
+#| label: fig-graduates-disciplines
+#| fig-cap: "Number of graduates across scientific disciplines from 2006 to 2023. Each panel represents a different discipline, showing the trend in graduate numbers over time."
+
+course_leavers_arranged <- course_leavers_lvl4_science
+course_leavers_arranged$discipline <- course_leavers_lvl4_science$discipline |>
+  fct_recode(
+    "Natural and Physical Sciences (n.f.d.)" = "Natural and Physical Sciences, nfd"
+  ) |>
+  fct_relevel(
+    "Physics and Astronomy",
+    "Mathematical Sciences",
+    "Chemical Sciences",
+    "Earth Sciences",
+    "Biological Sciences",
+    "Other Natural and Physical Sciences",
+    "Natural and Physical Sciences (n.f.d.)"
+  )
+
+ggplot(course_leavers_arranged) +
+  aes(x = Year, y = Graduates) +
+  geom_line() +
+  facet_wrap(~discipline, scales = "free_y") +
+  labs(
+    y = "Number of graduates",
+    title = "Graduates by Discipline",
+    subtitle = "Natural and Physical Sciences\n2006 - 2023"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+```
+
+The increase in the working population observed in the 2021 Census for Mathematical Sciences, as mentioned earlier, can be partly attributed to the sharp rise in graduate numbers between 2016 and 2021. This surge in graduates during that period provides insight into the corresponding growth in the working population.
+
+Similarly, disciplines such as Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.) were characterised by lower median ages in their working populations. The higher graduate numbers in these fields may contribute to this trend, as younger graduates naturally lower the median age of the workforce.
+
+As with the example in Physics and Astronomy, future graduate numbers have been forecasted for each discipline. The corresponding graphs for these forecasts are included in the appendix (see @fig-future-grads-math, @fig-future-grads-chem, @fig-future-grads-earth, @fig-future-grads-bio, @fig-future-grads-other, and @fig-future-grads-nfd).
+
+## Net Migration
+
+@fig-net-migration-disciplines shows the age distribution of net migration across disciplines. Emigration during the early career stage is largely driven by international students graduating and returning home. This negative net migration in the early career stage is a significant factor across all disciplines.
+
+Other Natural and Physical Sciences and Natural and Physical Sciences (n.f.d.) show little to no immigration beyond this stage. Given their larger workforce sizes (as seen on the y-axis), these disciplines exhibit more stable net migration patterns.
+
+In contrast, core scientific disciplines, which have smaller populations, show more fluctuation in migration levels after the early career stage. This variability is likely due to workforce mobility, the sensitivity of estimates for smaller populations, and cohort effects, rather than reflecting actual migration dynamics.
+
+```{r}
+#| label: fig-net-migration-disciplines
+#| fig-cap: Estimated net migration by age across scientific disciplines (2006–2020). Each panel represents a different discipline, showing net migration trends across age groups.
+#| fig-height: 6
+ggplot(disciplines_combined) +
+  aes(x = Age, y = Migrants, group = Year, color = Year) +
+  geom_line() +
+  facet_wrap(~Discipline, scales = "free_y") +
+  scale_x_continuous(breaks = seq(10, 100, by = 10)) +
+  scale_color_gradientn(
+    colours = rainbow(10)
+  ) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration by Discipline",
+    subtitle = "Natural and Physical Sciences\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
+```
+
+## Forecast Results
+
+After 500 simulations of the future population for each discipline, the projections ten years apart (2025 and 2035) shown in @fig-forecast-working-population provide a basis for comparing estimates of the current and future workforce. 
+
+The projections indicate wider prediction intervals for younger age groups due to uncertainty in future graduate numbers, while mid-to-late career estimates primarily reflect the aging of existing cohorts. Across disciplines, the typical working population spans from the mid-to-late 20s (10th percentile) to the mid-50s and early 60s (90th percentile), as shown in @tbl-disciplines-stats in the appendix. Since retirements increase after the late 50s, workforce participation beyond 60 serves as a benchmark for identifying trends in delayed retirement and extended career duration. 
+
+\newpage
+
+```{r}
+#| label: fig-forecast-working-population
+#| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across scientific disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
+#| fig-height: 5.5
+future_disciplines_combined <- bind_rows(
+  as_tibble(future_physics_and_astronomy) |> mutate(Discipline = "Physics and Astronomy"),
+  as_tibble(future_mathematical_sciences) |> mutate(Discipline = "Mathematical Sciences"),
+  as_tibble(future_chemical_sciences) |> mutate(Discipline = "Chemical Sciences"),
+  as_tibble(future_earth_sciences) |> mutate(Discipline = "Earth Sciences"),
+  as_tibble(future_biological_sciences) |> mutate(Discipline = "Biological Sciences"),
+  as_tibble(future_other_natural_and_physical_sciences) |> mutate(Discipline = "Other Natural and Physical Sciences"),
+  as_tibble(future_natural_and_physical_sciences__nfd) |> mutate(Discipline = "Natural and Physical Sciences (n.f.d.)")
+)
+
+future_disciplines_combined$Discipline <- factor(
+  future_disciplines_combined$Discipline,
+  levels = c("Physics and Astronomy", "Mathematical Sciences", "Chemical Sciences", "Earth Sciences", "Biological Sciences", "Other Natural and Physical Sciences", "Natural and Physical Sciences (n.f.d.)")
+)
+
+# 2025 and 2035
+eg_forecast <- future_disciplines_combined |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Discipline, Age, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.75) +
+    labs(
+      y = "Number of working scientists",
+      title = "Forecast of Working Population by Discipline", 
+      subtitle = "Natural and Physical Sciences",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.position = "top"
+    ) +
+    facet_wrap(~Discipline, scales = "free_y")
+```
+
+The key findings from @fig-forecast-working-population are summarised below:
+
+-   **Physics and Astronomy** *(Aging Workforce):* The 35–45 age group shows a higher average than the previous 2025 cohort. There is a growing number of scientists aged 45 to 60, and more individuals aged 60+ are remaining in the workforce longer. These patterns indicate a gradual transition toward an older age structure, reflecting an aging workforce.
+-   **Mathematical Sciences** *(Expansive Workforce):* Workforce growth is evident across a broad range of ages, particularly among individuals aged 25 to 70. The most significant increase occurs before 60, though there is also a clear rise in older workers (60+) remaining in the workforce rather than retiring. Overall, workforce growth is strong and evident across age groups.
+-   **Chemical Sciences** *(Stationary Workforce):* The average workforce size remains stable, with a relatively narrow prediction interval, indicating a predictable pattern of stability over time. While there is a minor increase in the number of workers aged 70, this change is not substantial enough to suggest a broader shift in workforce dynamics.
+\newpage
+-   **Earth Sciences** *(Aging Workforce):* Early-career workforce projections are more uncertain relative to its size. A decline in the working population is observed in the mid-thirties, followed by an increase throughout the forties, though both remain modest. While the overall workforce remains relatively stable, these patterns indicate a slow shift toward an older age distribution.
+-   **Biological Sciences** *(Aging Workforce):* The number of workers aged 50 to 65 is increasing, indicating growth in later-career participation.
+-   **Other Natural and Physical Sciences** *(Expansive Workforce):* Workforce growth is strong across ages 30 to 70, characteristic of an expanding workforce.
+-   **Natural and Physical Sciences (n.f.d.)** *(Aging Workforce):* Growth is primarily concentrated in the 55–70 age range, indicating delayed retirement and an aging workforce.
+
+These trends are further validated by the total workforce projections shown in @fig-forecast-total-working-scientists. This figure presents the total number of working scientists by discipline at each point in time, illustrating changes in workforce size over the forecast period. While all disciplines exhibit widening prediction intervals resembling an open funnel, this primarily reflects increasing uncertainty over time as forecasts extend further into the future. The extent of this uncertainty varies by discipline, with some exhibiting more stable trends while others show greater variability in potential workforce outcomes.
+
+```{r}
+#| label: fig-forecast-total-working-scientists
+#| fig-cap: "Projected total number of working scientists across scientific disciplines from 2022 to 2041. The shaded region represents the 90% prediction interval, the coloured line indicates the mean estimate, and the black line represents historical data."
+
+sum_disciplines_combined  <- disciplines_combined |>
+  group_by(Discipline, Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+
+sum_future_disciplines_combined <- future_disciplines_combined |>
+  group_by(Discipline, Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Discipline, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+ggplot(sum_future_disciplines_combined) +
+  aes(x = Year) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+  geom_line(aes(y = mean), color = "#c14b14") +
+  geom_line(data = sum_disciplines_combined, aes(y = Working)) +
+  labs(
+    y = "Total number of working scientists (thousands)",
+    title = "Forecast of Total Working Population by Discipline",
+    subtitle = "Natural and Physical Sciences\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  facet_wrap(~Discipline, scales = "free_y")
+```
+
+\newpage
+
+From the plot, Mathematical Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.) are projected to grow at an accelerating pace. Chemical Sciences, on the other hand, is more likely to decline, while the remaining disciplines are expected to experience more stable growth. However, it is important to consider the prediction intervals when interpreting these trends. These patterns are largely consistent with workforce structure classifications, with expansive disciplines experiencing faster growth, aging disciplines maintaining more stable trends, and constrictive disciplines showing signs of decline.
+
+\newpage
+
+# Broader Applications: Beyond Natural and Physical Sciences {#broader-applications}
+
+The forecasting process can be applied to any ASCED educational field. This section demonstrates its broader applicability by extending the analysis to three additional Broad Fields: Information Technology, Engineering and Related Technologies, and Agriculture, Environmental, and Related Studies. As each field presents different industry characteristics, the retirement intentions data is adjusted accordingly. Forecasts for all disciplines within each Broad Field offer a comprehensive view of workforce trends across these areas.
+
+## Information Technology
+
+```{r eval=FALSE }
+#| label: fig-working-population-infotech
+#| fig-cap: "Age distribution of the working population across Information Technology disciplines based on Census data from 2006, 2011, 2016, and 2021. Each panel represents a different discipline, with lines indicating the number of active IT professionals in the Australian labour market by age for each Census year."
+
+disciplines_combined <- bind_rows(
+  as_tibble(computer_science) |> mutate(Discipline = "Computer Science"),
+  as_tibble(information_systems) |> mutate(Discipline = "Information Systems"),
+  as_tibble(other_information_technology) |> mutate(Discipline = "Other"),
+  as_tibble(information_technology__nfd) |> mutate(Discipline = "Not Further Defined")
+)
+
+disciplines_combined$Discipline <- factor(
+  disciplines_combined$Discipline,
+  levels = c("Computer Science", "Information Systems", "Other", "Not Further Defined")
+)
+
+disciplines_combined |>
+  filter(Year %in% years) |>
+  mutate(Year = factor(Year, levels = rev(years))) |>
+  ggplot() +
+  aes(x = Age, y = Working, color = Year, group = Year) +
+  geom_line() +
+  scale_color_manual(values = cols) +
+  labs(
+    y = "Number of active IT professionals",
+    title = "Working Population by Discipline",
+    subtitle = "Census Years: 2006, 2011, 2016, 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  facet_wrap(~Discipline, scales = "free_y") +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
+```
+
+```{r eval=FALSE  }
+#| label: fig-graduates-disciplines-infotech
+#| fig-cap: "Number of graduates across information technology disciplines from 2006 to 2023. Each panel represents a different discipline, showing the trend in graduate numbers over time."
+
+course_leavers_arranged <- course_leavers_lvl4_infotech
+
+ggplot(course_leavers_arranged) +
+  aes(x = Year, y = Graduates) +
+  geom_line() +
+  facet_wrap(~discipline, scales = "free_y") +
+  labs(
+    y = "Number of graduates",
+    title = "Graduates Across Disciplines",
+    subtitle = "Years: 2006 - 2023"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+```
+
+In the 2022-2023 financial year, the majority of Information Technology workers were employed in the Professional, Scientific, and Technical Services industry, accounting for 28.89% of the workforce. For forecasting retirement trends, the retirement intentions data from this industry serves as the basis.
+
+In @fig-forecast-working-population-infotech, the forecasts for the Information Technology disciplines show the following workforce trends from 2025 to 2035:
+
+-   **Computer Science** *(Expansive Workforce):* Workforce growth is observed, particularly in the 30–40 age range and significantly in the 50–70 range. The higher average forecast reflects both expansion and delayed retirements.
+-   **Information Systems** *(Uncertain Workforce):* Extremely large prediction intervals are present at workforce entry due to low current workforce numbers but high graduate inflows. The projected workforce remains relatively small on average, with estimates indicating fewer individuals aged 45 in the workforce by 2035.
+-   **Other Information Technology** *(Uncertain Workforce):* Workforce projections show extreme uncertainty. Despite large graduate inflows, the projected workforce remains small, and the absence of prediction intervals indicates a lack of certainty in future participation.
+-   **Information Technology (n.f.d.)** *(Expansive Workforce):* Workforce growth is expected in the 35–45 age range, with a significant increase in the 50–70 age group, reflecting sustained participation among older workers.
+
+```{r}
+#| label: fig-forecast-working-population-infotech
+#| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across IT disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
+#| fig-height: 4.5
+
+future_disciplines_combined <- bind_rows(
+  as_tibble(future_computer_science) |> mutate(Discipline = "Computer Science"),
+  as_tibble(future_information_systems) |> mutate(Discipline = "Information Systems"),
+  as_tibble(future_other_information_technology) |> mutate(Discipline = "Other"),
+  as_tibble(future_information_technology__nfd) |> mutate(Discipline = "Not Further Defined")
+)
+
+future_disciplines_combined$Discipline <- factor(
+  future_disciplines_combined$Discipline,
+  levels = c("Computer Science", "Information Systems", "Other", "Not Further Defined"
+))
+
+# 2025 and 2035
+eg_forecast <- future_disciplines_combined |>
+  filter(Year %in% c(2025, 2035), Working >= 0) |>
+  group_by(Discipline, Age, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.75) +
+    labs(
+      y = "Number of working IT professionals",
+      title = "Forecast of Working Population by Discipline",
+      subtitle = "Information Technology",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.position = "top"
+    ) +
+    facet_wrap(~Discipline, scales = "free_y", ncol = 3)
+```
+
+The Information Technology workforce consists of both expansive and uncertain disciplines. Computer Science and Information Technology (n.f.d.) exhibit workforce growth across multiple age groups, including delayed retirements beyond 60. In contrast, Information Systems and Other Information Technology show significant uncertainty, where high graduate inflows contrast with low workforce numbers, leading to substantial forecast variability.
+
+\newpage
+
+Unlike other Information Technology disciplines that cover multiple fields, Other Information Technology consists solely of Security Science, a single, specialised field. Historically, its workforce was minimal in 2006 and 2011, with some growth in 2016 and 2021. Despite thousands of graduates, the projected workforce remains relatively small. This mismatch between graduate numbers and workforce participation introduces substantial uncertainty. Since the model relies on graduate inflows, this occurs when historical workforce participation is low, and graduates do not transition into the workforce as expected. This reflects the characteristics of the available data rather than a limitation of the model.
+
+The absence of a prediction interval despite the presence of an average further highlights this uncertainty. The data range is so large that both the lower and upper bounds collapse to zero, even though the true range is much wider. While this may make the forecast appear incomplete, it actually reflects extreme variability in workforce participation. Understanding the underlying cause would require external data, such as why Security Science sees consistently high graduate numbers despite low workforce participation, how ASCED classifies this discipline, or whether industry demand, employment pathways, or policy incentives influence trends.
+
+\newpage
+
+In @fig-forecast-total-working-it, Computer Science and Information Technology (n.f.d.) are experiencing workforce growth. Information Systems indicates a potential decline on average, though the large prediction intervals in later years suggest possible expansion. Other Information Technology remains highly unpredictable, with no clear alignment between the average and the prediction interval.
+
+```{r}
+#| label: fig-forecast-total-working-it
+#| fig-cap: "Projected total number of working IT professionals across IT disciplines from 2022 to 2041. The shaded region represents the 90% prediction interval, the coloured line indicates the mean estimate, and the black line represents historical data."
+#| fig-height: 4
+
+
+disciplines_combined <- bind_rows(
+  as_tibble(computer_science) |> mutate(Discipline = "Computer Science"),
+  as_tibble(information_systems) |> mutate(Discipline = "Information Systems"),
+  as_tibble(other_information_technology) |> mutate(Discipline = "Other"),
+  as_tibble(information_technology__nfd) |> mutate(Discipline = "Not Further Defined")
+)
+
+disciplines_combined$Discipline <- factor(
+  disciplines_combined$Discipline,
+  levels = c("Computer Science", "Information Systems", "Other", "Not Further Defined")
+)
+
+sum_disciplines_combined  <- disciplines_combined |>
+  group_by(Discipline, Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+
+sum_future_disciplines_combined <- future_disciplines_combined |>
+  group_by(Discipline, Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Discipline, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+ggplot(sum_future_disciplines_combined) +
+  aes(x = Year) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+  geom_line(aes(y = mean), color = "#c14b14") +
+  geom_line(data = sum_disciplines_combined, aes(y = Working)) +
+  labs(
+    y = "Total number of working IT Professionals (thousands)",
+    title = "Forecast of Total Working Population by Discipline",
+    subtitle = "Information Technology\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  facet_wrap(~Discipline, scales = "free_y", ncol = 3)
+```
+
+## Engineering and Related Technologies
+
+```{r eval=FALSE }
+#| label: fig-working-population-engineering
+#| fig-cap: "Age distribution of the working population across Engineering disciplines based on Census data from 2006, 2011, 2016, and 2021. Each panel represents a different discipline, with lines indicating the number of active engineers in the Australian labour market by age for each Census year."
+#| fig-height: 5.5
+
+disciplines_combined <- bind_rows(
+  as_tibble(manufacturing_engineering_and_technology) |> mutate(Discipline = "Manufacturing"),
+  as_tibble(process_and_resources_engineering) |> mutate(Discipline = "Process and Resources"),
+  as_tibble(automotive_engineering_and_technology) |> mutate(Discipline = "Automotive"),
+  as_tibble(mechanical_and_industrial_engineering_and_technology) |> mutate(Discipline = "Mechanical and Industrial"),
+  as_tibble(civil_engineering) |> mutate(Discipline = "Civil"),
+  as_tibble(geomatic_engineering) |> mutate(Discipline = "Geomatic"),
+  as_tibble(electrical_and_electronic_engineering_and_technology) |> mutate(Discipline = "Electrical and Electronic"),
+  as_tibble(aerospace_engineering_and_technology) |> mutate(Discipline = "Aerospace"),
+  as_tibble(maritime_engineering_and_technology) |> mutate(Discipline = "Maritime"),
+  as_tibble(other_engineering_and_related_technologies) |> mutate(Discipline = "Other"),
+  as_tibble(engineering_and_related_technologies__nfd) |> mutate(Discipline = "Not Further Defined")
+)
+
+disciplines_combined$Discipline <- factor(
+  disciplines_combined$Discipline,
+  levels = c("Manufacturing", "Process and Resources", "Automotive", "Mechanical and Industrial", 
+             "Civil", "Geomatic", "Electrical and Electronic", "Aerospace", "Maritime", 
+             "Other", "Not Further Defined")
+)
+
+disciplines_combined |>
+  filter(Year %in% years) |>
+  mutate(Year = factor(Year, levels = rev(years))) |>
+  ggplot() +
+  aes(x = Age, y = Working, color = Year, group = Year) +
+  geom_line() +
+  scale_color_manual(values = cols) +
+  labs(
+    y = "Number of active engineers",
+    title = "Working Population by Discipline",
+    subtitle = "Census Years: 2006, 2011, 2016, 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  facet_wrap(~Discipline, scales = "free_y") +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "top"
+  )
+```
+
+```{r eval=FALSE }
+#| label: fig-graduates-disciplines-engineering
+#| fig-cap: "Number of graduates across engineering disciplines from 2006 to 2023. Each panel represents a different discipline, showing the trend in graduate numbers over time."
+
+course_leavers_arranged <- course_leavers_lvl4_engineering %>%
+  mutate(discipline = case_when(
+    discipline == "Manufacturing Engineering and Technology" ~ "Manufacturing",
+    discipline == "Process and Resources Engineering" ~ "Process and Resources",
+    discipline == "Automotive Engineering and Technology" ~ "Automotive",
+    discipline == "Mechanical and Industrial Engineering and Technology" ~ "Mechanical and Industrial",
+    discipline == "Civil Engineering" ~ "Civil",
+    discipline == "Geomatic Engineering" ~ "Geomatic",
+    discipline == "Electrical and Electronic Engineering and Technology" ~ "Electrical and Electronic",
+    discipline == "Aerospace Engineering and Technology" ~ "Aerospace",
+    discipline == "Maritime Engineering and Technology" ~ "Maritime",
+    discipline == "Other Engineering and Related Technologies" ~ "Other",
+    discipline == "Engineering and Related Technologies, nfd" ~ "Not Further Defined",
+    TRUE ~ discipline
+  ))
+
+ggplot(course_leavers_arranged) +
+  aes(x = Year, y = Graduates) +
+  geom_line() +
+  facet_wrap(~discipline, scales = "free_y") +
+  labs(
+    y = "Number of graduates",
+    title = "Graduates Across Disciplines",
+    subtitle = "Years: 2006 - 2023"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+```
+
+In the 2022-2023 financial year, the majority of Engineering and Related Technologies workers were employed in the Professional, Scientific, and Technical Services industry, accounting for 23.54% of the workforce. As this is the largest share across industries, the retirement intentions data from this sector serves as the basis for forecasting trends.
+
+In @fig-forecast-working-population-engineering, the forecasts for the Engineering disciplines show the following workforce trends from 2025 to 2035:
+
+-   **Manufacturing and Engineering Technology** *(Aging Workforce):* Wide prediction intervals at workforce entry suggest uncertainty in younger age groups, while workforce growth is concentrated in the 40-70 age range, indicating an aging trend.
+-   **Process and Resources Engineering** *(Declining Workforce):* Workforce numbers are projected to decline up to age 40, while growth in the 40–65 range indicates an aging trend. Large prediction intervals at workforce entry suggest uncertainty, but the overall pattern points to a shrinking workforce rather than sustainable aging.
+\newpage
+-   **Automotive Engineering and Technology** *(Aging Workforce):* Large prediction intervals at workforce entry indicate uncertainty in younger age groups, while workforce growth is concentrated in the 50-70 age range, suggesting an aging trend.
+-   **Mechanical and Industrial Engineering and Technology** *(Aging Workforce):* Wide prediction intervals before age 40 indicate uncertainty in workforce entry. Workforce growth is concentrated in the 40-70 age range, suggesting an older workforce with potential delayed retirements beyond age 60.
+-   **Civil Engineering** *(Aging Workforce):* Workforce growth is concentrated in the 40-70 age range, indicating an aging workforce.
+-   **Geomatic Engineering** *(Aging Workforce):* Workforce growth is observed primarily in the 50-70 age range, though the increase is modest.
+-   **Electrical and Electronic Engineering and Technology** *(Aging Workforce):* Significant workforce growth in the 45-70 age range suggests an older workforce with delayed retirements.
+-   **Aerospace Engineering and Technology** *(Expansive Workforce):* Workforce numbers are projected to be higher than in 2025, with growth mainly in the 40–70 age range. Despite an aging trend, the higher average number of younger entrants suggests overall expansion. However, large prediction intervals before age 35 indicate some uncertainty in workforce entry patterns.
+-   **Maritime Engineering and Technology** *(Aging Workforce):* Workforce growth is concentrated in the 40-65 age range, indicating an older workforce.
+-   **Other Engineering and Related Technologies** *(Declining Workforce):* Workforce numbers in the 30-40 age group are projected to decline. The prediction intervals remain wide throughout, but on average, the workforce is shrinking over time.
+-   **Engineering and Related Technologies (n.f.d.)** *(Expansive Workforce):* Workforce growth is projected across all age groups, from 20 to 70.
+
+```{r}
+#| label: fig-forecast-working-population-engineering
+#| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across Engineering disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
+#| fig-height: 6.5
+
+future_disciplines_combined <- bind_rows(
+  as_tibble(future_manufacturing_engineering_and_technology) |> mutate(Discipline = "Manufacturing"),
+  as_tibble(future_process_and_resources_engineering) |> mutate(Discipline = "Process and Resources"),
+  as_tibble(future_automotive_engineering_and_technology) |> mutate(Discipline = "Automotive"),
+  as_tibble(future_mechanical_and_industrial_engineering_and_technology) |> mutate(Discipline = "Mechanical and Industrial"),
+  as_tibble(future_civil_engineering) |> mutate(Discipline = "Civil"),
+  as_tibble(future_geomatic_engineering) |> mutate(Discipline = "Geomatic"),
+  as_tibble(future_electrical_and_electronic_engineering_and_technology) |> mutate(Discipline = "Electrical and Electronic"),
+  as_tibble(future_aerospace_engineering_and_technology) |> mutate(Discipline = "Aerospace"),
+  as_tibble(future_maritime_engineering_and_technology) |> mutate(Discipline = "Maritime"),
+  as_tibble(future_other_engineering_and_related_technologies) |> mutate(Discipline = "Other"),
+  as_tibble(future_engineering_and_related_technologies__nfd) |> mutate(Discipline = "Not Further Defined")
+) 
+
+future_disciplines_combined$Discipline <- factor(
+  future_disciplines_combined$Discipline,
+  levels = c("Manufacturing", "Process and Resources", "Automotive", "Mechanical and Industrial", "Civil", "Geomatic", "Electrical and Electronic", "Aerospace", "Maritime", "Other", "Not Further Defined"
+))
+
+eg_forecast <- future_disciplines_combined |>
+  filter(Year %in% c(2025, 2035)) |> 
+  group_by(Discipline, Age, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), linewidth = 0.75) +
+    labs(
+      y = "Number of working engineers",
+      title = "Forecast of Working Population by Discipline",
+      subtitle = "Engineering and Related Technologies",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.position = "top"
+    ) +
+    facet_wrap(~Discipline, scales = "free_y", ncol=3)
+```
+
+In @fig-forecast-total-working-engineering, Civil Engineering, Geomatic Engineering, Aerospace Engineering and Technology, and Engineering and Related Technologies (n.f.d.) have more predictable workforce trends. Other Engineering and Related Technologies is the only discipline with a clear decline in workforce numbers.
+
+Overall, most Engineering disciplines are projected to have an aging workforce, with workforce growth primarily occurring in older age groups.
+
+```{r}
+#| label: fig-forecast-total-working-engineering
+#| fig-cap: "Projected total number of working engineers across Engineering disciplines from 2022 to 2041. The shaded region represents the 90% prediction interval, the coloured line indicates the mean estimate, and the black line represents historical data."
+#| fig-height: 6.5
+
+disciplines_combined <- bind_rows(
+  as_tibble(manufacturing_engineering_and_technology) |> mutate(Discipline = "Manufacturing"),
+  as_tibble(process_and_resources_engineering) |> mutate(Discipline = "Process and Resources"),
+  as_tibble(automotive_engineering_and_technology) |> mutate(Discipline = "Automotive"),
+  as_tibble(mechanical_and_industrial_engineering_and_technology) |> mutate(Discipline = "Mechanical and Industrial"),
+  as_tibble(civil_engineering) |> mutate(Discipline = "Civil"),
+  as_tibble(geomatic_engineering) |> mutate(Discipline = "Geomatic"),
+  as_tibble(electrical_and_electronic_engineering_and_technology) |> mutate(Discipline = "Electrical and Electronic"),
+  as_tibble(aerospace_engineering_and_technology) |> mutate(Discipline = "Aerospace"),
+  as_tibble(maritime_engineering_and_technology) |> mutate(Discipline = "Maritime"),
+  as_tibble(other_engineering_and_related_technologies) |> mutate(Discipline = "Other"),
+  as_tibble(engineering_and_related_technologies__nfd) |> mutate(Discipline = "Not Further Defined")
+)
+
+disciplines_combined$Discipline <- factor(
+  disciplines_combined$Discipline,
+  levels = c("Manufacturing", "Process and Resources", "Automotive", "Mechanical and Industrial", 
+             "Civil", "Geomatic", "Electrical and Electronic", "Aerospace", "Maritime", 
+             "Other", "Not Further Defined")
+)
+
+sum_disciplines_combined  <- disciplines_combined |>
+  group_by(Discipline, Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+
+sum_future_disciplines_combined <- future_disciplines_combined |>
+  group_by(Discipline, Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Discipline, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+ggplot(sum_future_disciplines_combined) +
+  aes(x = Year) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+  geom_line(aes(y = mean), color = "#c14b14") +
+  geom_line(data = sum_disciplines_combined, aes(y = Working)) +
+  labs(
+    y = "Total number of working engineers (thousands)",
+    title = "Forecast of Total Working Population by Discipline",
+    subtitle = "Engineering and Related Technologies\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  facet_wrap(~Discipline, scales = "free_y", ncol=3)
+```
+
+## Agriculture, Environmental and Related Studies
+
+```{r eval=FALSE }
+#| label: fig-graduates-disciplines-agriculture
+#| fig-cap: "Number of graduates across agriculture disciplines from 2006 to 2023. Each panel represents a different discipline, showing the trend in graduate numbers over time."
+
+course_leavers_arranged <- course_leavers_lvl4_agriculture
+
+ggplot(course_leavers_arranged) +
+  aes(x = Year, y = Graduates) +
+  geom_line() +
+  facet_wrap(~discipline, scales = "free_y") +
+  labs(
+    y = "Number of graduates",
+    title = "Graduates Across Disciplines",
+    subtitle = "Years: 2006 - 2023"
+  ) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+```
+
+In the 2022-2023 financial year, the majority of Agriculture, Environmental, and Related Studies workers were employed in the Public Administration and Safety (17.87%), Agriculture, Forestry and Fishing (14.83%), and Professional, Scientific and Technical Services (13.69%) industries. As these sectors account for the largest shares of the workforce, the retirement intentions data from these industries serves as the basis for forecasting trends.
+
+In @fig-forecast-working-population-agriculture, the forecasts for Agriculture disciplines from 2025 to 2035 indicate the following workforce trends:
+
+-   **Agriculture** *(Expansive Workforce):* The number of workers across all age groups is projected to increase on average compared to 2025, with most growth occurring in the 40–60 age range.
+-   **Horticulture and Viticulture** *(Declining Workforce):* Workforce numbers are decreasing, particularly in the 40–55 range, while increasing from 60 to 80. The lack of younger replacements indicates workforce decline rather than just aging.
+-   **Forestry Studies** *(Declining Workforce):* Workforce numbers are expected to decline across all age groups, particularly in the 40–60 and 70+ ranges.
+-   **Fisheries Studies** *(Declining Workforce):* Workforce numbers are projected to decline significantly in the 20–50 range, while growth is expected in the 60–70 group, reflecting an aging but ultimately shrinking workforce.
+-   **Environmental Studies** *(Aging Workforce):* A wide prediction interval in the early years reflects uncertainty in younger age group participation. By 2035, growth is concentrated in workers aged 50–70.
+-   **Other Agriculture, Environmental and Related Studies** *(Expansive Workforce):* Growth is expected in the 30–40 range, with the overall workforce projected to be larger than in 2025. However, large prediction intervals in the 20–40 group create uncertainty about sustained growth.
+-   **Agriculture, Environmental and Related Studies (n.f.d.)** *(Declining Workforce):* Workforce numbers are decreasing across all age groups, with the most pronounced decline in the 20–40 range. The total number of workers in any given age group remains low, with a maximum of about 10 at a time.
+
+@fig-forecast-total-working-agriculture shows a decline in the workforce for Horticulture and Viticulture, Forestry Studies, Fisheries Studies, and Agriculture, Environmental and Related Studies (n.f.d.), which are smaller disciplines. In contrast, Agriculture and Other Agriculture, Environmental and Related Studies are projected to grow. Environmental Studies is also expected to grow, though at a slower pace than before.
+
+```{r }
+#| label: fig-forecast-working-population-agriculture
+#| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across Agricultural and Environmental disciplines. The shaded regions represent the 95% prediction intervals, and the solid lines indicate the mean estimates for each year."
+#| fig-height: 5.5
+
+future_disciplines_combined <- bind_rows(
+  as_tibble(future_agriculture) |> mutate(Discipline = "Agriculture"),
+  as_tibble(future_horticulture_and_viticulture) |> mutate(Discipline = "Horticulture and Viticulture"),
+  as_tibble(future_forestry_studies) |> mutate(Discipline = "Forestry Studies"),
+  as_tibble(future_fisheries_studies) |> mutate(Discipline = "Fisheries Studies"),
+  as_tibble(future_environmental_studies) |> mutate(Discipline = "Environmental Studies"),
+  as_tibble(future_other_agriculture__environmental_and_related_studies) |> mutate(Discipline = "Other"),
+  as_tibble(future_agriculture__environmental_and_related_studies__nfd) |> mutate(Discipline = "Not Further Defined"),
+)
+
+future_disciplines_combined$Discipline <- factor(
+  future_disciplines_combined$Discipline,
+  levels = c("Agriculture", "Horticulture and Viticulture", "Forestry Studies", "Fisheries Studies", "Environmental Studies", "Other", "Not Further Defined"
+))
+
+# 2025 and 2035
+eg_forecast <- future_disciplines_combined |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Discipline, Age, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.75) +
+    labs(
+      y = "Number of working agriculturists",
+      title = "Forecast of Working Population by Discipline",
+      subtitle = "Agriculture, Environmental and Related Studies",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "bold"),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.position = "top"
+    ) +
+    facet_wrap(~Discipline, scales = "free_y")
+```
+
+```{r}
+#| label: fig-forecast-total-working-agriculture
+#| fig-cap: "Projected total number of working agriculturists across Agriculture and Environmental disciplines from 2022 to 2041. The shaded region represents the 90% prediction interval, the coloured line indicates the mean estimate, and the black line represents historical data."
+
+disciplines_combined <- bind_rows(
+  as_tibble(agriculture) |> mutate(Discipline = "Agriculture"),
+  as_tibble(horticulture_and_viticulture) |> mutate(Discipline = "Horticulture and Viticulture"),
+  as_tibble(forestry_studies) |> mutate(Discipline = "Forestry Studies"),
+  as_tibble(fisheries_studies) |> mutate(Discipline = "Fisheries Studies"),
+  as_tibble(environmental_studies) |> mutate(Discipline = "Environmental Studies"),
+  as_tibble(other_agriculture__environmental_and_related_studies) |> mutate(Discipline = "Other"),
+  as_tibble(agriculture__environmental_and_related_studies__nfd) |> mutate(Discipline = "Not Further Defined"),
+)
+
+disciplines_combined$Discipline <- factor(
+  disciplines_combined$Discipline,
+  levels =  c("Agriculture", "Horticulture and Viticulture", "Forestry Studies", "Fisheries Studies", "Environmental Studies", "Other", "Not Further Defined"
+))
+
+sum_disciplines_combined  <- disciplines_combined |>
+  group_by(Discipline, Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+
+sum_future_disciplines_combined <- future_disciplines_combined |>
+  group_by(Discipline, Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Discipline, Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+ggplot(sum_future_disciplines_combined) +
+  aes(x = Year) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+  geom_line(aes(y = mean), color = "#c14b14") +
+  geom_line(data = sum_disciplines_combined, aes(y = Working)) +
+  labs(
+    y = "Total number of working agriculturists (thousands)",
+    title = "Forecast of Total Working Population by Discipline",
+    subtitle = "Agriculture, Environmental and Related Studies\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
+  theme_classic() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) +
+  facet_wrap(~Discipline, scales = "free_y", ncol=3)
+```
+
+# Conclusion
+
+This report provides data-driven forecasts of Australia's science workforce age structures, outlining expected changes across disciplines by 2035. The Natural and Physical Sciences, along with Engineering, are projected to experience workforce aging, with growth concentrated in older age groups. Information Technology is expected to expand, though some disciplines remain uncertain due to high graduate numbers not translating into workforce participation. Smaller disciplines within Agriculture and Environmental Studies are projected to decline.
+
+When interpreting these projections, policymakers should consider data limitations, particularly in discipline classification and reporting. Variations in self-reporting and ASCED categorisation may not fully capture industry or education changes, impacting accuracy, especially in smaller or evolving disciplines.
+
+Additionally, while these projections provide a solid foundation for workforce planning, it is important to note that they are entirely driven by historical trends and do not account for possible new developments, such as the impact of AI and other emerging technologies on the labour market in different scientific disciplines. Other factors, such as policy changes or global economic shifts, may also influence workforce trends and should be taken into account.
+
+While alternative demographic methodologies, such as the Lee-Carter model, could be considered for estimating demographic components, the methods employed in this report, including the functional data model, ARIMA model, and demographic growth-balance equation, are better suited to the specific characteristics of the data and the goals of this analysis.
+
+Other quantitative studies, such as job market forecasting, may offer complementary insights into broader trends in the scientific workforce. Qualitative studies can also uncover latent factors that go beyond historical data. While this report focuses on forecasting based on past trends, these alternative approaches can provide additional perspectives on the scientific workforce in Australia.
+
+Future work could enhance the accessibility of these projections through interactive visualisations, improve accuracy with new Census data, and broaden the analysis to additional ASCED fields. Refining estimation methods would further strengthen projection reliability and robustness.
+
+This analysis contributes to the Australian Academy of Science’s initiative _Australian Science, Australia’s Future: Science 2035_ by identifying shifts in the workforce, helping anticipate future demand for science capabilities, and highlighting potential workforce gaps as aging and retirement reshape workforce dynamics.
+
+\newpage
+
+# Appendix
+
+```{r}
+#| label: tbl-disciplines-stats
+#| tbl-cap: Summary statistics for the scientific disciplines, including the 10th and 90th percentile ages, weighted average age, and weighted median age, calculated from the Australian Census data for the years 2006, 2011, 2016, and 2021.
+
+calculate_statistics <- function(discipline_data, discipline_name, years) {
+  stats <- discipline_data |>
+    as_tibble() |>
+    filter(Year %in% years) |>
+    mutate(Age = as.numeric(as.character(Age))) |>
+    group_by(Year) |>
+    summarise(
+      `10th Percentile` = weighted_percentile(Age, Working, prob = 0.1),
+      `90th Percentile` = weighted_percentile(Age, Working, prob = 0.9),
+      `Weighted Average` = round(sum(Age * Working, na.rm = TRUE) / sum(Working, na.rm = TRUE), 1),
+      `Weighted Median` = weighted_percentile(Age, Working, prob = 0.5)
+    )
+
+  stats <- stats |> mutate(Discipline = discipline_name)
+
+  return(stats)
+}
+
+statistics_math <- calculate_statistics(mathematical_sciences, "Mathematical Sciences", years)
+statistics_chem <- calculate_statistics(chemical_sciences, "Chemical Sciences", years)
+statistics_earth <- calculate_statistics(earth_sciences, "Earth Sciences", years)
+statistics_bio <- calculate_statistics(biological_sciences, "Biological Sciences", years)
+statistics_other <- calculate_statistics(other_natural_and_physical_sciences, "Other Natural and Physical Sciences", years)
+statistics_nfd <- calculate_statistics(natural_and_physical_sciences__nfd, "Natural and Physical Sciences (n.f.d.)", years)
+
+all_statistics <- bind_rows(statistics_math, statistics_chem, statistics_earth, statistics_bio, statistics_other, statistics_nfd)
+
+kable(all_statistics[, c("Year", "10th Percentile", "90th Percentile", "Weighted Average", "Weighted Median")]) |>
+  add_header_above(c("Summary Statistics of Scientific Disciplines" = ncol(all_statistics)), bold = TRUE) |>
+  kable_styling(full_width = FALSE) |>
+  column_spec(1, width = "10em") |>
+  column_spec(2, width = "5em") |>
+  column_spec(3, width = "5em") |>
+  column_spec(4, width = "5em") |>
+  column_spec(5, width = "5em") |>
+  column_spec(6, width = "5em") |>
+  group_rows("Mathematical Sciences", 1, 4) |>
+  group_rows("Chemical Sciences", 5, 8) |>
+  group_rows("Earth Sciences", 9, 12) |>
+  group_rows("Biological Sciences", 13, 16) |>
+  group_rows("Other Natural and Physical Sciences", 17, 20) |>
+  group_rows("Natural and Physical Sciences (n.f.d.)", 21, 24)
+```
+
+## Mathematical Sciences
+
+```{r}
+#| label: fig-mathematicians
+#| fig-cap: Interpolated number of scientists in Mathematical Sciences active in the Australian labour market, 2006–2021, using linear cohort interpolation
+#| fig-height: 3.5
+#| fig-width: 5.5
+mathematical_sciences |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = "Mathematical Sciences\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-math
+#| fig-cap: Projected number of Mathematical Sciences graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023.
+#| fig-height: 3.5
+#| fig-width: 5.5
+math_grads <- future_course_leavers_science |>
+  filter(discipline == "Mathematical Sciences") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(math_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Mathematical Sciences"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+    title = "Forecast of Graduates",
+    subtitle = "Mathematical Sciences\nForecasted Years: 2024 - 2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-net-migrants-maths
+#| fig-cap: Net migration of scientists in Mathematical Sciences by age, 2006–2020.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+mathematical_sciences |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Mathematical Sciences\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-mathematicians-2035
+#| fig-cap: Forecasted age distribution of the working population for Mathematical Sciences in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+# 2025 and 2035
+eg_forecast <- future_mathematical_sciences |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.6) +
+  labs(y = "Number of working scientists",
+    title = "Forecast of Working Population",
+    subtitle = "Mathematical Sciences",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| label: fig-total-future-mathematicians
+#| fig-cap: Forecasted total number of working scientists for Mathematical Sciences (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+sum_mathematical_sciences  <- mathematical_sciences |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_mathematical_sciences <- future_mathematical_sciences |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_mathematical_sciences) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_mathematical_sciences, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Mathematical Sciences\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+## Chemical Sciences
+
+```{r}
+#| label: fig-chemists
+#| fig-cap: Interpolated number of scientists in Chemical Sciences active in the Australian labour market, 2006–2021, using linear cohort interpolation
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+chemical_sciences |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = "Chemical Sciences\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-chem
+#| fig-cap: Projected number of Chemical Sciences graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+chem_grads <- future_course_leavers_science |>
+  filter(discipline == "Chemical Sciences") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(chem_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Chemical Sciences"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+    title = "Forecast of Graduates",
+    subtitle = "Chemical Sciences\nForecasted Years: 2024 - 2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-net-migrants-chem
+#| fig-cap: Net migration of scientists in Chemical Sciences by age, 2006–2020.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+chemical_sciences |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Chemical Sciences\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-chemists-2035
+#| fig-cap: Forecasted age distribution of the working population for Chemical Sciences in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+# 2025 and 2035
+eg_forecast <- future_chemical_sciences |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.6) +
+  labs(y = "Number of working scientists",
+    title = "Forecast of Working Population",
+    subtitle = "Chemical Sciences",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| label: fig-total-future-chemists
+#| fig-cap: Forecasted total number of working scientists for Chemical Sciences (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+sum_chemical_sciences  <- chemical_sciences |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_chemical_sciences <- future_chemical_sciences |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_chemical_sciences) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_chemical_sciences, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Chemical Sciences\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+## Earth Sciences
+
+```{r}
+#| label: fig-earthscientists
+#| fig-cap: Interpolated number of scientists in Earth Sciences active in the Australian labour market, 2006–2021, using linear cohort interpolation
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+earth_sciences |>
+  autoplot(Working) +
+  labs(
+    y = "Number of active scientists",
+    title = "Interpolated Working Population",
+    subtitle = "Earth Sciences\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-earth
+#| fig-cap: Projected number of Earth Sciences graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+earth_grads <- future_course_leavers_science |>
+  filter(discipline == "Earth Sciences") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(earth_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Earth Sciences"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+    title = "Forecast of Graduates",
+    subtitle = "Earth Sciences\nForecasted Years: 2024 - 2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-net-migrants-earth
+#| fig-cap: Net migration of scientists in Earth Sciences by age, 2006–2020.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+earth_sciences |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Earth Sciences\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-earthscientists-2035
+#| fig-cap: Forecasted age distribution of the working population for Earth Sciences in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+# 2025 and 2035
+eg_forecast <- future_earth_sciences |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.6) +
+  labs(y = "Number of working scientists",
+    title = "Forecast of Working Population",
+    subtitle = "Earth Sciences",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| label: fig-total-future-earthscientists
+#| fig-cap: Forecasted total number of working scientists for Earth Sciences (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+sum_earth_sciences  <- earth_sciences |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_earth_sciences <- future_earth_sciences |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_earth_sciences) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_earth_sciences, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Earth Sciences\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+## Biological Sciences
+
+```{r}
+#| label: fig-biologists
+#| fig-cap: Interpolated number of scientists in Biological Sciences active in the Australian labour market, 2006–2021, using linear cohort interpolation
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+biological_sciences |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = "Biological Sciences\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-bio
+#| fig-cap: Projected number of Biological Sciences graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023. intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+bio_grads <- future_course_leavers_science |>
+  filter(discipline == "Biological Sciences") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(bio_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Biological Sciences"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+    title = "Forecast of Graduates",
+    subtitle = "Biological Sciences\nForecasted Years: 2024 - 2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-net-migrants-biology
+#| fig-cap: Net migration of scientists in Biological Sciences by age, 2006–2020.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+biological_sciences |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Biological Sciences\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-biologists-2035
+#| fig-cap: Forecasted age distribution of the working population for Biological Sciences in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+# 2025 and 2035
+eg_forecast <- future_biological_sciences |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.6) +
+  labs(y = "Number of working scientists",
+    title = "Forecast of Working Population",
+    subtitle = "Biological Sciences",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| label: fig-total-future-biologists
+#| fig-cap: Forecasted total number of working scientists for Biological Sciences (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+sum_biological_sciences  <- biological_sciences |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_biological_sciences <- future_biological_sciences |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_biological_sciences) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_biological_sciences, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Biological Sciences\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+## Other Natural and Physical Sciences
+
+```{r}
+#| label: fig-otherscientists
+#| fig-cap: Interpolated number of scientists in Other Natural and Physical Sciences active in the Australian labour market, 2006–2021, using linear cohort interpolation
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+other_natural_and_physical_sciences |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = "Other Natural and Physical Sciences\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-other
+#| fig-cap: Projected number of Other Natural and Physical Sciences graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+other_grads <- future_course_leavers_science |>
+  filter(discipline == "Other Natural and Physical Sciences") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(other_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Other Natural and Physical Sciences"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+    title = "Forecast of Graduates",
+    subtitle = "Other Natural and Physical Sciences\nForecasted Years: 2024 - 2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-net-migrants-other
+#| fig-cap: Net migration of scientists in Other Natural and Physical Sciences by age, 2006–2020.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+other_natural_and_physical_sciences |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Other Natural and Physical Sciences\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-otherscientists-2035
+#| fig-cap: Forecasted age distribution of the working population for Other Natural and Physical Sciences in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+# 2025 and 2035
+eg_forecast <- future_other_natural_and_physical_sciences |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.6) +
+  labs(y = "Number of working scientists",
+    title = "Forecast of Working Population",
+    subtitle = "Other Natural and Physical Sciences",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| label: fig-total-future-otherscientists
+#| fig-cap: Forecasted total number of working scientists for Other Natural and Physical Sciences (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+sum_other_natural_and_physical_sciences  <- other_natural_and_physical_sciences |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_other_natural_and_physical_sciences <- future_other_natural_and_physical_sciences |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_other_natural_and_physical_sciences) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_other_natural_and_physical_sciences, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Other Natural and Physical Sciences\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+## Natural and Physical Sciences (Not Further Defined)
+
+```{r}
+#| label: fig-nfd
+#| fig-cap: Interpolated number of scientists in Natural and Physical Sciences (n.f.d.) active in the Australian labour market, 2006–2021, using linear cohort interpolation
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+natural_and_physical_sciences__nfd |>
+  autoplot(Working) +
+  labs(
+    y = "Number of active scientists",
+    title = "Interpolated Working Population",
+    subtitle = "Natural and Physical Sciences (n.f.d.)\n2006 - 2021"
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-grads-nfd
+#| fig-cap: Projected number of Natural and Physical Sciences (n.f.d.) graduates, 2024–2041, with 90% prediction intervals, based on historical data from 2006–2023.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+nfd_grads <- future_course_leavers_science |>
+  filter(discipline == "Natural and Physical Sciences, nfd") |>
+  summarise(
+    mean = mean(Graduates),
+    lo = quantile(Graduates, prob = 0.05),
+    hi = quantile(Graduates, prob = 0.95)
+  )
+ggplot(nfd_grads) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = course_leavers_lvl4 |> filter(discipline == "Natural and Physical Sciences, nfd"), aes(y = Graduates)) +
+  labs(y = "Number of graduates",
+    title = "Forecast of Graduates",
+    subtitle = "Natural and Physical Sciences (n.f.d.)\nForecasted Years: 2024 - 2041"
+  ) +
+ scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-net-migrants-nfd
+#| fig-cap: Net migration of scientists in Natural and Physical Sciences (n.f.d.) by age, 2006–2020.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+natural_and_physical_sciences__nfd |>
+  autoplot(Migrants) +
+  scale_x_continuous(breaks = seq(10,100,by=10)) +
+  labs(
+    y = "Number of net migrants",
+    title = "Estimated Net Migration",
+    subtitle = "Natural and Physical Sciences (n.f.d.)\n2006 - 2020"
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", alpha=0.5) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
+
+```{r}
+#| label: fig-future-nfd-2035
+#| fig-cap: Forecasted age distribution of the working population for Natural and Physical Sciences (n.f.d.) in 2025 and 2035, comparing changes over 10 years. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+# 2025 and 2035
+eg_forecast <- future_natural_and_physical_sciences__nfd |>
+  filter(Year %in% c(2025, 2035)) |>
+  group_by(Age) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+
+# Overlay
+ggplot(eg_forecast) +
+    aes(x = Age, color = factor(Year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    geom_line(aes(y = mean), size = 0.6) +
+  labs(y = "Number of working scientists",
+    title = "Forecast of Working Population",
+    subtitle = "Natural and Physical Sciences (n.f.d.)",
+      color = "Forecast Year",
+      fill = "Forecast Year"
+    ) +
+    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
+    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    theme_classic() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7),
+    legend.position = "top"
+  )
+```
+
+```{r}
+#| label: fig-total-future-nfd
+#| fig-cap: Forecasted total number of working scientists for Natural and Physical Sciences (n.f.d.) (2022–2041), indicating the rate of change. Shaded areas represent 90% prediction intervals.
+#| fig-height: 3.5
+#| fig-width: 5.5
+
+sum_natural_and_physical_sciences_nfd  <- natural_and_physical_sciences__nfd |>
+  as_tibble() |>
+  group_by(Year) |>
+  summarise(Working = sum(Working), .groups = "drop")
+sum_future_natural_and_physical_sciences_nfd <- future_natural_and_physical_sciences__nfd |>
+  as_tibble() |>
+  group_by(Year, .rep) |>
+  summarise(Working = sum(Working), .groups = "drop")  |>
+  group_by(Year) |>
+  summarise(
+    mean = mean(Working),
+    lo = quantile(Working, prob = 0.05),
+    hi = quantile(Working, prob = 0.95),
+    .groups = "drop"
+  )
+ggplot(sum_future_natural_and_physical_sciences_nfd) +
+    aes(x = Year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_natural_and_physical_sciences_nfd, aes(y = Working)) +
+ labs(y = "Total number of working scientists") +
+  labs(
+    title = "Forecast of Total Working Population",
+    subtitle = "Natural and Physical Sciences (n.f.d.)\nForecasted Years: 2022 - 2041"
+  ) +
+  scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+  scale_y_continuous(labels = scales::comma_format()) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(size = 9, hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 7),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 7)
+  )
+```
