@@ -1,6 +1,6 @@
 library(targets)
 
-tar_option_set(packages = c("dplyr", "ggplot2", "vital"))
+tar_option_set(packages = c("dplyr", "ggplot2", "vital", "stringr", "tidyr"))
 tar_source()
 
 list(
@@ -10,9 +10,18 @@ list(
   tar_target(mortality, read_mortality(mx_file, ex_file)),
   tar_target(aus_death_prob, compute_death_prob(mortality)),
 
-  # Industry employment data
-  tar_target(industry_file, here::here("data/Industry.xlsx"), format = "file"),
-  tar_target(industry, read_industry(industry_file)),
-  tar_target(industry_summary, summarise_industry(industry)),
-  tar_target(top_industries, find_top_industries(industry_summary))
+  # Retirement data
+  tar_target(science_file4, here::here("data/Natural and physical sciences 4-digit.xlsx")),
+  tar_target(retirement_data, read_retirements(science_file4)),
+  tar_target(retirements, single_age_retirements(retirement_data, aus_death_prob)),
+
+  # Graduates
+  tar_target(grad_file, here::here("data/Award course completions for all students by age group and course level.xlsx")),
+  tar_target(completions, read_completions(grad_file)),
+
+  # Course leavers
+  tar_target(leavers_file, here::here("data/Course completions - 2006 to 2023 - Totals.xlsx")),
+  tar_target(course_leavers, read_course_leavers(leavers_file)),
+
+  NULL
 )
