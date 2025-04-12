@@ -37,19 +37,11 @@ execute:
 
 
 ```{r setup, include=FALSE}
+#| eval: true
 library(ggplot2)
 library(patchwork)
-library(vital)
-library(fable)
-library(dplyr)
-library(tidyr)
-library(stringr)
-library(forcats)
 library(knitr)
-library(purrr)
 library(kableExtra)
-library(gganimate)
-library(ggokabeito)
 
 # Set default colors
 options(
@@ -122,50 +114,7 @@ Younger and older age groups within some disciplines were particularly affected 
 ```{r}
 #| label: fig-labour-force
 #| fig-cap: Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
-
-census_science <- census |>
-  filter(category == "Natural and Physical Sciences")
-
-cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF", "#000000")
-names(cols) <- c(unique(census_science$Year), "Average")
-
-census_science <- census_science |>
-  mutate(
-    age_group = fct_relevel(age_group, "100+", after = Inf),
-    Year = factor(Year, levels = c(2006, 2011, 2016, 2021))
-  )
-
-census_participation <- census_science |>
-  mutate(
-    Year = case_when(
-      Year == 2011 ~ "Average",
-      TRUE ~ as.character(Year)
-    ),
-    age_group = fct_relevel(age_group, "100+", after = Inf),
-    Year = factor(Year, levels = c(2006, "Average", 2016, 2021))
-  )
-
-ggplot(census_participation |> filter(Year %in% c("Average", 2016, 2021)), 
-       aes(x = as.numeric(gsub("\\+", "", age_group)), y = participation, 
-           shape = as.factor(Year), color = as.factor(Year))) +
-  geom_point(size = 1.5) +
-  labs(
-    title = "Labour Force Participation",
-    subtitle = "Natural and Physical Sciences",
-    x = "One-year age groups",
-    y = "Participation rate",
-    shape = "Census Year",
-    color = "Census Year"
-  ) +
-  scale_x_continuous(breaks = seq(20, 100, by = 10), labels = c(seq(20, 90, by = 10), "100+")) +
-  scale_shape_manual(values = c(1, 2, 0)) +
-  scale_color_manual(values = cols) +
-  theme_classic() +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
+tar_read(fig1)
 ```
 
 ## Cohort Interpolation {#cohort}
@@ -180,48 +129,14 @@ The completed historical dataset forms the basis for forecasting future workforc
 
 ```{r}
 #| label: fig-census
-#| fig-cap: Distribution of scientists active in the labour market by age across Census years (2006, 2011, 2016, 2021).
-years <- seq(2006, 2021, by = 5)
-cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF")
-names(cols) <- years
-natural_and_physical_sciences |>
-  as_tibble() |>
-  filter(Year %in% years) |>
-  mutate(Year = factor(Year, levels = rev(years))) |>
-  ggplot() +
-  aes(x = Age, y = Working, color = Year, group = Year) +
-  geom_line() +
-  labs(y = "Number of active scientists") +
-  scale_color_manual(values = cols, name = "Census Year") +
-  labs(
-    title = "Working Population",
-    subtitle = "Natural and Physical Sciences"
-  ) +
-  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
-  theme_classic()  +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = element_text(hjust = 0.5)
-  )
+#| fig-cap: Distribution of scientists active in the labour market by age across  Census years (2006, 2011, 2016, 2021).
+tar_read(fig2)
 ```
 
 ```{r}
 #| label: fig-cohort-interpolation
 #| fig-cap: Interpolated number of scientists in Australia, 2006–2021, using linear cohort interpolation.
-
-natural_and_physical_sciences  |>
-  autoplot(Working) +
-  labs(y = "Number of active scientists") +
-  labs(
-    title = "Interpolated Working Population",
-    subtitle = "Natural and Physical Sciences\n2006 - 2021"
-  ) +
-  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
-  theme_classic()  +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = element_text(hjust = 0.5)
-  )
+tar_read(fig3)
 ```
 
 ## Smoothed Disaggregation {#smooth}
@@ -233,51 +148,13 @@ To estimate single-year age distributions, a monotonic cubic spline [@SHW04] is 
 ```{r}
 #| label: fig-beforedisaggregation
 #| fig-cap: Retirement intentions for key industries before smoothed disaggregation.
-
-industry_retirement <- bind_rows(
-  retirement_data |> mutate(industry = "Professional, scientific and technical services"),
-  industry_retirement  
-)
-
-ggplot(industry_retirement, aes(x = age_group, y = pc)) +
-  geom_col(alpha=0.6) +
-  facet_wrap(~industry, ncol=2) +
-  labs(
-    title = "Retirement Intentions Across Key Industries",
-    subtitle = "2022–23 Financial Year",
-    x = "Age group",
-    y = "Percentage of retirement intentions"
-  ) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  theme_classic() +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = element_text(hjust = 0.5),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "none"
-  )
+tar_read(fig4)
 ```
 
 ```{r}
 #| label: fig-afterdisaggregation
 #| fig-cap: Retirement intentions across key industries after smoothed disaggregation.
-
-all_retirement |> 
-  ggplot(aes(x = Age, y = pc, group = industry)) +
-  geom_line() +
-  facet_wrap(~industry, ncol=2) +
-  labs(
-    y = "Percentage of retirement intentions",
-    title = "Retirement Intentions Across Key Industries",
-    subtitle = "2022–23 Financial Year"
-  ) +
-  scale_x_continuous(breaks = seq(40, 100, by = 10)) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-  theme_classic() +
-  theme(
-    plot.title = element_text(hjust = 0.5, face = "bold"),
-    plot.subtitle = element_text(hjust = 0.5)
-  )
+tar_read(fig5)
 ```
 
 

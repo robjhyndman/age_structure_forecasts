@@ -1,4 +1,5 @@
 library(targets)
+library(tarchetypes)
 
 tar_option_set(
   packages = c(
@@ -83,5 +84,15 @@ list(
       nsim = nsim
     )
   ),
+
+  # Figures
+  tar_target(fig1, make_fig1(census)),
+  tar_target(fig2, make_fig2(census1)),
+  tar_target(fig3, make_fig3(census1)),
+  tar_target(fig4, make_fig4(retirement_data)),
+  tar_target(fig5, make_fig4(retirements)),
+  
+  # Document
+  #tar_render(report, "age_structure_forecasts.qmd"),
   NULL
 )

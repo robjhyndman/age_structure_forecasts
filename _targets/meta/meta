@@ -17,14 +17,25 @@ arma_coef_science|stem|8dc7366529c8c43b|490219dbad662550|e1d0533f3e2d4f89|399983
 future_course_leavers_science|stem|fe2e8170271da116|2ae9bcdf3e79dd86|6c7d6dbe63253a37|738110183||t20189.2418817214s|s659147b|659147|rds|local|vector|||1.22||
 census1|stem|448281775c633b69|9cfda2ec5abd97b2|4b5bbd2b66526d34|-1277176487||t20189.2553968147s|s313468b|313468|rds|local|vector|||1.358||
 census|stem|aac5cf38934410a4|8f3fadc55e754f6f|d79040827e5a91ac|-1772958682||t20189.2860988238s|s27186b|27186|rds|local|vector|||0.325||
+h|stem|82b418db226386a9|04e9db38f5201c33|2c530c1562a7fbd1|-1482155975||t20189.3002841539s|s51b|51|rds|local|vector|||0.531||
+nsim|stem|61567819f15ccc08|f7fa471aa3f8197f|2c530c1562a7fbd1|-1416505744||t20189.3002843276s|s53b|53|rds|local|vector|||0.001||
+future_pop_science|stem|b6ba24a6d941ae26|3c41094188971bee|63b905c892c1da9e|367499894||t20189.3013624063s|s59024220b|59024220|rds|local|vector|||85.041||
+report|stem||5efae862ad9ab98f|2c530c1562a7fbd1|787668912||t20190.0700831753s||0|file|local|vector|||1.737||object census not found
+fig1|stem|46bc68da4242eb6d|aa8de2a8f490795b|cf7a2c81a803554b|-1217956669||t20190.1008280818s|s1042510b|1042510|rds|local|vector|||0.515||
+fig2|stem|963e6dd8eea604ab|3c1c950a7ade650c|4a42d52b7caead17|241197254||t20190.1164094953s|s1453441b|1453441|rds|local|vector|||0.217||
+fig3|stem|8ef5e8e57278c3c9|959fa02b2e1cb5e4|93fc6301fa0b7a60|-2116679561||t20190.116415074s|s3146916b|3146916|rds|local|vector|||0.065||
 read_course_leavers|function|008279db3953f26b
 read_mortality|function|c8cfde0bb229ca43
 read_retirements|function|8bdca3d87425b2c8
 aas_step|function|29cd004dd604b642
 fit_global_model|function|608f807ac398cd40
+make_fig1|function|ecfd84b9a30529d9
 add_migrants|function|cc1ea2e68945f81f
 make_monotonic|function|37aab7fad1ac797f
+make_fig2|function|0ec59553b95df1b7
 aas_smooth|function|d7dcb9c6909b96ca
+make_fig3|function|291a0a6b83254983
+make_fig4|function|71f559a34b17e2c2
 read_census|function|7d7220d1bdc44eff
 cohort_interpolation|function|91690e288a21a1ad
 global_arma|function|8a7aca0e379cb851
@@ -37,6 +48,5 @@ make_single_age|function|5c7154c0502e4272
 single_age_retirements|function|43912fc5ea9869b9
 read_completions|function|abb835bc6176c767
 make_census_single_year|function|6833cf372be1f6bc
-h|stem|82b418db226386a9|04e9db38f5201c33|2c530c1562a7fbd1|-1482155975||t20189.3002841539s|s51b|51|rds|local|vector|||0.531||
-nsim|stem|61567819f15ccc08|f7fa471aa3f8197f|2c530c1562a7fbd1|-1416505744||t20189.3002843276s|s53b|53|rds|local|vector|||0.001||
-future_pop_science|stem|b6ba24a6d941ae26|3c41094188971bee|63b905c892c1da9e|367499894||t20189.3013624063s|s59024220b|59024220|rds|local|vector|||85.041||
+fig4|stem|6e88b7214f0e0c12|a320c2b09f4dcbba|74d616f8c4427e86|1201650863||t20190.1195874218s|s673202b|673202|rds|local|vector|||0.197||
+fig5|stem|01b4cbd9e164551c|5dadd49ff6113710|17ddcaf403443e06|1691928213||t20190.1195901302s|s676581b|676581|rds|local|vector|||0.012||
