@@ -96,9 +96,15 @@ read_completions <- function(file) {
     ) |>
     select(Year, age_group, pc)
 
-  completions_step <- completions |>
-    make_single_age(pc, smooth = FALSE)
+  return(completions)
+}
 
+make_completions_step <- function(completions) {
+  completions |>
+    make_single_age(pc, smooth = FALSE)
+}
+
+make_completions_ave <- function(completions) {
   # Average over years
   ave_completions <- completions |>
     group_by(age_group) |>

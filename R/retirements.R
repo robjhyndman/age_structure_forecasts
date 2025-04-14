@@ -1,13 +1,28 @@
-# Script to read in age distribution of retirement intentions
-# mortality.R needs to be run first to get Australian population data
+# Age distribution of retirement intentions
 
 read_retirements <- function(file) {
   readxl::read_excel(file, sheet = "Retirement intentions by occ", skip = 10) |>
     janitor::clean_names() |>
     head(56) |>
-    filter(x1 == "Professional, scientific and technical services") |>
+    filter(
+      x1 %in%
+        c(
+          "Professional, scientific and technical services",
+          "Education and training",
+          "Health care and social assistance"
+        )
+    ) |>
     select(contains("years")) |>
-    tidyr::pivot_longer(everything(), names_to = "age_group", values_to = "count") |>
+    mutate(across(
+      everything(),
+      function(x) as.numeric(x) * c(15.81, 15.48, 14.65) / 100
+    )) |>
+    summarise(across(everything(), sum)) |>
+    tidyr::pivot_longer(
+      everything(),
+      names_to = "age_group",
+      values_to = "count"
+    ) |>
     transmute(
       age_group = stringr::str_remove(age_group, "^x"),
       age_group = stringr::str_remove(age_group, "_years"),
@@ -29,7 +44,11 @@ single_age_retirements <- function(retirement_data, death_prob) {
   # That looks weird below 55. Let's just replace that section by a linear interpolation
 
   retirement <- retirement |>
-    mutate(pc = if_else(Age <= 59, (Age - 44) * 0.0727505, pc))
+    mutate(
+      pc = if_else(Age <= 59, (Age - 44) * 0.0727505, pc),
+      pc = pc/sum(pc)*100
+    )
+
 
   # retirement |> ggplot(aes(x=Age, y=pc)) + geom_line()
   # Looks better

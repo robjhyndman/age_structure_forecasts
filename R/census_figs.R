@@ -1,4 +1,4 @@
-make_fig2 <- function(census) {
+make_fig2 <- function(census, subtitle) {
   years <- seq(2006, 2021, by = 5)
   cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF")
   names(cols) <- years
@@ -13,7 +13,7 @@ make_fig2 <- function(census) {
     scale_color_manual(values = cols, name = "Census Year") +
     labs(
       title = "Working Population",
-      subtitle = "Natural and Physical Sciences"
+      subtitle = subtitle
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     theme_classic() +
@@ -21,4 +21,20 @@ make_fig2 <- function(census) {
       plot.title = element_text(hjust = 0.5, face = "bold"),
       plot.subtitle = element_text(hjust = 0.5)
     )
+}
+
+make_fig3 <- function(census, subtitle) {
+  census |>
+  autoplot(Working) +
+  labs(y = "Number of active scientists") +
+  labs(
+    title = "Interpolated Working Population",
+    subtitle = paste0(subtitle, "\n2006 - 2021")
+  ) +
+  scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+  theme_classic()  +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
 }

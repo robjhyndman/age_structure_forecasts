@@ -10,7 +10,9 @@ tar_option_set(
     "tidyr",
     "tsibble",
     "fable",
-    "feasts"
+    "feasts",
+    "knitr",
+    "kableExtra"
   )
 )
 tar_source()
@@ -41,6 +43,8 @@ list(
     )
   ),
   tar_target(completions, read_completions(grad_file)),
+  tar_target(completions_step, make_completions_step(completions)),
+  tar_target(ave_completions, make_completions_ave(completions)),
 
   # Course leavers
   tar_target(
@@ -55,14 +59,20 @@ list(
       select(-category)
   ),
 
-  # Census
-  tar_target(census, read_census(science_file4)),
+  # Census 2 digit
+  tar_target(science_file2, here::here("data/2-digit - Single year.xlsx")),
+  tar_target(census2, read_census2(science_file2)),
+  tar_target(census2_1,
+    make_census_single_year(census2, course_leavers, ave_completions, retirements, aus_death_prob)),
+
+  # Census 4 digit
+  tar_target(census4, read_census(science_file4)),
   tar_target(
-    census1,
+    census4_1,
     make_census_single_year(
-      census,
+      census4,
       course_leavers,
-      completions,
+      ave_completions,
       retirements,
       aus_death_prob
     )
@@ -74,9 +84,9 @@ list(
   tar_target(
     future_pop_science,
     forecast_pop(
-      census1,
+      census4_1,
       course_leavers,
-      completions,
+      ave_completions,
       retirements,
       aus_death_prob,
       arma_coef_science,
@@ -85,14 +95,44 @@ list(
     )
   ),
 
+  # Physics
+  tar_target(
+    physics,
+    census4_1 |>
+      filter(discipline == "Physics and Astronomy") |>
+      select(-discipline)
+  ),
+  tar_target(
+    physics_leavers,
+    course_leavers |>
+      filter(discipline == "Physics and Astronomy") |>
+      select(-discipline, -category)
+  ),
+  tar_target(
+    future_physics_leavers,
+    future_course_leavers_science |>
+      filter(discipline == "Physics and Astronomy") |>
+      select(-discipline)
+  ),
+
   # Figures
-  tar_target(fig1, make_fig1(census)),
-  tar_target(fig2, make_fig2(census1)),
-  tar_target(fig3, make_fig3(census1)),
+  tar_target(fig1, make_fig1(census2)),
+  tar_target(fig2, make_fig2(census2_1, "Natural and Physical Sciences")),
+  tar_target(fig3, make_fig3(census2_1, "Natural and Physical Sciences")),
   tar_target(fig4, make_fig4(retirement_data)),
-  tar_target(fig5, make_fig4(retirements)),
-  
+  tar_target(fig6, make_fig6(retirements, pc)),
+  tar_target(fig7, make_fig6(retirements, retire_prob)),
+  tar_target(fig8, make_fig8(aus_death_prob)),
+  tar_target(fig9, make_fig9(completions_step)),
+  tar_target(fig10, make_fig10(ave_completions)),
+  tar_target(tab2, make_table2(ave_completions)),
+  tar_target(fig11, make_fig2(physics, "Physics and Astronomy")),
+  tar_target(fig12, make_fig3(physics, "Physics and Astronomy")),
+  tar_target(fig13, make_fig13(physics_leavers, "Physics and Astronomy")),
+  tar_target(fig14, make_fig14(future_physics_leavers, physics_leavers)),
+  tar_target(fig15, make_fig15(physics)),
+
   # Document
-  #tar_render(report, "age_structure_forecasts.qmd"),
+  tar_render(report, "age_structure_forecasts.qmd"),
   NULL
 )

@@ -1,37 +1,33 @@
-# Course leavers
-
-# Numbers of people at census
-read_census <- function(file) {
+read_census2 <- function(file) {
+  # Numbers of people at census
   y2006 <- readxl::read_excel(file, sheet = "2006", skip = 10) |>
     janitor::clean_names() |>
-    head(3535) |>
+    head(3030) |>
     transmute(
-      discipline = non_school_qualification_field_of_study_qalfp_2_digit,
+      category = non_school_qualification_field_of_study_qalfp_1_digit,
       qualification = non_school_qualification_level_of_education_qallp_1_digit,
       age_group = age_in_single_years_agep,
       persons = persons
     ) |>
     mutate(age_group = as.character(age_group))
-
   y2011 <- readxl::read_excel(file, sheet = "2011", skip = 10) |>
     janitor::clean_names() |>
-    head(3010) |>
+    head(2580) |>
     transmute(
-      discipline = qalfp_4_digit_level,
+      category = qalfp_2_digit_level,
       qualification = qallp_1_digit_level,
       age_group = age_in_single_years_agep,
       persons = persons
     )
-
   y2016 <- readxl::read_excel(
     file,
     sheet = "2016 - Labour force flag",
     skip = 10
   ) |>
     janitor::clean_names() |>
-    head(7070) |>
+    head(6060) |>
     transmute(
-      discipline = qalfp_4_digit_level,
+      category = qalfp_2_digit_level,
       participation = lffp_labour_force_participation_flag,
       qualification = qallp_1_digit_level,
       age_group = agep_age,
@@ -44,9 +40,9 @@ read_census <- function(file) {
     skip = 10
   ) |>
     janitor::clean_names() |>
-    head(7070) |>
+    head(6060) |>
     transmute(
-      discipline = x4_digit_level_qalfp_non_school_qualification_field_of_study,
+      category = x2_digit_level_qalfp_non_school_qualification_field_of_study,
       participation = lffp_labour_force_participation_flag,
       qualification = x1_digit_level_qallp_non_school_qualification_level_of_education,
       age_group = agep_age,
@@ -61,6 +57,15 @@ read_census <- function(file) {
   ) |>
     filter(qualification != "Certificate Level") |>
     filter(qualification != "Advanced Diploma and Diploma Level") |>
+    filter(
+      category %in%
+        c(
+          "Natural and Physical Sciences",
+          "Information Technology",
+          "Agriculture, Environmental and Related Studies",
+          "Engineering and Related Technologies"
+        )
+    ) |>
     select(-qualification) |>
     mutate(
       age_group = stringr::str_remove(age_group, " years"),
@@ -71,9 +76,9 @@ read_census <- function(file) {
         age_group
       )
     ) |>
-    group_by(Year, age_group, discipline) |>
+    group_by(Year, age_group, category) |>
     summarise(persons = sum(persons), .groups = "drop") |>
-    select(Year, age_group, persons, discipline)
+    select(Year, age_group, persons, category)
 
   # Combine 2016 and 2021 (split by labour force participation)
   censusp <- bind_rows(
@@ -82,6 +87,15 @@ read_census <- function(file) {
   ) |>
     filter(qualification != "Certificate Level") |>
     filter(qualification != "Advanced Diploma and Diploma Level") |>
+    filter(
+      category %in%
+        c(
+          "Natural and Physical Sciences",
+          "Information Technology",
+          "Agriculture, Environmental and Related Studies",
+          "Engineering and Related Technologies"
+        )
+    ) |>
     select(-qualification) |>
     mutate(
       age_group = ifelse(
@@ -91,9 +105,9 @@ read_census <- function(file) {
       ),
       participation = (participation == "Participates in the Labour Force")
     ) |>
-    group_by(Year, age_group, participation, discipline) |>
+    group_by(Year, age_group, participation, category) |>
     summarise(persons = sum(persons), .groups = "drop") |>
-    group_by(Year, age_group, discipline) |>
+    group_by(Year, age_group, category) |>
     summarise(
       participation = sum(participation * persons) / sum(persons),
       persons = sum(persons),
@@ -103,7 +117,7 @@ read_census <- function(file) {
 
   # Create an average participation rate from 2016 and 2021
   avg_participation <- censusp |>
-    group_by(age_group, discipline) |>
+    group_by(age_group, category) |>
     summarise(
       avg_participation = mean(participation),
       .groups = "drop"
@@ -111,99 +125,17 @@ read_census <- function(file) {
 
   # Add average participation rates for 2016 and 2021 to previous years
   census <- census |>
-    left_join(avg_participation, by = c("age_group", "discipline")) |>
+    left_join(avg_participation, by = c("age_group", "category")) |>
     mutate(participation = avg_participation) |>
     select(-avg_participation)
 
   # Combine all years
-  census |>
+  census <- census |>
     bind_rows(censusp) |>
     mutate(Working = persons * participation)
-}
 
-# Convert census data to single age groups and separate the disciplines
-make_census_single_year <- function(
-  census,
-  course_leavers,
-  completions,
-  retirements,
-  death_prob
-) {
-  by_discipline <- "discipline" %in% names(census)
-  if (by_discipline) {
-    c2 <- census |> split(census$discipline)
-    cl2 <- course_leavers |> split(course_leavers$discipline)
-  } else {
-    c2 <- list(census)
-    cl2 <- list(
-      course_leavers |>
-        group_by(Year) |>
-        summarise(Graduates = sum(Graduates))
-    )
-  }
-  output <- mapply(
-    function(census_filtered, course_leavers_filtered) {
-      out <- census_filtered |>
-        make_single_age(Working) |>
-        as_vital(index = Year, key = Age, .age = "Age") |>
-        cohort_interpolation() |>
-        add_migrants(
-          course_leavers_filtered,
-          completions,
-          retirements,
-          death_prob
-        ) |>
-        as_tibble()
-      if (by_discipline) out$discipline <- unique(census_filtered$discipline)
-      return(out)
-    },
-    c2,
-    cl2,
-    SIMPLIFY = FALSE
-  )
-  bind_rows(output) |>
-    as_vital(
-      index = Year,
-      key = if (by_discipline) c("Age", "discipline") else "Age",
-      .age = "Age"
-    )
-}
-
-# Forecast the working population for each discipline
-
-forecast_pop <- function(
-  census1,
-  course_leavers,
-  completions,
-  retirements,
-  death_prob,
-  arma_coef_science,
-  h,
-  nsim
-) {
-  c2 <- census1 |> split(census1$discipline)
-  cl2 <- course_leavers |> split(course_leavers$discipline)
-  output <- mapply(
-    function(census_filtered, course_leavers_filtered) {
-      forecast_pop_discipline(
-        census_filtered,
-        course_leavers_filtered,
-        completions,
-        retirements,
-        death_prob,
-        arma_coef_science,
-        h = h,
-        nsim = nsim
-      ) |>
-        as_tibble() |>
-        mutate(discipline = unique(census_filtered$discipline))
-    },
-    c2,
-    cl2,
-    SIMPLIFY = FALSE
-  )
-
-  output |>
-    bind_rows() |>
-    as_vital(index = Year, key = c(Age, discipline, .rep), .age = "Age")
+  # Only return science
+  census |>
+    filter(category == "Natural and Physical Sciences") |>
+    select(-category)
 }
