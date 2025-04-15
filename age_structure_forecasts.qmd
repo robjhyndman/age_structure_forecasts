@@ -150,13 +150,6 @@ To estimate single-year age distributions, a monotonic cubic spline [@SHW04] is 
 tar_read(fig4)
 ```
 
-```{r}
-#| label: fig-afterdisaggregation
-#| eval: true
-#| fig-cap: Retirement intentions across key industries after smoothed disaggregation.
-tar_read(fig5)
-```
-
 
 
 ## Retirement Distribution by Age {#retirement}
