@@ -161,6 +161,11 @@ list(
   ),
 
   # Document
-  tar_render(report, "age_structure_forecasts.qmd"),
+  tar_target(discipline_table, make_discipline_table()),
+  tar_quarto(
+    report,
+    "age_structure_forecasts.qmd",
+    output_file = "age_structure_forecasts.pdf"
+  ),
   NULL
 )
