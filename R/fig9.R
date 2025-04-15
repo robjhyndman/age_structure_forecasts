@@ -12,11 +12,6 @@ make_fig9 <- function(completions) {
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     scale_y_continuous(
       labels = scales::percent_format(scale = 1)
-    ) +
-    theme_classic() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      plot.subtitle = element_text(hjust = 0.5)
     )
 }
 
@@ -31,12 +26,7 @@ make_fig10 <- function(ave_completions) {
       subtitle = "2006 - 2023"
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
-    scale_y_continuous(labels = scales::percent_format(scale = 1)) +
-    theme_classic() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      plot.subtitle = element_text(hjust = 0.5)
-    )
+    scale_y_continuous(labels = scales::percent_format(scale = 1))
 }
 
 make_table2 <- function(ave_completions) {

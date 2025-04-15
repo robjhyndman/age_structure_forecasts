@@ -7,11 +7,6 @@ make_fig13 <- function(physics, subtitle) {
       title = "Graduates",
       subtitle = paste0(subtitle, "\n2006–2023"),
       y = "Number of graduates"
-    ) +
-    theme_classic() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      plot.subtitle = element_text(hjust = 0.5)
     )
 }
 
@@ -32,8 +27,8 @@ make_fig14 <- function(future_physics_grads, physics_grads) {
       title = "Forecast of Graduates",
       subtitle = "Physics and Astronomy\nForecasted Years: 2024–2041"
     ) +
-    scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
-    theme_classic() +
+    scale_x_continuous(breaks = seq(2010, 2040, by = 5))
+}
     theme(
       plot.title = element_text(hjust = 0.5, face = "bold"),
       plot.subtitle = element_text(hjust = 0.5)

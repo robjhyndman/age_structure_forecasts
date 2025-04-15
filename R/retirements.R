@@ -49,7 +49,6 @@ single_age_retirements <- function(retirement_data, death_prob) {
       pc = pc/sum(pc)*100
     )
 
-
   # retirement |> ggplot(aes(x=Age, y=pc)) + geom_line()
   # Looks better
 

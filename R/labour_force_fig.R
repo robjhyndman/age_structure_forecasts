@@ -21,8 +21,10 @@ make_fig1 <- function(census_science) {
   ggplot(
     census_participation |> filter(Year %in% c("Average", 2016, 2021)),
     aes(
-      x = as.numeric(gsub("\\+", "", age_group)), y = participation,
-      shape = as.factor(Year), color = as.factor(Year)
+      x = as.numeric(gsub("\\+", "", age_group)),
+      y = participation,
+      shape = as.factor(Year),
+      color = as.factor(Year)
     )
   ) +
     geom_point(size = 1.5) +
@@ -34,13 +36,10 @@ make_fig1 <- function(census_science) {
       shape = "Census Year",
       color = "Census Year"
     ) +
-    scale_x_continuous(breaks = seq(20, 100, by = 10), labels = c(seq(20, 90, by = 10), "100+")) +
+    scale_x_continuous(
+      breaks = seq(20, 100, by = 10),
+      labels = c(seq(20, 90, by = 10), "100+")
+    ) +
     scale_shape_manual(values = c(1, 2, 0)) +
-    scale_color_manual(values = cols) +
-    theme_classic() +
-    theme(
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      plot.subtitle = element_text(hjust = 0.5),
-      axis.text.x = element_text(angle = 45, hjust = 1)
-    )
+    scale_color_manual(values = cols)
 }
