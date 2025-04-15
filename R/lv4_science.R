@@ -116,9 +116,20 @@ read_census <- function(file) {
     select(-avg_participation)
 
   # Combine all years
-  census |>
+  census <- census |>
     bind_rows(censusp) |>
     mutate(Working = persons * participation)
+
+  # Combine "Other Natural and Physical Sciences" and "Natural and Physical Sciences (n.f.d.)"
+  census <- census |>
+    mutate(
+      discipline = if_else(
+        discipline == "Natural and Physical Sciences (n.f.d.)",
+        "Other Natural and Physical Sciences",
+        discipline
+      )
+    )
+  return(census)
 }
 
 # Convert census data to single age groups and separate the disciplines

@@ -12,7 +12,7 @@ read_mortality <- function(mx_path, ex_path) {
 # Then smooth the result and add in population data
 compute_death_prob <- function(mortality) {
   life_table(mortality) |>
-    smooth_mortality(qx, k = 20) |>
+    smooth_mortality(qx, k = 50) |>
     mutate(death_prob = c(.smooth)) |>
     select(Year, Age, death_prob) |>
     left_join(
