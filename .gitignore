@@ -6,4 +6,8 @@ monash2.png
 
 *.bbl
 *.blg
+*.fdb_latexmk
+
 age_structure_forecasts.tex
+
+age_structure_forecasts_files/*
