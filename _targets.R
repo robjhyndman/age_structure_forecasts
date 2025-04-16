@@ -1,6 +1,5 @@
 library(targets)
 library(tarchetypes)
-
 tar_option_set(
   packages = c(
     "dplyr",
@@ -14,7 +13,8 @@ tar_option_set(
     "knitr",
     "kableExtra",
     "patchwork"
-  )
+  ),
+  seed = 2025
 )
 tar_source()
 
