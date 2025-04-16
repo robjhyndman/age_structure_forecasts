@@ -122,31 +122,12 @@ list(
       select(-discipline)
   ),
   tar_target(
-    physics_leavers,
-    course_leavers |>
-      filter(discipline == "Physics and Astronomy") |>
-      select(-discipline, -category)
-  ),
-  tar_target(
-    future_physics_leavers,
-    future_course_leavers_science |>
-      filter(discipline == "Physics and Astronomy") |>
-      select(-discipline)
-  ),
-  tar_target(
     future_physics,
     future_pop_science |>
       filter(discipline == "Physics and Astronomy") |>
       select(-discipline)
   ),
-  # tar_target(fig11, make_fig2(physics, "Physics and Astronomy")),
-  # tar_target(fig12, make_fig3(physics, "Physics and Astronomy")),
-  # tar_target(fig13, make_fig13(physics_leavers, "Physics and Astronomy")),
-  # tar_target(fig14, make_fig14(future_physics_leavers, physics_leavers)),
-  # tar_target(fig15, make_fig15(physics)),
   tar_target(fig16, make_fig16(physics, future_physics)),
-  # tar_target(fig17, make_fig17(future_physics)),
-  # tar_target(fig18, make_fig18(physics, future_physics)),
 
   # Disciplines combined
   tar_target(fig19, make_fig19(census4_1)),
@@ -166,6 +147,5 @@ list(
     report,
     "age_structure_forecasts.qmd",
     output_file = "age_structure_forecasts.pdf"
-  ),
-  NULL
+  )
 )
