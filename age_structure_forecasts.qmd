@@ -65,7 +65,13 @@ options(
 
 # Introduction {#sec-intro}
 
-In planning for the future labour market, it is necessary to forecast the age structure of the workforce, in order to enable data-driven decision-making on policies concerning universities and immigration. We demonstrate a statistical modelling approach to this problem, illustrated using various scientific disciplines in Australia, forecasting future workforce age structures over the next decade. The forecasts described have been used by the Australian Academy of Science as part of _Australian Science, Australia’s Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia’s ambitions [@AAS2035].
+In planning for the future labour market, it is necessary to forecast the age structure of the workforce, in order to enable informed decision-making on policies concerning universities and immigration. We demonstrate a statistical modelling approach to this problem, illustrated using various scientific disciplines in Australia, forecasting future workforce age structures over the next decade. The forecasts described have been used by the Australian Academy of Science as part of _Australian Science, Australia’s Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia’s ambitions [@AAS2035].
+
+The economic implications of workforce age structure shifts are well-documented [e.g., @Bloom2007], affecting productivity, pensions and superannuation, and skill shortages [@PC2013; @OECD2019a; @OECD2019b; @pension].
+
+Our approach builds on functional data models, introduced to demographic modelling by @HU07. They combined nonparametric smoothing and functional principal components for age-specific demographic rates. These models were then used by @HB08 for mortality, fertility, and migration rates, providing stochastic data generating processes for the components of demographic balance equations. These separate component models were then simulated to form future sample paths, leading to age- and sex-specific stochastic population forecasts.
+
+This framework is adaptable to workforce dynamics by redefining the demographic components, replacing fertility with workforce entry. The latter functions more like a migration process than a birth process because graduates can enter the workforce at any age.
 
 This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. For consistency, the report refers to ASCED’s Narrow Fields as "disciplines".
 
