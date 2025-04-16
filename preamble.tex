@@ -1,1 +1,14 @@
 \usepackage{colortbl}
+
+\renewbibmacro*{url+urldate}{%
+  \ifthenelse{\iffieldundef{url}\OR\NOT\iffieldundef{doi}}
+    {}
+    {\printfield{url}
+    \iffieldundef{urlday}
+      {}
+      {
+       \setunit{\addspace}%
+       \mkbibparens{visited \stripzeros{\thefield{urlday}}~\mkbibmonth{\thefield{urlmonth}} \printfield{urlyear}}
+      }
+    }
+}

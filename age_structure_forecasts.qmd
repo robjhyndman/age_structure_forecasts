@@ -111,7 +111,7 @@ Specifically, the *Census of Population and Housing* (2006, 2011, 2016, and 2021
 
 Australian age-specific death counts and population exposures from 1971 to 2021 were sourced from the @HMD. This dataset includes death counts and population exposures categorised by age.
 
-Retirement data is sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022–2023 financial year [@ABS6238]. It provides insights into expected retirement ages for workers in age groups ranging from 45 to 70 across various industries.
+Retirement data is sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. It provides insights into expected retirement ages for workers in age groups ranging from 45 to 70 across various industries.
 
 Graduate completion statistics from 2006 to 2023, categorised by age group and including individuals with a bachelor’s degree or higher, are derived from the *Award Course Completions* dataset [@DeptEdu]. Additionally, the Department of Education provides data on the number of graduates with a bachelor’s degree or higher, categorised by discipline and year, for the same period [@DeptEdu_Private]. These datasets include both domestic and international students.
 
@@ -123,7 +123,7 @@ Another limitation is that retirement intentions data is unavailable by educatio
 
 Labour force participation data is available for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from these later years are applied, assuming overall patterns remain consistent. While participation rates were generally stable between 2016 and 2021, smaller groups experienced more volatility.
 
-Younger and older age groups within some disciplines were particularly affected by this volatility, especially when sample sizes were small. For example, in a group of five 15–19-year-olds, a single individual's employment status change could significantly shift the participation rate. Similarly, fluctuations in smaller cohorts of older scientists impacted participation rates. Averaging the rates from 2016 and 2021 helps mitigate this volatility and provides a more stable estimate for 2006 and 2011. Any discrepancies in participation rates are minimal due to the small cohort sizes, making this a more reliable approach than relying on a single year.
+Younger and older age groups within some disciplines were particularly affected by this volatility, especially when sample sizes were small. For example, in a group of five 15--19-year-olds, a single individual's employment status change could significantly shift the participation rate. Similarly, fluctuations in smaller cohorts of older scientists impacted participation rates. Averaging the rates from 2016 and 2021 helps mitigate this volatility and provides a more stable estimate for 2006 and 2011. Any discrepancies in participation rates are minimal due to the small cohort sizes, making this a more reliable approach than relying on a single year.
 
 @fig-labour-force displays the labour force participation rates for the broader category of Natural and Physical Sciences for 2016, 2021, and their average, which serves as a proxy for 2006 and 2011. While estimation is conducted separately at both the discipline and category levels, the figure below illustrates this approach using the broader category as an example.
 
@@ -154,7 +154,7 @@ tar_read(fig2)
 ```{r}
 #| label: fig-cohort-interpolation
 #| eval: true
-#| fig-cap: Interpolated number of scientists in Australia, 2006–2021, using linear cohort interpolation.
+#| fig-cap: Interpolated number of scientists in Australia, 2006--2021, using linear cohort interpolation.
 tar_read(fig3)
 ```
 
@@ -283,9 +283,6 @@ tar_read(fig19)
 tar_read(fig20)
 ```
 
-
-
-
 ## Graduate Completions
 
 @fig-grad-forecasts shows the number of total graduate completions from 2006 to 2023 ($\sum_x N_{i,x,t}$). A significant positive trend is observed in three disciplines: Mathematical Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.). Note that the Y-axis scales vary across disciplines to reflect differences in the number of completions.
@@ -313,7 +310,6 @@ Beyond this age range, net migration fluctuates between small levels of immigrat
 
 As outlined in the methodology, these estimates rely on forecasting the other components ($D$, $N$, and $R$). Therefore, only estimated historical values up to 2020 are shown here. While historical data on the working population extends to 2021, net migration values for 2021 can only be obtained by incorporating forecasted components due to the structure of the equation.
 
-
 Other Natural and Physical Sciences and Natural and Physical Sciences (n.f.d.) show little to no immigration beyond this stage. Given their larger workforce sizes (as seen on the y-axis), these disciplines exhibit more stable net migration patterns.
 
 In contrast, core scientific disciplines, which have smaller populations, show more fluctuation in migration levels after the early career stage. This variability is likely due to workforce mobility, the sensitivity of estimates for smaller populations, and cohort effects, rather than reflecting actual migration dynamics.
@@ -321,11 +317,10 @@ In contrast, core scientific disciplines, which have smaller populations, show m
 ```{r}
 #| label: fig-net-migration-disciplines
 #| eval: true
-#| fig-cap: Estimated net migration by age across scientific disciplines (2006–2020). Each panel represents a different discipline, showing net migration trends across age groups.
+#| fig-cap: Estimated net migration by age across scientific disciplines (2006--2020). Each panel represents a different discipline, showing net migration trends across age groups.
 #| fig-height: 6
 tar_read(fig22)
 ```
-
 
 ## Simulating Future Populations
 
@@ -377,13 +372,13 @@ tar_read(fig23)
 
 The key findings from @fig-forecast-working-population are summarised below:
 
--   **Physics and Astronomy** *(Aging Workforce):* The 35–45 age group shows a higher average than the previous 2025 cohort. There is a growing number of scientists aged 45 to 60, and more individuals aged 60+ are remaining in the workforce longer. These patterns indicate a gradual transition toward an older age structure, reflecting an aging workforce.
+-   **Physics and Astronomy** *(Aging Workforce):* The 35--45 age group shows a higher average than the previous 2025 cohort. There is a growing number of scientists aged 45 to 60, and more individuals aged 60+ are remaining in the workforce longer. These patterns indicate a gradual transition toward an older age structure, reflecting an aging workforce.
 -   **Mathematical Sciences** *(Expansive Workforce):* Workforce growth is evident across a broad range of ages, particularly among individuals aged 25 to 70. The most significant increase occurs before 60, though there is also a clear rise in older workers (60+) remaining in the workforce rather than retiring. Overall, workforce growth is strong and evident across age groups.
 -   **Chemical Sciences** *(Stationary Workforce):* The average workforce size remains stable, with a relatively narrow prediction interval, indicating a predictable pattern of stability over time. While there is a minor increase in the number of workers aged 70, this change is not substantial enough to suggest a broader shift in workforce dynamics.
 -   **Earth Sciences** *(Aging Workforce):* Early-career workforce projections are more uncertain relative to its size. A decline in the working population is observed in the mid-thirties, followed by an increase throughout the forties, though both remain modest. While the overall workforce remains relatively stable, these patterns indicate a slow shift toward an older age distribution.
 -   **Biological Sciences** *(Aging Workforce):* The number of workers aged 50 to 65 is increasing, indicating growth in later-career participation.
 -   **Other Natural and Physical Sciences** *(Expansive Workforce):* Workforce growth is strong across ages 30 to 70, characteristic of an expanding workforce.
--   **Natural and Physical Sciences (n.f.d.)** *(Aging Workforce):* Growth is primarily concentrated in the 55–70 age range, indicating delayed retirement and an aging workforce.
+-   **Natural and Physical Sciences (n.f.d.)** *(Aging Workforce):* Growth is primarily concentrated in the 55--70 age range, indicating delayed retirement and an aging workforce.
 
 These trends are further validated by the total workforce projections shown in @fig-forecast-total-working-scientists. This figure presents the total number of working scientists by discipline at each point in time, illustrating changes in workforce size over the forecast period. While all disciplines exhibit widening prediction intervals resembling an open funnel, this primarily reflects increasing uncertainty over time as forecasts extend further into the future. The extent of this uncertainty varies by discipline, with some exhibiting more stable trends while others show greater variability in potential workforce outcomes.
 
@@ -395,8 +390,6 @@ tar_read(fig24)
 ```
 
 From the plot, Mathematical Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.) are projected to grow at an accelerating pace. Chemical Sciences, on the other hand, is more likely to decline, while the remaining disciplines are expected to experience more stable growth. However, it is important to consider the prediction intervals when interpreting these trends. These patterns are largely consistent with workforce structure classifications, with expansive disciplines experiencing faster growth, aging disciplines maintaining more stable trends, and constrictive disciplines showing signs of decline.
-
-
 
 # Conclusion {#sec-conclusion}
 
