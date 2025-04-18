@@ -430,15 +430,23 @@ ave_smooth_pr <- function(data) {
     data <- list(data)
   }
   smooth <- lapply(data, function(x) {
-    fit <- loess(
-      formula = participation ~ age,
-      data = x,
-      span = 0.3
+    fit <- cobs::cobs(
+      x$age,
+      log(x$participation + 0.001),
+      constraint = "concave",
+      lambda = 0.5,
+      print.warn = FALSE,
+      print.mesg = FALSE
     )
     age <- sort(unique(x$age))
     data.frame(
       age = age,
-      .smooth = pmax(predict(fit, newdata = data.frame(age = age)), 0)
+      .smooth = exp(predict(
+        fit,
+        minz = min(age),
+        maxz = max(age),
+        nz = length(age)
+      )[, 2])
     )
   })
   purrr::map2_dfr(data, smooth, function(x, y) {
