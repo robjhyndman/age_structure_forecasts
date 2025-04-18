@@ -8,7 +8,7 @@ make_fig19 <- function(disciplines_combined) {
     filter(year %in% years) |>
     mutate(Year = factor(year, levels = rev(years))) |>
     ggplot() +
-    aes(x = Age, y = Working, color = Year, group = Year) +
+    aes(x = age, y = working, color = Year, group = Year) +
     geom_line() +
     scale_color_manual(values = cols, name = "Census Year") +
     labs(
@@ -25,7 +25,7 @@ make_fig19 <- function(disciplines_combined) {
 
 make_fig20 <- function(disciplines_combined) {
   ggplot(disciplines_combined) +
-    aes(x = Age, y = Working, group = year, color = year) +
+    aes(x = age, y = working, group = year, color = year) +
     geom_line() +
     facet_wrap(~discipline, scales = "free_y") +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
@@ -44,21 +44,17 @@ make_fig20 <- function(disciplines_combined) {
 
 make_fig21 <- function(course_leavers) {
   course_leavers$discipline <- course_leavers$discipline |>
-    forcats::fct_recode(
-      "Natural and Physical Sciences (n.f.d.)" = "Natural and Physical Sciences, nfd"
-    ) |>
     forcats::fct_relevel(
       "Physics and Astronomy",
       "Mathematical Sciences",
       "Chemical Sciences",
       "Earth Sciences",
       "Biological Sciences",
-      "Other Natural and Physical Sciences",
-      "Natural and Physical Sciences (n.f.d.)"
+      "Other Natural and Physical Sciences"
     )
 
   ggplot(course_leavers) +
-    aes(x = Year, y = Graduates) +
+    aes(x = year, y = graduates) +
     geom_line() +
     facet_wrap(~discipline, scales = "free_y") +
     labs(
@@ -73,7 +69,7 @@ make_fig21 <- function(course_leavers) {
 
 make_fig22 <- function(disciplines_combined) {
   ggplot(disciplines_combined) +
-    aes(x = Age, y = Migrants, group = Year, color = Year) +
+    aes(x = age, y = migrants, group = year, color = year) +
     geom_line() +
     facet_wrap(~discipline, scales = "free_y") +
     scale_x_continuous(breaks = seq(10, 100, by = 10)) +
