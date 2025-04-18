@@ -147,5 +147,11 @@ list(
     "age_structure_forecasts.qmd",
     output_file = "age_structure_forecasts.pdf",
     extra_files = c("refs.bib", "preamble.tex")
+  ),
+  tar_quarto(
+    talk,
+    "age_structure_talk.qmd",
+    output_file = "age_structure_talk.pdf",
+    extra_files = c("header.tex")
   )
 )

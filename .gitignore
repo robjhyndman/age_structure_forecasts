@@ -10,4 +10,7 @@ monash2.png
 
 age_structure_forecasts.tex
 
-age_structure_forecasts_files/*
+*_files/*
+
+/.luarc.json
+.Rproj.user
