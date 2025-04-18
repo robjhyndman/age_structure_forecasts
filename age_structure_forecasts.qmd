@@ -1,5 +1,5 @@
 ---
-title: "The future age structure of scientific disciplines"
+title: "Forecasting the age structure of the scientific workforce in Australia"
 author:
 - name: Rob J Hyndman
   affiliations:
@@ -75,7 +75,7 @@ This framework is adaptable to workforce dynamics by redefining the demographic 
 
 This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. For consistency, the report refers to ASCED’s Narrow Fields as "disciplines".
 
-The report forecasts the number of individuals in each one-year age group who are active in the workforce and hold a bachelor’s degree or higher in the following scientific disciplines: Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.).
+We forecast the number of individuals in each one-year age group who are active in the workforce and hold a bachelor’s degree or higher in the following scientific disciplines: Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.).
 
 Projections extend over a 20-year period to 2041, with particular focus on workforce composition in 2035. These estimates account for key demographic factors, including mortality, retirement, graduation, and migration.
 
