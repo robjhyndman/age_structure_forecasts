@@ -45,8 +45,8 @@ single_age_retirements <- function(retirement_data, death_prob) {
 
   retirement <- retirement |>
     mutate(
-      pc = if_else(Age <= 59, (Age - 44) * 0.0727505, pc),
-      pc = pc/sum(pc)*100
+      pc = if_else(age <= 59, (age - 44) * 0.0727505, pc),
+      pc = pc / sum(pc) * 100
     )
 
   # retirement |> ggplot(aes(x=Age, y=pc)) + geom_line()
@@ -56,16 +56,16 @@ single_age_retirements <- function(retirement_data, death_prob) {
   # Use the general Australian population in last year of available data
 
   retirement <- retirement |>
-    left_join(death_prob |> filter(Year == max(Year)), by = "Age") |>
+    left_join(death_prob |> filter(year == max(year)), by = "age") |>
     mutate(
       population = 100 * population / mean(population),
       dx = (pc / 100) * population,
       mx = dx / population,
-      qx = if_else(Age == max(Age), 1, mx / (1 + 0.5 * mx)),
+      qx = if_else(age == max(age), 1, mx / (1 + 0.5 * mx)),
       qx = make_monotonic(qx),
       qx = if_else(death_prob + qx > 1, 1 - death_prob, qx)
     ) |>
-    select(Age, pc, retire_prob = qx)
+    select(age, pc, retire_prob = qx)
 
   return(retirement)
 }

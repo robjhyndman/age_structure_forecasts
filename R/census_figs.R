@@ -4,10 +4,10 @@ make_fig2 <- function(census, subtitle) {
   names(cols) <- years
   census |>
     as_tibble() |>
-    filter(Year %in% years) |>
-    mutate(Year = factor(Year, levels = rev(years))) |>
+    filter(year %in% years) |>
+    mutate(Year = factor(year, levels = rev(years))) |>
     ggplot() +
-    aes(x = Age, y = Working, color = Year, group = Year) +
+    aes(x = age, y = working, color = Year, group = Year) +
     geom_line() +
     labs(y = "Number of active scientists") +
     scale_color_manual(values = cols, name = "Census Year") +
@@ -20,7 +20,7 @@ make_fig2 <- function(census, subtitle) {
 
 make_fig3 <- function(census, subtitle) {
   census |>
-    autoplot(Working) +
+    autoplot(working) +
     labs(y = "Number of active scientists") +
     labs(
       title = "Interpolated Working Population",

@@ -15,9 +15,9 @@ make_fig4 <- function(retirements) {
 
 make_fig6 <- function(retirements, var) {
   retirements |>
-    filter(Age < 100) |>
+    filter(age < 100) |>
     ggplot() +
-    aes(x = Age, y = {{ var }}) +
+    aes(x = age, y = {{ var }}) +
     geom_line() +
     labs(
       y = "Probability of retirement",

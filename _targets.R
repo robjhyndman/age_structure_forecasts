@@ -63,8 +63,7 @@ list(
   tar_target(arma_coef_science, global_arma(course_leavers)),
   tar_target(
     future_course_leavers_science,
-    simulate_future_graduates(course_leavers, arma_coef_science) |>
-      select(-category)
+    simulate_future_graduates(course_leavers, arma_coef_science)
   ),
 
   # Census 2 digit
@@ -114,7 +113,7 @@ list(
     )
   ),
 
-  # # Physics
+  # Physics
   tar_target(
     physics,
     census4_1 |>

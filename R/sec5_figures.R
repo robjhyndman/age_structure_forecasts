@@ -5,8 +5,8 @@ make_fig19 <- function(disciplines_combined) {
 
   disciplines_combined |>
     as_tibble() |>
-    filter(Year %in% years) |>
-    mutate(Year = factor(Year, levels = rev(years))) |>
+    filter(year %in% years) |>
+    mutate(Year = factor(year, levels = rev(years))) |>
     ggplot() +
     aes(x = Age, y = Working, color = Year, group = Year) +
     geom_line() +
@@ -25,7 +25,7 @@ make_fig19 <- function(disciplines_combined) {
 
 make_fig20 <- function(disciplines_combined) {
   ggplot(disciplines_combined) +
-    aes(x = Age, y = Working, group = Year, color = Year) +
+    aes(x = Age, y = Working, group = year, color = year) +
     geom_line() +
     facet_wrap(~discipline, scales = "free_y") +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
@@ -94,19 +94,19 @@ make_fig22 <- function(disciplines_combined) {
 make_fig23 <- function(future_disciplines_combined) {
   eg_forecast <- future_disciplines_combined |>
     as_tibble() |>
-    filter(Year %in% c(2025, 2035)) |>
-    group_by(discipline, Age, Year) |>
+    filter(year %in% c(2025, 2035)) |>
+    group_by(discipline, age, year) |>
     summarise(
-      mean = mean(Working),
-      lo = quantile(Working, prob = 0.05),
-      hi = quantile(Working, prob = 0.95),
+      mean = mean(working),
+      lo = quantile(working, prob = 0.05),
+      hi = quantile(working, prob = 0.95),
       .groups = "drop"
     )
 
   # Overlay
   ggplot(eg_forecast) +
-    aes(x = Age, color = factor(Year)) +
-    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(Year)), alpha = 0.1) +
+    aes(x = age, color = factor(year)) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(year)), alpha = 0.1) +
     geom_line(aes(y = mean), linewidth = 0.75) +
     labs(
       y = "Number of working scientists",
@@ -127,26 +127,26 @@ make_fig23 <- function(future_disciplines_combined) {
 make_fig24 <- function(disciplines_combined, future_disciplines_combined) {
   sum_disciplines_combined <- disciplines_combined |>
     as_tibble() |>
-    group_by(discipline, Year) |>
-    summarise(Working = sum(Working), .groups = "drop")
+    group_by(discipline, year) |>
+    summarise(working = sum(working), .groups = "drop")
 
   sum_future_disciplines_combined <- future_disciplines_combined |>
     as_tibble() |>
-    group_by(discipline, Year, .rep) |>
-    summarise(Working = sum(Working), .groups = "drop") |>
-    group_by(discipline, Year) |>
+    group_by(discipline, year, .rep) |>
+    summarise(working = sum(working), .groups = "drop") |>
+    group_by(discipline, year) |>
     summarise(
-      mean = mean(Working),
-      lo = quantile(Working, prob = 0.05),
-      hi = quantile(Working, prob = 0.95),
+      mean = mean(working),
+      lo = quantile(working, prob = 0.05),
+      hi = quantile(working, prob = 0.95),
       .groups = "drop"
     )
 
   ggplot(sum_future_disciplines_combined) +
-    aes(x = Year) +
+    aes(x = year) +
     geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
     geom_line(aes(y = mean), color = "#c14b14") +
-    geom_line(data = sum_disciplines_combined, aes(y = Working)) +
+    geom_line(data = sum_disciplines_combined, aes(y = working)) +
     labs(
       y = "Total number of working scientists (thousands)",
       title = "Forecast of Total Working Population by Discipline",
@@ -161,21 +161,21 @@ make_fig_grad_forecasts <- function(grads, future_grads) {
   future_grads <- future_grads |>
     group_by(discipline) |>
     summarise(
-      mean = mean(Graduates),
-      lo = quantile(Graduates, prob = 0.05),
-      hi = quantile(Graduates, prob = 0.95)
+      mean = mean(graduates),
+      lo = quantile(graduates, prob = 0.05),
+      hi = quantile(graduates, prob = 0.95)
     )
   grads <- grads |>
     as_tibble() |>
-    group_by(discipline, Year) |>
-    summarise(Graduates = sum(Graduates))
+    group_by(discipline, year) |>
+    summarise(graduates = sum(graduates))
   future_grads |>
     as_tibble() |>
     ggplot() +
-    aes(x = Year, group = discipline) +
+    aes(x = year, group = discipline) +
     geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
     geom_line(aes(y = mean), color = "#c14b14") +
-    geom_line(data = grads, aes(y = Graduates)) +
+    geom_line(data = grads, aes(y = graduates)) +
     labs(
       y = "Number of graduates",
       title = "Forecast of Graduates",

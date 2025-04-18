@@ -31,28 +31,34 @@ aas_smooth <- function(x, y, xout) {
 # As we only have population data at the census dates, we will interpolate
 # the population for the years between censuses using a cohort linear interpolation method
 cohort_interpolation <- function(df) {
-  fullP <- expand_grid(Year = 2006:2021, Age = 15:100) |>
-    mutate(birth_year = Year - Age) |>
-    left_join(df, by = c("Year", "Age")) |>
-    select(-Age)
+  fullP <- expand_grid(year = 2006:2021, age = 15:100) |>
+    mutate(birth_year = year - age) |>
+    left_join(df, by = c("year", "age")) |>
+    select(-age)
   fullP <- lapply(
     split(fullP, fullP$birth_year),
     function(x) {
-      if (sum(!is.na(x$Working)) <= 1 | NROW(x) <= 1) {
+      if (sum(!is.na(x$working)) <= 1 | NROW(x) <= 1) {
         return(x)
       } else {
-        x$Working <- approx(x = x$Year, y = x$Working, method = "linear", xout = x$Year, rule = 2)$y
+        x$working <- approx(
+          x = x$year,
+          y = x$working,
+          method = "linear",
+          xout = x$year,
+          rule = 2
+        )$y
         return(x)
       }
     }
   ) |>
     bind_rows() |>
     mutate(
-      Working = if_else(is.na(Working), 0, Working),
-      Age = Year - birth_year
+      working = if_else(is.na(working), 0, working),
+      age = year - birth_year
     ) |>
     select(-birth_year) |>
-    as_vital(index = Year, key = Age, .age = "Age")
+    as_vital(index = year, key = age, .age = "age")
 
   return(fullP)
 }
@@ -65,18 +71,40 @@ cohort_interpolation <- function(df) {
 # If smooth, the resulting step function is smoothed using positive cubic splines
 # Will group by year if there is a variable called "year"
 
-make_single_age <- function(df, variable, min_age = 15, max_age = 100, smooth = TRUE) {
+make_single_age <- function(
+  df,
+  variable,
+  min_age = 15,
+  max_age = 100,
+  smooth = TRUE
+) {
   var_name <- deparse(substitute(variable))
-  groups <- "Year" %in% colnames(df)
+  groups <- "year" %in% colnames(df)
   # Add lower and upper age columns
-  df$lower_age <- readr::parse_number(stringr::str_extract(df$age_group, "^[0-9]*"))
-  df$upper_age <- readr::parse_number(stringr::str_extract(df$age_group, "\\d+(?!.*\\d)"))
-  df$upper_age <- if_else(df$upper_age == max(df$upper_age), max_age, df$upper_age)
+  df$lower_age <- readr::parse_number(stringr::str_extract(
+    df$age_group,
+    "^[0-9]*"
+  ))
+  df$upper_age <- readr::parse_number(stringr::str_extract(
+    df$age_group,
+    "\\d+(?!.*\\d)"
+  ))
+  df$upper_age <- if_else(
+    df$upper_age == max(df$upper_age),
+    max_age,
+    df$upper_age
+  )
   if (groups) {
     output <- list()
-    df <- split(df, df$Year)
+    df <- split(df, df$year)
     for (i in seq_along(df)) {
-      output[[i]] <- make_single_age_oneyear(df[[i]], var_name, min_age, max_age, smooth)
+      output[[i]] <- make_single_age_oneyear(
+        df[[i]],
+        var_name,
+        min_age,
+        max_age,
+        smooth
+      )
     }
     output <- bind_rows(output)
   } else {
@@ -87,7 +115,13 @@ make_single_age <- function(df, variable, min_age = 15, max_age = 100, smooth = 
 }
 
 # This function does the work for a single year of data
-make_single_age_oneyear <- function(df, var_name, min_age = 15, max_age = 100, smooth = TRUE) {
+make_single_age_oneyear <- function(
+  df,
+  var_name,
+  min_age = 15,
+  max_age = 100,
+  smooth = TRUE
+) {
   # df should only contain the data for one year.
   # Therefore age_groups should be unique
   if (length(unique(df$lower_age)) != nrow(df)) {
@@ -97,11 +131,11 @@ make_single_age_oneyear <- function(df, var_name, min_age = 15, max_age = 100, s
   df <- df |> arrange(upper_age)
   # Set up output tibble
   ages <- seq(min_age, max_age, by = 1L)
-  output <- tibble(Age = ages, y = 0)
-  colnames(output) <- c("Age", var_name)
-  if ("Year" %in% colnames(df)) {
-    output$Year <- df$Year[1]
-    output <- output[, c("Year", "Age", var_name)]
+  output <- tibble(age = ages, y = 0)
+  colnames(output) <- c("age", var_name)
+  if ("year" %in% colnames(df)) {
+    output$year <- df$year[1]
+    output <- output[, c("year", "age", var_name)]
   }
   # Either use a monotonic smoothing spline to cumulative data, or use a step function
   if (smooth) {
@@ -124,42 +158,42 @@ make_single_age_oneyear <- function(df, var_name, min_age = 15, max_age = 100, s
 # Function to add graduates, retirees, deaths and migrants
 add_migrants <- function(df, graduates, completions, retirements, mortality) {
   # Construct new graduate age distribution
-  N <- expand_grid(Year = graduates$Year, Age = completions$Age) |>
-    left_join(graduates, by = "Year") |>
-    left_join(completions, by = "Age") |>
+  N <- expand_grid(year = graduates$year, age = completions$age) |>
+    left_join(graduates, by = "year") |>
+    left_join(completions, by = "age") |>
     mutate(
       pc = if_else(is.na(pc), 0, pc),
-      Graduates = pc * Graduates / 100
+      graduates = pc * graduates / 100
     ) |>
     select(-pc) |>
-    as_vital(index = Year, key = Age, .age = "Age")
+    as_vital(index = year, key = age, .age = "age")
 
   # Add graduates, deaths and retirements to population data
   P <- df |>
-    left_join(N, by = c("Year", "Age")) |>
-    left_join(mortality, by = c("Age", "Year")) |>
-    left_join(retirements, by = "Age") |>
+    left_join(N, by = c("year", "age")) |>
+    left_join(mortality, by = c("age", "year")) |>
+    left_join(retirements, by = "age") |>
     mutate(
       retire_prob = if_else(is.na(retire_prob), 0, retire_prob),
-      Retirees = retire_prob * Working,
-      Deaths = death_prob * Working
+      retirees = retire_prob * working,
+      deaths = death_prob * working
     ) |>
-    select(Year, Age, Working, Graduates, Retirees, Deaths)
+    select(year, age, working, graduates, retirees, deaths)
   # Compute migrants
   next_year <- P |>
     transmute(
-      Lead_Working = if_else(Age <= 15, 0, Working),
-      Year = Year - 1,
-      Age = Age - 1
+      lead_working = if_else(age <= 15, 0, working),
+      year = year - 1,
+      age = age - 1
     )
   P <- P |>
-    left_join(next_year, by = c("Year", "Age")) |>
+    left_join(next_year, by = c("year", "age")) |>
     mutate(
-      Migrants = Lead_Working - Working + Deaths + Retirees - Graduates,
-      Migrants = if_else(Age == max(Age), 0, Migrants)
+      migrants = lead_working - working + deaths + retirees - graduates,
+      migrants = if_else(age == max(age), 0, migrants)
     ) |>
-    select(-Lead_Working) |>
-    as_vital(index = Year, key = Age, .age = "Age")
+    select(-lead_working) |>
+    as_vital(index = year, key = age, .age = "age")
 
   # Return complete data
   return(P)
@@ -167,28 +201,38 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
 
 # Forecast function
 
-forecast_pop_discipline <- function(df, graduates, completions, retirements, mortality, arma_coef, h = 20, nsim = 500) {
+forecast_pop_discipline <- function(
+  df,
+  graduates,
+  completions,
+  retirements,
+  mortality,
+  arma_coef,
+  h = 20,
+  nsim = 500
+) {
   # Last year of available population data
-  last_yr <- max(df$Year)
+  last_yr <- max(df$year)
 
   # Estimate future migrants in last year
   # (since we can't compute them using following year)
   fit_migrants <- df |>
-    filter(Year < last_yr, !is.na(Graduates)) |>
-    model(fdm = FDM(Migrants))
+    filter(year < last_yr, !is.na(graduates)) |>
+    model(fdm = FDM(migrants))
   last_yr_migrants <- fit_migrants |>
     forecast(h = 1) |>
     as_tibble() |>
-    select(-Migrants, -.model) |>
-    rename(Migrants = .mean)
+    select(-migrants, -.model) |>
+    rename(migrants = .mean)
   # Add migrants into last year
   population <- bind_rows(
-    df |> filter(Year < last_yr),
-    df |> filter(Year == last_yr) |>
-      select(-Migrants) |>
+    df |> filter(year < last_yr),
+    df |>
+      filter(year == last_yr) |>
+      select(-migrants) |>
       left_join(
         last_yr_migrants,
-        by = c("Age", "Year")
+        by = c("age", "year")
       )
   )
 
@@ -202,109 +246,114 @@ forecast_pop_discipline <- function(df, graduates, completions, retirements, mor
   # Simulate future migrant numbers
   future_migrants <- fit_migrants |>
     generate(h = h + 1, times = nsim) |>
-    filter(Year > last_yr) |>
-    rename(Migrants = .sim) |>
+    filter(year > last_yr) |>
+    rename(migrants = .sim) |>
     select(-.model)
 
   # Simulate future graduate numbers
   future_graduates <- graduates |>
     fit_global_model(arma_coef) |>
     generate(h = h, times = nsim) |>
-    rename(Graduates = .sim) |>
+    rename(graduates = .sim) |>
     select(-.model)
   # Add actual graduate numbers where available
   future_graduates <- future_graduates |>
     bind_rows(
       graduates |>
-        filter(Year >= last_yr) |>
+        filter(year >= last_yr) |>
         expand_grid(.rep = unique(future_graduates$.rep))
     )
 
   # Disaggregate by age
   N <- expand_grid(
-    Year = last_yr + seq(h),
-    Age = completions$Age,
+    year = last_yr + seq(h),
+    age = completions$age,
     .rep = unique(future_graduates$.rep)
   ) |>
-    left_join(future_graduates, by = c(".rep", "Year")) |>
-    left_join(completions, by = "Age") |>
+    left_join(future_graduates, by = c(".rep", "year")) |>
+    left_join(completions, by = "age") |>
     mutate(
       pc = if_else(is.na(pc), 0, pc),
-      Graduates = pc * Graduates / 100
+      graduates = pc * graduates / 100
     ) |>
     select(-pc)
 
   N <- N |>
-    left_join(future_death_prob, by = c("Age", "Year", ".rep")) |>
-    left_join(retirements |> select(-pc), by = "Age") |>
-    mutate(retire_prob = if_else(Age < 45, 0, retire_prob)) |>
-    left_join(future_migrants, by = c("Age", "Year", ".rep")) |>
-    filter(Year <= last_yr + h)
+    left_join(future_death_prob, by = c("age", "year", ".rep")) |>
+    left_join(retirements |> select(-pc), by = "age") |>
+    mutate(retire_prob = if_else(age < 45, 0, retire_prob)) |>
+    left_join(future_migrants, by = c("age", "year", ".rep")) |>
+    filter(year <= last_yr + h)
 
   # Get first year working population of simulation
   tmp <- population |>
-    filter(Year == last_yr) |>
+    filter(year == last_yr) |>
     transmute(
-      Age = Age + 1,
-      Year = Year + 1,
-      Working = Working - Deaths - Retirees + Graduates + Migrants,
+      age = age + 1,
+      year = year + 1,
+      working = working - deaths - retirees + graduates + migrants,
     ) |>
-    filter(Age <= 100) |>
+    filter(age <= 100) |>
     bind_rows(
-      tibble(Age = 15, Year = last_yr + 1, Working = 0),
+      tibble(age = 15, year = last_yr + 1, working = 0),
     )
 
   N <- N |>
-    left_join(tmp, by = c("Age", "Year"))
+    left_join(tmp, by = c("age", "year"))
 
   # Now iterate to generate population each year
   # Pull out year to process
   for (i in 2:h) {
     N1 <- N |>
-      filter(Year == last_yr + i) |>
-      select(-Working)
-    N2 <- N |> filter(Year != last_yr + i)
+      filter(year == last_yr + i) |>
+      select(-working)
+    N2 <- N |> filter(year != last_yr + i)
     # Compute migrants
     next_year <- N |>
-      filter(Year == last_yr + i - 1) |>
+      filter(year == last_yr + i - 1) |>
       transmute(
         .rep = .rep,
-        Working = if_else(Age <= 15, 0, Working),
-        Year = Year + 1,
-        Age = Age + 1
+        working = if_else(age <= 15, 0, working),
+        year = year + 1,
+        age = age + 1
       )
     N1 <- N1 |>
-      left_join(next_year, by = c("Age", "Year", ".rep")) |>
+      left_join(next_year, by = c("age", "year", ".rep")) |>
       mutate(
-        Deaths = Working * death_prob,
-        Retirees = Working * retire_prob,
-        Retirees = if_else(Retirees < 0, 0, Retirees),
-        Working = Working - Deaths - Retirees + Graduates + Migrants,
-        Working = if_else(Age == 15, 0, Working),
-        Working = if_else(Working < 0, 0, Working)
+        deaths = working * death_prob,
+        retirees = working * retire_prob,
+        retirees = if_else(retirees < 0, 0, retirees),
+        working = working - deaths - retirees + graduates + migrants,
+        working = if_else(age == 15, 0, working),
+        working = if_else(working < 0, 0, working)
       ) |>
-      filter(Age <= 100) |>
-      select(-Deaths, -Retirees)
+      filter(age <= 100) |>
+      select(-deaths, -retirees)
     N <- bind_rows(N1, N2)
   }
   N |>
-    select(Year, Age, .rep, Working) |>
-    as_vital(index = Year, key = c(Age, .rep), .age = "Age")
+    select(year, age, .rep, working) |>
+    as_vital(index = year, key = c(age, .rep), .age = "age")
 }
 
 # Function to simulate future graduates only
-simulate_future_graduates <- function(graduates, arma_coef, h = 18, nsim = 500) {
+simulate_future_graduates <- function(
+  graduates,
+  arma_coef,
+  h = 18,
+  nsim = 500
+) {
   future_graduates <- graduates |>
     fit_global_model(arma_coef) |>
     generate(h = h, times = nsim) |>
-    rename(Graduates = .sim) |>
+    rename(graduates = .sim) |>
     select(-.model)
 
-  last_yr <- max(graduates$Year)
+  last_yr <- max(graduates$year)
   future_graduates <- future_graduates |>
     bind_rows(
       graduates |>
-        filter(Year >= last_yr) |>
+        filter(year >= last_yr) |>
         expand_grid(.rep = unique(future_graduates$.rep))
     )
 
@@ -317,23 +366,28 @@ global_arma <- function(course_leavers) {
   mean_grads <- course_leavers |>
     group_by(discipline) |>
     summarise(
-      mean_grads = mean(Graduates),
-      mean_diff = mean(tsibble::difference(Graduates), na.rm=TRUE)
+      mean_grads = mean(graduates),
+      mean_diff = mean(tsibble::difference(graduates), na.rm = TRUE)
     )
 
   # Scale course leavers by means and take differences, removing any drift
   scaled_course_leavers <- course_leavers |>
     left_join(mean_grads, by = "discipline") |>
     group_by(discipline) |>
-    mutate(Graduates = (tsibble::difference(Graduates) - mean_diff)/ mean_grads)
+    mutate(
+      graduates = (tsibble::difference(graduates) - mean_diff) / mean_grads
+    )
 
   # Construct single series of all graduates with large missing sections to wash out memory
   y <- scaled_course_leavers |>
     bind_rows(
-      expand_grid(Year = 1960:(min(course_leavers$Year)-1), discipline = unique(course_leavers$discipline))
+      expand_grid(
+        year = 1960:(min(course_leavers$year) - 1),
+        discipline = unique(course_leavers$discipline)
+      )
     ) |>
-    arrange(discipline, Year) |>
-    pull(Graduates)
+    arrange(discipline, year) |>
+    pull(graduates)
 
   # Fit ARIMA model with d = 0 to differenced data
   global_fit <- tibble(y = y) |>
@@ -352,15 +406,42 @@ fit_global_model <- function(graduates, coef) {
   ma <- stringr::str_detect(coef$term, "ma")
   p <- sum(ar)
   q <- sum(ma)
-  if("discipline" %in% colnames(graduates)) {
+  if ("discipline" %in% colnames(graduates)) {
     tsbl <- graduates |>
-      as_tsibble(index = Year, key = discipline)
+      as_tsibble(index = year, key = discipline)
   } else {
     tsbl <- graduates |>
-      as_tsibble(index = Year)
+      as_tsibble(index = year)
   }
   tsbl |>
-    model(arima = ARIMA(Graduates ~ 1 + pdq(p = p, d = 1, q = q),
-            fixed = c(coef$estimate, NA), transform.pars = FALSE)
+    model(
+      arima = ARIMA(
+        graduates ~ 1 + pdq(p = p, d = 1, q = q),
+        fixed = c(coef$estimate, NA),
+        transform.pars = FALSE
+      )
     )
+}
+
+ave_smooth_pr <- function(data) {
+  if ("discipline" %in% colnames(data)) {
+    data <- split(data, data$discipline)
+  } else {
+    data <- list(data)
+  }
+  smooth <- lapply(data, function(x) {
+    fit <- loess(
+      formula = participation ~ age,
+      data = x,
+      span = 0.3
+    )
+    age <- sort(unique(x$age))
+    data.frame(
+      age = age,
+      .smooth = pmax(predict(fit, newdata = data.frame(age = age)), 0)
+    )
+  })
+  purrr::map2_dfr(data, smooth, function(x, y) {
+    x |> left_join(y, by = "age")
+  })
 }

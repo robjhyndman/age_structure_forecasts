@@ -1,12 +1,12 @@
 make_fig16 <- function(physics, future_physics) {
   p <- physics |>
     ggplot() +
-    aes(x = Age, y = Working, group = Year) +
+    aes(x = age, y = working, group = year) +
     geom_line(colour = "gray")
   p1 <- p +
     geom_line(
       data = future_physics |> filter(.rep == "1"),
-      aes(colour = Year)
+      aes(colour = year)
     ) +
     labs(y = "Number of working scientists") +
     scale_color_gradientn(colors = rainbow(10)[1:8]) +
@@ -22,7 +22,7 @@ make_fig16 <- function(physics, future_physics) {
   p2 <- p +
     geom_line(
       data = future_physics |> filter(.rep == "2"),
-      aes(colour = Year)
+      aes(colour = year)
     ) +
     labs(y = NULL) + # Remove y-axis label
     scale_color_gradientn(colors = rainbow(10)[1:8]) +

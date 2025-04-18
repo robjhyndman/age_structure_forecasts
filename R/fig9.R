@@ -1,7 +1,7 @@
 make_fig9 <- function(completions) {
   completions |>
     ggplot() +
-    aes(x = Age, y = pc, colour = Year, group = Year) +
+    aes(x = age, y = pc, colour = year, group = year) +
     geom_line() +
     scale_color_gradientn(colours = rainbow(10)[1:8]) +
     labs(
@@ -18,7 +18,7 @@ make_fig9 <- function(completions) {
 make_fig10 <- function(ave_completions) {
   ave_completions |>
     ggplot() +
-    aes(x = Age, pc) +
+    aes(x = age, pc) +
     geom_line() +
     labs(y = "Percentage of graduates") +
     labs(
@@ -31,9 +31,9 @@ make_fig10 <- function(ave_completions) {
 
 make_table2 <- function(ave_completions) {
   ave_completions |>
-    filter(Age >= 20 & Age <= 25) |>
+    filter(age >= 20 & age <= 25) |>
     mutate(pc = paste0(round(pc, 2), "%")) |>
-    select(Age, pc) |>
+    select(age, pc) |>
     kable(col.names = c("Age", "Percentage of Graduates"), align = "c") |>
     add_header_above(
       c("Percentage of Graduates Ages 20-25" = 2),
