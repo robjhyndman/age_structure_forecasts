@@ -21,10 +21,11 @@ make_fig2 <- function(census, subtitle) {
 make_fig3 <- function(census, subtitle) {
   census |>
     autoplot(working) +
-    labs(y = "Number of active scientists") +
     labs(
+      x = "Age",
+      y = "Number of active scientists",
       title = "Interpolated Working Population",
-      subtitle = paste0(subtitle, "\n2006 - 2021")
+      subtitle = paste0(subtitle, ": 2006 - 2021")
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10))
 }

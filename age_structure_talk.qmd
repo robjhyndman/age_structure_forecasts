@@ -57,7 +57,35 @@ options(
 # Labour force participation rates
 
 ```{r}
-#| label: fig-labour-force
+#| label: labour-force
 # Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
 tar_read(fig1)
+```
+
+# Working population by year and age
+
+```{r}
+#| label: labour-force2
+tar_read(fig3)
+```
+
+# Retirement intentions
+
+```{r}
+#| label: retirement
+tar_read(fig6)
+```
+
+# Death probabilities
+
+```{r}
+#| label: death_prob
+tar_read(fig8)
+```
+
+# Graduate completions
+
+```{r}
+#| label: graduates
+tar_read(fig10)
 ```

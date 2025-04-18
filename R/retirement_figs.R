@@ -20,9 +20,9 @@ make_fig6 <- function(retirements, var) {
     aes(x = age, y = {{ var }}) +
     geom_line() +
     labs(
+      x = "Age",
       y = "Probability of retirement",
-      title = "Probability of Retirement",
-      subtitle = "Professional, scientific and technical services\n2022–23 Financial Year"
+      title = "Probability of Retirement for Scientists: 2022–23"
     ) +
     scale_x_continuous(breaks = seq(40, 100, by = 10))
 }
