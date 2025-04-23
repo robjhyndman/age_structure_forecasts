@@ -1,0 +1,33 @@
+\usetheme{Monash}
+\definecolor{MonashBlue}{HTML}{003c6b}
+
+$if(toc)$
+% Outline at start of each section
+\AtBeginSection[]{
+   \begin{frame}{Outline}\vspace*{0.7cm}
+   \tableofcontents[currentsection,hideallsubsections]
+   \end{frame}
+  }
+$endif$
+
+% Monash title page
+% One can alter the font size by setting eg 'titlefontsize: 20pt' in the YAML header
+\setbeamerfont{title}{series=\bfseries,parent=structure,size=\fontsize{22}{24}}
+\setbeamertemplate{title page}
+{\placefig{-0.01}{-0.01}{width=1.01\paperwidth,height=1.01\paperheight}{bg-12.png}
+\placefig{8.0}{6.8}{width=2.4cm}{aas-logo.png}
+\begin{textblock}{8.7}(1,2.2)\usebeamerfont{title}
+{\color[HTML]{003c6b}\raggedright\par\inserttitle}
+\end{textblock}
+\begin{textblock}{8.7}(1,6.1)\fontsize{13}{15}\sf
+{\color[HTML]{003c6b}\raggedright{\insertauthor}\mbox{}\\[0.7cm]
+\insertdate}
+\end{textblock}}
+
+% Find images
+\graphicspath{{_extensions/presentation/_images/background/}{_extensions/quarto-monash/presentation/_images/background/}{figs/}{figures/}{images/}{img/}}
+
+% Fix longtable undefined theHtable issue
+\ifdefined\theHtable\else
+\newcommand{\theHtable}{\thetable}
+\fi
