@@ -35,14 +35,14 @@ make_fig20 <- function(disciplines_combined) {
     labs(
       y = "Number of active scientists",
       title = "Interpolated Working Population by Discipline",
-      subtitle = "Natural and Physical Sciences\n2006 - 2021"
+      subtitle = "Natural and Physical Sciences\n2006 – 2021"
     ) +
     theme(
       legend.position = "top"
     )
 }
 
-make_fig21 <- function(course_leavers) {
+make_fig21 <- function(course_leavers, combine = FALSE) {
   course_leavers$discipline <- course_leavers$discipline |>
     forcats::fct_relevel(
       "Physics and Astronomy",
@@ -53,18 +53,31 @@ make_fig21 <- function(course_leavers) {
       "Other Natural and Physical Sciences"
     )
 
-  ggplot(course_leavers) +
+  if (combine) {
+    course_leavers <- course_leavers |>
+      group_by(year) |>
+      summarise(graduates = sum(graduates), .groups = "drop")
+  }
+
+  p <- ggplot(course_leavers) +
     aes(x = year, y = graduates) +
     geom_line() +
-    facet_wrap(~discipline, scales = "free_y") +
     labs(
       y = "Number of graduates",
-      title = "Graduates by Discipline",
-      subtitle = "Natural and Physical Sciences\n2006 - 2023"
+      subtitle = "Natural and Physical Sciences: 2006 – 2023"
     ) +
     theme(
       legend.position = "none"
     )
+
+  if (!combine) {
+    p <- p +
+      facet_wrap(~discipline, scales = "free_y") +
+      labs(title = "Graduates by Discipline")
+  } else {
+    p <- p + labs(title = "Total graduates")
+  }
+  p
 }
 
 make_fig22 <- function(disciplines_combined) {

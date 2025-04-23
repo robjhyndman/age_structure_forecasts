@@ -22,7 +22,7 @@ make_fig6 <- function(retirements, var) {
     labs(
       x = "Age",
       y = "Probability of retirement",
-      title = "Probability of Retirement for Scientists: 2022–23"
+      title = "Probability of Retirement for Scientists: 2022 – 23"
     ) +
     scale_x_continuous(breaks = seq(40, 100, by = 10))
 }

@@ -38,8 +38,8 @@ single_age_retirements <- function(retirement_data, death_prob) {
   retirement <- retirement_data |>
     make_single_age(pc, min_age = 45)
 
-  # retirement |> ggplot(aes(x=Age, y=cumsum(pc))) + geom_line()
-  # retirement |> ggplot(aes(x=Age, y=pc)) + geom_line()
+  # retirement |> ggplot(aes(x=age, y=cumsum(pc))) + geom_line()
+  # retirement |> ggplot(aes(x=age, y=pc)) + geom_line()
 
   # That looks weird below 55. Let's just replace that section by a linear interpolation
 
@@ -49,7 +49,7 @@ single_age_retirements <- function(retirement_data, death_prob) {
       pc = pc / sum(pc) * 100
     )
 
-  # retirement |> ggplot(aes(x=Age, y=pc)) + geom_line()
+  # retirement |> ggplot(aes(x=age, y=pc)) + geom_line()
   # Looks better
 
   # Estimate retirement rates by age from the retirement age distribution
