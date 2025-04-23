@@ -62,8 +62,8 @@ single_age_retirements <- function(retirement_data, death_prob) {
       dx = (pc / 100) * population,
       mx = dx / population,
       qx = if_else(age == max(age), 1, mx / (1 + 0.5 * mx)),
-      qx = make_monotonic(qx),
-      qx = if_else(death_prob + qx > 1, 1 - death_prob, qx)
+      #qx = make_monotonic(qx),
+      #qx = if_else(death_prob + qx > 1, 1 - death_prob, qx)
     ) |>
     select(age, pc, retire_prob = qx)
 
