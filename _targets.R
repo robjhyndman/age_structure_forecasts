@@ -132,6 +132,7 @@ list(
   tar_target(fig19, make_fig19(census4_1)),
   tar_target(fig20, make_fig20(census4_1)),
   tar_target(fig21, make_fig21(course_leavers)),
+  tar_target(fig21b, make_fig21(course_leavers, combine = TRUE)),
   tar_target(fig22, make_fig22(census4_1)),
   tar_target(fig23, make_fig23(future_pop_science)),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
@@ -152,6 +153,6 @@ list(
     talk,
     "age_structure_talk.qmd",
     output_file = "age_structure_talk.pdf",
-    extra_files = c("header.tex")
+    extra_files = c("header.tex", "before-title.tex")
   )
 )

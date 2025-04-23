@@ -14,7 +14,7 @@ format:
     include-in-header: header.tex
     keep-tex: true
     fig-width: 9
-    fig-height: 4
+    fig-height: 4.1
 highlight-style: tango
 execute:
   echo: false
@@ -56,38 +56,90 @@ options(
 )
 ```
 
-# Labour force participation rates
+# Labour force model
+\fontsize{14}{16}\sf
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+\begin{textblock}{2}(11,4)
+\begin{block}{}
+$x = $ Age \\
+$t = $ Year
+\end{block}
+\end{textblock}
 
-```{r}
-#| label: labour-force
-# Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
-tar_read(fig1)
-```
+* $P_{x,t}=$ number of equivalent full-time workers
+* $D_{x,t}=$ number of deaths
+* $R_{x,t}=$ number of retirements.
+* $N_{x,t}=$ number of graduates
+* $G_{x,t}=$ net number of migrants
 
-# Working population by year and age
+\pause
+
+### Assumptions:
+\vspace*{-0.2cm}
+
+ * All processes are smooth functions of $x$.
+ * $N_{x,t} = G_{x,t} = 0$ for $x \ge 100$.
+
+# Working population: $P_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
 
 ```{r}
 #| label: labour-force2
 tar_read(fig3)
 ```
 
-# Retirement intentions
-
-```{r}
-#| label: retirement
-tar_read(fig6)
-```
-
-# Death probabilities
+# Death probabilities: $D_{x,t}/P_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
 
 ```{r}
 #| label: death_prob
 tar_read(fig8)
 ```
 
-# Graduate completions
+# Retirement intentions $R_{x,t}/P_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: retirement
+tar_read(fig6)
+```
+
+# Graduate completions $G_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: course_leavers
+tar_read(fig21b)
+```
+
+
+# Graduate completions $G_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
 
 ```{r}
 #| label: graduates
 tar_read(fig10)
+```
+
+# Graduate completions $G_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: labour-force
+# Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
+tar_read(fig1)
 ```
