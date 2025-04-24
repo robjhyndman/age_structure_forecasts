@@ -148,14 +148,14 @@ The completed historical dataset forms the basis for forecasting future workforc
 #| label: fig-census
 #| eval: true
 #| fig-cap: Distribution of scientists active in the labour market by age across  Census years (2006, 2011, 2016, 2021).
-tar_read(fig2)
+tar_read(fig3a)
 ```
 
 ```{r}
 #| label: fig-cohort-interpolation
 #| eval: true
 #| fig-cap: Interpolated number of scientists in Australia, 2006--2021, using linear cohort interpolation.
-tar_read(fig3)
+tar_read(fig3b)
 ```
 
 ## Smoothed Disaggregation {#sec-smooth}

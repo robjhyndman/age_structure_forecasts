@@ -20,10 +20,10 @@ make_fig10 <- function(ave_completions) {
     ggplot() +
     aes(x = age, pc) +
     geom_line() +
-    labs(y = "Percentage of graduates") +
     labs(
-      title = "Graduate Completions by Age",
-      subtitle = "Averaged over 2006 – 2023"
+      x = "Age",
+      y = "Percentage of graduates",
+      title = "Average graduate completions by age (2006 – 2023)"
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     scale_y_continuous(labels = scales::percent_format(scale = 1))

@@ -80,8 +80,12 @@ list(
     )
   ),
   tar_target(fig1, make_fig1(census2)),
-  tar_target(fig2, make_fig2(census2_1, "Natural and Physical Sciences")),
-  tar_target(fig3, make_fig3(census2_1, "Natural and Physical Sciences")),
+  tar_target(fig3a, make_pop_fig(census2_1, "Natural and Physical Sciences", FALSE, TRUE)),
+  tar_target(fig3b, make_pop_fig(census2_1, "Natural and Physical Sciences", TRUE, TRUE)),
+  tar_target(fig_deaths, make_component_fig(census2_1, deaths)),
+  tar_target(fig_retirements, make_component_fig(census2_1, retirees)),
+  tar_target(fig_graduates, make_component_fig(census2_1, graduates)),
+  tar_target(fig_mig, make_component_fig(census2_1, migrants)),
 
   # Census 4 digit
   tar_target(census4, read_census(science_file4)),

@@ -52,7 +52,7 @@ make_fig21 <- function(course_leavers, combine = FALSE) {
       "Biological Sciences",
       "Other Natural and Physical Sciences"
     )
-
+  subtitle <- "Natural and Physical Sciences (2006 – 2023)"
   if (combine) {
     course_leavers <- course_leavers |>
       group_by(year) |>
@@ -63,19 +63,18 @@ make_fig21 <- function(course_leavers, combine = FALSE) {
     aes(x = year, y = graduates) +
     geom_line() +
     labs(
+      x = "Year",
       y = "Number of graduates",
-      subtitle = "Natural and Physical Sciences: 2006 – 2023"
     ) +
-    theme(
-      legend.position = "none"
-    )
+    theme(legend.position = "none")
 
   if (!combine) {
     p <- p +
       facet_wrap(~discipline, scales = "free_y") +
-      labs(title = "Graduates by Discipline")
+      labs(title = paste("Graduates by Discipline:", subtitle))
   } else {
-    p <- p + labs(title = "Total graduates")
+    p <- p +
+      labs(title = paste("Total graduates:", subtitle))
   }
   p
 }

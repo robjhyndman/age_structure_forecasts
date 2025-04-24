@@ -8,8 +8,7 @@ make_fig1 <- function(census_science) {
     geom_point(size = 1.5) +
     geom_line(aes(y = .smooth), color = "black") +
     labs(
-      title = "Labour Force Participation",
-      subtitle = "Natural and Physical Sciences",
+      title = "Labour Force Participation: Natural and Physical Sciences",
       x = "Age",
       y = "Participation rate",
       shape = "Census Year",

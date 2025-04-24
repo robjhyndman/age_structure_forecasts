@@ -5,8 +5,7 @@ make_fig8 <- function(death_prob) {
     labs(
       y = "Probability of death",
       x = "Age",
-      title = "Australian Death Probabilities",
-      subtitle = "1971 – 2021"
+      title = "Probability of death for Australians (1971 – 2021)",
     ) +
     scale_x_continuous(breaks = seq(0, 100, by = 10))
 }

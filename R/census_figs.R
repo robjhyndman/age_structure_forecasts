@@ -1,31 +1,54 @@
-make_fig2 <- function(census, subtitle) {
-  years <- seq(2006, 2021, by = 5)
-  cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF")
-  names(cols) <- years
-  census |>
+make_pop_fig <- function(
+  census,
+  subtitle,
+  interpolation = FALSE,
+  highlight_census = FALSE
+) {
+  p <- census |>
     as_tibble() |>
-    filter(year %in% years) |>
-    mutate(Year = factor(year, levels = rev(years))) |>
     ggplot() +
-    aes(x = age, y = working, color = Year, group = Year) +
-    geom_line() +
-    labs(y = "Number of active scientists") +
-    scale_color_manual(values = cols, name = "Census Year") +
-    labs(
-      title = "Working Population",
-      subtitle = subtitle
+    aes(x = age, y = working, color = year, group = year) +
+    geom_line(
+      data = census |> filter(year %in% seq(2006, 2021, by = 5)),
+      linewidth = 0.5 + 0.5 * highlight_census
     ) +
-    scale_x_continuous(breaks = seq(20, 100, by = 10))
-}
-
-make_fig3 <- function(census, subtitle) {
-  census |>
-    autoplot(working) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    scale_color_gradientn(colours = rainbow(10)) +
     labs(
       x = "Age",
       y = "Number of active scientists",
-      title = "Interpolated Working Population",
-      subtitle = paste0(subtitle, ": 2006 – 2021")
-    ) +
-    scale_x_continuous(breaks = seq(20, 100, by = 10))
+      title = paste("Working Population:", subtitle, "(2006 – 2021)")
+    )
+  if (interpolation) {
+    p <- p +
+      geom_line(
+        data = census |> filter(!year %in% seq(2006, 2021, by = 5)),
+        linewidth = 0.5
+      )
+  }
+  p
+}
+
+make_component_fig <- function(census, variable) {
+  var <- as.character(substitute(variable))
+  minyear <- min(census$year)
+  maxyear <- max(census$year)
+  census |>
+    as_tibble() |>
+    ggplot() +
+    aes(x = age, y = {{ variable }}, color = year, group = year) +
+    geom_line() +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    scale_color_gradientn(colours = rainbow(10)) +
+    labs(
+      x = "Age",
+      y = paste("Estimated number of", var),
+      title = paste0(
+        "Natural and Physical Sciences (",
+        minyear,
+        " – ",
+        maxyear,
+        ")"
+      )
+    )
 }

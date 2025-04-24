@@ -61,7 +61,7 @@ options(
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
 \end{alertblock}
-\begin{textblock}{2}(11,4)
+\begin{textblock}{1.7}(13.3,2.1)
 \begin{block}{}
 $x = $ Age \\
 $t = $ Year
@@ -89,10 +89,21 @@ $t = $ Year
 
 ```{r}
 #| label: labour-force2
-tar_read(fig3)
+tar_read(fig3a)
 ```
 
-# Death probabilities: $D_{x,t}/P_{x,t}$
+
+# Working population: $P_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: labour-force3
+tar_read(fig3b)
+```
+
+# Deaths: $D_{x,t}$
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
 \end{alertblock}
@@ -102,7 +113,17 @@ tar_read(fig3)
 tar_read(fig8)
 ```
 
-# Retirement intentions $R_{x,t}/P_{x,t}$
+# Deaths: $D_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: deaths
+tar_read(fig_deaths)
+```
+
+# Retirements: $R_{x,t}$
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
 \end{alertblock}
@@ -112,7 +133,17 @@ tar_read(fig8)
 tar_read(fig6)
 ```
 
-# Graduate completions $G_{x,t}$
+# Retirements: $R_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: retirees
+tar_read(fig_retirements)
+```
+
+# Graduate completions: $G_{x,t}$
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
 \end{alertblock}
@@ -122,8 +153,7 @@ tar_read(fig6)
 tar_read(fig21b)
 ```
 
-
-# Graduate completions $G_{x,t}$
+# Graduate completions: $G_{x,t}$
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
 \end{alertblock}
@@ -133,7 +163,7 @@ tar_read(fig21b)
 tar_read(fig10)
 ```
 
-# Graduate completions $G_{x,t}$
+# Graduate completions: $G_{x,t}$
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
 \end{alertblock}
@@ -142,4 +172,34 @@ tar_read(fig10)
 #| label: labour-force
 # Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
 tar_read(fig1)
+```
+
+
+# Graduate completions: $G_{x,t}$
+\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: est_graduates
+tar_read(fig_graduates)
+```
+
+# Net migration: $N_{x,t}$
+\only<1>{\begin{alertblock}{}
+\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} + N_{x,t}$}
+\end{alertblock}}
+\only<2>{\begin{alertblock}{}
+\centerline{$N_{x,t} = P_{x+1,t+1} - P_{x,t} + D_{x,t} + R_{x,t} - G_{x,t}$}
+\end{alertblock}}
+\vspace*{10cm}
+
+# Net migration: $N_{x,t}$
+\begin{alertblock}{}
+\centerline{$N_{x,t} = P_{x+1,t+1} - P_{x,t} + D_{x,t} + R_{x,t} - G_{x,t}$}
+\end{alertblock}
+
+```{r}
+#| label: net-migration
+tar_read(fig_mig)
 ```
