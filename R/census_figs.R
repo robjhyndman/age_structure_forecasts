@@ -4,6 +4,11 @@ make_pop_fig <- function(
   interpolation = FALSE,
   highlight_census = FALSE
 ) {
+  if(!interpolation) {
+    census <- census |>
+      as_tibble() |>
+      mutate(year = factor(year, levels = rev(seq(2006, 2021, by = 5))))
+  }
   p <- census |>
     as_tibble() |>
     ggplot() +
@@ -13,7 +18,6 @@ make_pop_fig <- function(
       linewidth = 0.5 + 0.5 * highlight_census
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
-    scale_color_gradientn(colours = rainbow(10)) +
     labs(
       x = "Age",
       y = "Number of active scientists",
@@ -24,7 +28,13 @@ make_pop_fig <- function(
       geom_line(
         data = census |> filter(!year %in% seq(2006, 2021, by = 5)),
         linewidth = 0.5
-      )
+      ) +
+        scale_color_gradientn(colours = rainbow(10))
+  } else {
+    cols <- c("#ff0000", "#32ff00", "#0065ff", "#ff0099")
+    names(cols) <- seq(2006, 2021, by = 5)
+    p <- p +
+      scale_color_manual(values = cols)
   }
   p
 }

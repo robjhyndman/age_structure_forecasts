@@ -15,13 +15,12 @@ make_fig4 <- function(retirements) {
 
 make_fig6 <- function(retirements, var) {
   retirements |>
-    filter(age < 100) |>
     ggplot() +
     aes(x = age, y = {{ var }}) +
     geom_line() +
     labs(
       x = "Age",
-      y = "Probability of retirement",
+      y = latex2exp::TeX("Probability of retirement ($r_{x,t}$)"),
       title = "Probability of retirement for Australian scientists (2022 – 23)"
     ) +
     scale_x_continuous(breaks = seq(40, 100, by = 10))

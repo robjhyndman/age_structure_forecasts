@@ -3,7 +3,7 @@ make_fig8 <- function(death_prob) {
     autoplot(death_prob) +
     scale_y_log10(labels = scales::label_number()) +
     labs(
-      y = "Probability of death",
+      y = latex2exp::TeX("Probability of death ($m_{x,t}$)"),
       x = "Age",
       title = "Probability of death for Australians (1971 – 2021)",
     ) +

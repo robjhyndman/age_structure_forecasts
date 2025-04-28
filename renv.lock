@@ -2854,6 +2854,45 @@
       "Maintainer": "Winston Chang <winston@posit.co>",
       "Repository": "https://packagemanager.posit.co/cran/latest"
     },
+    "latex2exp": {
+      "Package": "latex2exp",
+      "Version": "0.9.6",
+      "Source": "Repository",
+      "Type": "Package",
+      "Title": "Use LaTeX Expressions in Plots",
+      "Date": "2022-11-27",
+      "Authors@R": "person(\"Stefano\", \"Meschiari\", email=\"stefano.meschiari@gmail.com\", role=c(\"aut\", \"cre\"))",
+      "Description": "Parses and converts LaTeX math formulas to R's plotmath expressions, used to enter mathematical formulas and symbols to be rendered as text, axis labels, etc. throughout R's plotting system.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://www.stefanom.io/latex2exp/, https://github.com/stefano-meschiari/latex2exp",
+      "BugReports": "https://github.com/stefano-meschiari/latex2exp/issues",
+      "Imports": [
+        "stringr",
+        "magrittr"
+      ],
+      "Encoding": "UTF-8",
+      "Suggests": [
+        "testthat",
+        "waldo",
+        "knitr",
+        "ggplot2",
+        "rmarkdown",
+        "purrr",
+        "tibble",
+        "reactable",
+        "htmltools",
+        "RCurl",
+        "rlang",
+        "dplyr"
+      ],
+      "VignetteBuilder": "knitr",
+      "RoxygenNote": "7.1.2",
+      "Language": "en-US",
+      "NeedsCompilation": "no",
+      "Author": "Stefano Meschiari [aut, cre]",
+      "Maintainer": "Stefano Meschiari <stefano.meschiari@gmail.com>",
+      "Repository": "RSPM"
+    },
     "lattice": {
       "Package": "lattice",
       "Version": "0.22-6",
@@ -4949,8 +4988,8 @@
     },
     "targets": {
       "Package": "targets",
-      "Version": "1.11.1",
-      "Source": "Repository",
+      "Version": "1.11.2.9004",
+      "Source": "GitHub",
       "Title": "Dynamic Function-Oriented 'Make'-Like Declarative Pipelines",
       "Description": "Pipeline tools coordinate the pieces of computationally demanding analysis projects. The 'targets' package is a 'Make'-like pipeline tool for statistics and data science in R. The package skips costly runtime for tasks that are already up to date, orchestrates the necessary computation with implicit parallel computing, and abstracts files as R objects. If all the current output matches the current upstream code and data, then the whole pipeline is up to date, and the results are more trustworthy than otherwise. The methodology in this package borrows from GNU 'Make' (2015, ISBN:978-9881443519) and 'drake' (2018, <doi:10.21105/joss.00550>).",
       "License": "MIT + file LICENSE",
@@ -5022,11 +5061,16 @@
       "Language": "en-US",
       "VignetteBuilder": "knitr",
       "Config/testthat/edition": "3",
+      "Roxygen": "list(markdown = TRUE)",
       "RoxygenNote": "7.3.2",
-      "NeedsCompilation": "no",
-      "Author": "William Michael Landau [aut, cre] (<https://orcid.org/0000-0003-1878-3253>), Matthew T. Warkentin [ctb], Mark Edmondson [ctb] (<https://orcid.org/0000-0002-8434-3881>), Samantha Oliver [rev] (<https://orcid.org/0000-0001-5668-1165>), Tristan Mahr [rev] (<https://orcid.org/0000-0002-8890-5116>), Eli Lilly and Company [cph, fnd]",
+      "Author": "William Michael Landau [aut, cre] (ORCID: <https://orcid.org/0000-0003-1878-3253>), Matthew T. Warkentin [ctb], Mark Edmondson [ctb] (ORCID: <https://orcid.org/0000-0002-8434-3881>), Samantha Oliver [rev] (ORCID: <https://orcid.org/0000-0001-5668-1165>), Tristan Mahr [rev] (ORCID: <https://orcid.org/0000-0002-8890-5116>), Eli Lilly and Company [cph, fnd]",
       "Maintainer": "William Michael Landau <will.landau.oss@gmail.com>",
-      "Repository": "binary"
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "ropensci",
+      "RemoteRepo": "targets",
+      "RemoteRef": "main",
+      "RemoteSha": "405e73ce545e11262c956a7cbcf707e27205539a"
     },
     "tibble": {
       "Package": "tibble",
