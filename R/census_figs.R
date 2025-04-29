@@ -41,6 +41,11 @@ make_pop_fig <- function(
 
 make_component_fig <- function(census, variable) {
   var <- as.character(substitute(variable))
+  if(var == "remainder") {
+    ylab = "Remainder"
+  } else {
+    ylab = paste("Estimated number of", var)
+  }
   minyear <- min(census$year)
   maxyear <- max(census$year)
   census |>
@@ -52,7 +57,7 @@ make_component_fig <- function(census, variable) {
     scale_color_gradientn(colours = rainbow(10)) +
     labs(
       x = "Age",
-      y = paste("Estimated number of", var),
+      y = ylab,
       title = paste0(
         "Natural and Physical Sciences (",
         minyear,

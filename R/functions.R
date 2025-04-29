@@ -195,6 +195,10 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
     select(-lead_working) |>
     as_vital(index = year, key = age, .age = "age")
 
+  # Rename migrants as remainder
+  P <- P |>
+    rename(remainder = migrants)
+
   # Return complete data
   return(P)
 }

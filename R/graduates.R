@@ -129,3 +129,36 @@ make_completions_ave <- function(completions) {
 
   return(ave_completions)
 }
+
+make_fig_completions <- function(completions, average = FALSE) {
+  p <- ggplot(completions)
+  if(average) {
+    p <- p + aes(x = age, y = pc) +
+      labs(title = "Average graduate completions by age (2006 – 2023)")
+  } else {
+    p <- p + aes(x = age, y = pc, colour = year, group = year) +
+    scale_color_gradientn(colours = rainbow(10)[1:8]) +
+      labs(title = "Graduate completions by year and age (2006 – 2023)")
+  }
+  p +
+    geom_line()  +
+    labs(
+      x = "Age",
+      y = "Percentage of graduates",
+    ) +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    scale_y_continuous(labels = scales::percent_format(scale = 1))
+}
+
+make_table2 <- function(ave_completions) {
+  ave_completions |>
+    filter(age >= 20 & age <= 25) |>
+    mutate(pc = paste0(round(pc, 2), "%")) |>
+    select(age, pc) |>
+    kable(col.names = c("Age", "Percentage of Graduates"), align = "c") |>
+    add_header_above(
+      c("Percentage of Graduates Ages 20-25" = 2),
+      bold = TRUE
+    ) |>
+    kable_styling(latex_options = c("striped"))
+}

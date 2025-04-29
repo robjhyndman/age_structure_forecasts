@@ -69,3 +69,31 @@ single_age_retirements <- function(retirement_data, death_prob) {
 
   return(retirement)
 }
+
+
+make_fig_r <- function(retirements) {
+  ggplot(retirements, aes(x = age_group, y = pc)) +
+    geom_col() +
+    labs(
+      title = "Retirement Intentions of Australian scientists (2022 – 23)",
+      x = "Age group",
+      y = "Percentage of retirement intentions"
+    ) +
+    scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+    theme(
+      legend.position = "none"
+    )
+}
+
+make_fig_rx <- function(retirements, var) {
+  retirements |>
+    ggplot() +
+    aes(x = age, y = {{ var }}) +
+    geom_line() +
+    labs(
+      x = "Age",
+      y = latex2exp::TeX("Probability of retirement ($r_{x,t}$)"),
+      title = "Probability of retirement for Australian scientists (2022 – 23)"
+    ) +
+    scale_x_continuous(breaks = seq(40, 100, by = 10))
+}

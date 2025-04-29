@@ -24,7 +24,7 @@ list(
   tar_target(ex_file, here::here("data/Exposures_1x1.txt"), format = "file"),
   tar_target(mortality, read_mortality(mx_file, ex_file)),
   tar_target(aus_death_prob, compute_death_prob(mortality)),
-  tar_target(fig8, make_fig8(aus_death_prob)),
+  tar_target(fig_mxt, make_fig_mxt(aus_death_prob)),
 
   # Retirement data
   tar_target(
@@ -36,25 +36,11 @@ list(
     retirements,
     single_age_retirements(retirement_data, aus_death_prob)
   ),
-  tar_target(fig4, make_fig4(retirement_data)),
-  tar_target(fig6, make_fig6(retirements, pc)),
-  tar_target(fig7, make_fig6(retirements, retire_prob)),
+  tar_target(fig_r, make_fig_r(retirement_data)),
+  tar_target(fig_rx, make_fig_rx(retirements, pc)),
+  tar_target(fig_rx2, make_fig_rx(retirements, retire_prob)),
 
   # Graduates
-  tar_target(
-    grad_file,
-    here::here(
-      "data/Award course completions for all students by age group and course level.xlsx"
-    )
-  ),
-  tar_target(completions, read_completions(grad_file)),
-  tar_target(completions_step, make_completions_step(completions)),
-  tar_target(ave_completions, make_completions_ave(completions)),
-  tar_target(fig9, make_fig9(completions_step)),
-  tar_target(fig10, make_fig10(ave_completions)),
-  tar_target(tab2, make_table2(ave_completions)),
-
-  # Course leavers
   tar_target(
     leavers_file,
     here::here("data/Course completions - 2006 to 2023 - Totals.xlsx")
@@ -65,6 +51,24 @@ list(
     future_course_leavers_science,
     simulate_future_graduates(course_leavers, arma_coef_science)
   ),
+
+  # Graduates by age
+  tar_target(
+    grad_file,
+    here::here(
+      "data/Award course completions for all students by age group and course level.xlsx"
+    )
+  ),
+  tar_target(completions, read_completions(grad_file)),
+  tar_target(completions_step, make_completions_step(completions)),
+  tar_target(ave_completions, make_completions_ave(completions)),
+  tar_target(fig_completions, make_fig_completions(completions_step)),
+  tar_target(
+    fig_ave_completions,
+    make_fig_completions(ave_completions, average = TRUE)
+  ),
+  tar_target(tab2, make_table2(ave_completions)),
+
 
   # Census 2 digit
   tar_target(science_file2, here::here("data/2-digit - Single year.xlsx")),
@@ -80,12 +84,15 @@ list(
     )
   ),
   tar_target(fig1, make_fig1(census2)),
-  tar_target(fig3a, make_pop_fig(census2_1, "Natural and Physical Sciences", FALSE, TRUE)),
-  tar_target(fig3b, make_pop_fig(census2_1, "Natural and Physical Sciences", TRUE, TRUE)),
-  tar_target(fig_deaths, make_component_fig(census2_1, deaths)),
-  tar_target(fig_retirements, make_component_fig(census2_1, retirees)),
-  tar_target(fig_graduates, make_component_fig(census2_1, graduates)),
-  tar_target(fig_mig, make_component_fig(census2_1, migrants)),
+  tar_target(
+    fig_Pxt_census,
+    make_pop_fig(census2_1, "Natural and Physical Sciences", FALSE, TRUE)
+  ),
+  tar_target(
+    fig_Pxt,
+    make_pop_fig(census2_1, "Natural and Physical Sciences", TRUE, TRUE)
+  ),
+  tar_target(fig_error, make_component_fig(census2_1, remainder)),
 
   # Census 4 digit
   tar_target(census4, read_census(science_file4)),
@@ -102,7 +109,7 @@ list(
 
   # Forecasts
   tar_target(h, 20),
-  tar_target(nsim, 500),
+  tar_target(nsim, 10),
   tar_target(
     future_pop_science,
     forecast_pop(

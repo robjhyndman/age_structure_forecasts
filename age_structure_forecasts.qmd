@@ -148,14 +148,14 @@ The completed historical dataset forms the basis for forecasting future workforc
 #| label: fig-census
 #| eval: true
 #| fig-cap: Distribution of scientists active in the labour market by age across  Census years (2006, 2011, 2016, 2021).
-tar_read(fig3a)
+tar_read(fig_Pxt_census)
 ```
 
 ```{r}
 #| label: fig-cohort-interpolation
 #| eval: true
 #| fig-cap: Interpolated number of scientists in Australia, 2006--2021, using linear cohort interpolation.
-tar_read(fig3b)
+tar_read(fig_Pxt)
 ```
 
 ## Smoothed Disaggregation {#sec-smooth}
@@ -168,7 +168,7 @@ To estimate single-year age distributions, a monotonic cubic spline [@SHW04] is 
 #| label: fig-beforedisaggregation
 #| eval: true
 #| fig-cap: Retirement intentions for key industries before smoothed disaggregation.
-tar_read(fig4)
+tar_read(fig_r)
 ```
 
 ## Retirement Distribution by Age {#sec-retirement}
@@ -183,7 +183,7 @@ The data show that a significant portion of workers plan to retire between the a
 #| label: fig-retirements
 #| eval: true
 #| fig-cap: Age distribution of retirement intentions for the 2022--2023 Australian financial year.
-tar_read(fig6)
+tar_read(fig_rx)
 ```
 
 From this distribution, the empirical probability of retirement at each age can be calculated using standard life table methods [@MRC18]. These probabilities are shown in @fig-retirements2. These probabilities, which exhibit a significant increase after age 59, are used to estimate $R_{i,x,t}$ from $P_{i,x,t}$​, and are treated as fixed for the simulation, assuming that retirement patterns will remain stable over time.
@@ -192,7 +192,7 @@ From this distribution, the empirical probability of retirement at each age can 
 #| label: fig-retirements2
 #| eval: true
 #| fig-cap: Age-specific probability of retirement based on the 2022--2023 Australian financial year.
-tar_read(fig7)
+tar_read(fig_rx2)
 ```
 
 In this approach, retirement is treated as a final state, meaning that once a scientist retires, they are not reintroduced into the workforce. This assumption considers workforce exit to be final. Mortality data, discussed in the next section, is incorporated into the calculation of the total probability of leaving the workforce, adjusting for the possibility of death before retirement. This ensures that the combined probability of exiting the workforce (through retirement or death) does not exceed 100%.
@@ -205,7 +205,7 @@ Age-specific mortality rates from 1971 to 2021 are obtained from the @HMD. Using
 #| label: fig-death-probs
 #| eval: true
 #| fig-cap: Age-specific probabilities of death (on a logarithmic scale) for each year from 1971 to 2021.
-tar_read(fig8)
+tar_read(fig_mxt)
 ```
 
 Although the final workforce forecasts focus on individuals aged 15 and older, mortality probability estimates are derived from data covering ages 0 to 100. These probabilities serve as inputs for estimating $D_{i,x,t}$, the number of deaths among full-time equivalent workers in scientific discipline $i$ at age $x$ in year $t$, based on $P_{i,x,t}$, the corresponding population of such workers. Death estimates are calculated by applying the forecasted mortality probabilities to the workforce population.
@@ -220,7 +220,7 @@ Data on graduate completions by age and year is not available for individual dis
 #| label: fig-completions1
 #| eval: true
 #| fig-cap: Percentage distribution of graduate completions by age for each year from 2006 to 2023.
-tar_read(fig9)
+tar_read(fig_completions)
 ```
 
 The resulting averaged distribution, shown in @fig-completions2, smooths out year-to-year fluctuations and provides a stable estimate of graduate completions by age. This transformation assumes that the overall age distribution of graduates remains relatively stable over time, allowing for a more reliable estimate when applied to specific disciplines.
@@ -229,7 +229,7 @@ The resulting averaged distribution, shown in @fig-completions2, smooths out yea
 #| label: fig-completions2
 #| eval: true
 #| fig-cap: Percentage distribution of graduate completions by age, aggregated over the years 2006 to 2023.
-tar_read(fig10)
+tar_read(fig_ave_completions)
 ```
 
 @tbl-completions highlights the percentage distribution of graduates aged 20 to 25, demonstrating a pronounced peak in this range, with the highest percentage observed at age 21. This reflects the typical age at which students complete their tertiary education.
