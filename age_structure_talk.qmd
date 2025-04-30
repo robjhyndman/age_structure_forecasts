@@ -31,32 +31,11 @@ abstract: |
 ```{r setup, include=FALSE}
 #| eval: true
 library(targets)
-
-# Set default colors
-options(
-  ggplot2.discrete.colour = c(
-    "#D55E00",
-    "#0072B2",
-    "#009E73",
-    "#CC79A7",
-    "#E69F00",
-    "#56B4E9",
-    "#F0E442"
-  ),
-  ggplot2.discrete.fill = c(
-    "#D55E00",
-    "#0072B2",
-    "#009E73",
-    "#CC79A7",
-    "#E69F00",
-    "#56B4E9",
-    "#F0E442"
-  )
-)
+source("setup.R")
 ```
 
 
-# Labour force model
+# Ideal labour force model
 
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} - C_{x,t} + N_{x,t}$}
@@ -80,7 +59,7 @@ N_{x,t} &= \text{net number of migrants} \\
 \vspace*{10cm}
 
 
-# Labour force model
+# Pragmatic labour force model
 
 \begin{alertblock}{}
 \centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
@@ -229,3 +208,34 @@ $E_{x,t}$ & functional time series model
 \end{center}\pause\vspace*{1cm}
 
 * Future sample paths of all components simulated to obtain probabilistic forecasts of $P_{x,t}$
+
+# Forecasting models: graduates $G_{t}$
+
+```{r}
+#| label: graduates_forecast
+tar_read(fig_future_grads)
+if(fabletools::model_sum(tar_read(arima)[[1]][[1]]) != "ARIMA(0,1,1) w/ drift") {
+  stop("Wrong model")
+}
+```
+
+\begin{textblock}{4}(11,7.2)
+\begin{block}{}
+Model: ARIMA(0,1,1) + drift
+\end{block}
+\end{textblock}
+
+# Forecasting models: $m_{x,t}$
+
+```{r}
+#| label: death_prob2
+tar_read(fig_mxt)
+```
+
+# Forecasting models: $m_{x,t}$
+
+
+```{r}
+#| label: mxt_model
+tar_read(fig_model_mxt)
+```

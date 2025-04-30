@@ -81,7 +81,7 @@ make_fig21 <- function(course_leavers, combine = FALSE) {
 
 make_fig22 <- function(disciplines_combined) {
   ggplot(disciplines_combined) +
-    aes(x = age, y = migrants, group = year, color = year) +
+    aes(x = age, y = remainder, group = year, color = year) +
     geom_line() +
     facet_wrap(~discipline, scales = "free_y") +
     scale_x_continuous(breaks = seq(10, 100, by = 10)) +
@@ -89,9 +89,9 @@ make_fig22 <- function(disciplines_combined) {
       colours = rainbow(10)
     ) +
     labs(
-      y = "Number of net migrants",
-      title = "Estimated Net Migration by Discipline",
-      subtitle = "Natural and Physical Sciences\n2006 - 2020"
+      y = "Remainder",
+      title = "Remainder by discipline",
+      subtitle = "Natural and Physical Sciences (2006 - 2020)"
     ) +
     geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
     theme(

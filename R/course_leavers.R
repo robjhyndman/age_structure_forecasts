@@ -21,3 +21,12 @@ read_course_leavers <- function(file) {
     group_by(year, discipline) |>
     summarise(graduates = sum(graduates), .groups = "drop")
 }
+
+# Level 2
+
+total_sci_grads <- function(course_leavers) {
+  course_leavers |>
+    group_by(year) |>
+    summarise(graduates = sum(graduates), .groups = "drop") |>
+    as_tsibble(index = year)
+}

@@ -24,8 +24,34 @@ list(
   tar_target(ex_file, here::here("data/Exposures_1x1.txt"), format = "file"),
   tar_target(mortality, read_mortality(mx_file, ex_file)),
   tar_target(aus_death_prob, compute_death_prob(mortality)),
-  tar_target(fig_mxt, make_fig_mxt(mortality)),
-  tar_target(fig_smooth_mxt, make_fig_mxt(aus_death_prob)),
+  tar_target(fig_mxt, life_table(mortality) |> make_fig_mxt()),
+  tar_target(
+    fig_smooth_mxt,
+    make_fig_mxt(aus_death_prob) +
+      labs(y = "Smoothed probability of death")
+  ),
+  tar_target(
+    model_mxt,
+    aus_death_prob |>
+      model(fdm = FDM(log(qx)))
+  ),
+  tar_target(
+    future_mxt,
+    model_mxt |>
+      generate(h = h, times = nsim) |>
+      rename(qx = .sim) |>
+      select(-.model)
+  ),
+  tar_target(
+    future_mxt_2030,
+    model_mxt |>
+      forecast(h = h) |>
+      filter(year == 2030)
+  ),
+  tar_target(
+    fig_model_mxt,
+    make_future_mxt_fig(model_mxt)
+  ),
 
   # Retirement data
   tar_target(
@@ -69,7 +95,6 @@ list(
     make_fig_completions(ave_completions, average = TRUE)
   ),
   tar_target(tab2, make_table2(ave_completions)),
-
 
   # Census 2 digit
   tar_target(science_file2, here::here("data/2-digit - Single year.xlsx")),
@@ -151,6 +176,29 @@ list(
   tar_target(
     fig_grad_forecasts,
     make_fig_grad_forecasts(course_leavers, future_course_leavers_science)
+  ),
+
+  # Graduate forecasts
+  tar_target(sci_grads, total_sci_grads(course_leavers)),
+  tar_target(arima, sci_grads |> model(ARIMA(graduates))),
+  tar_target(
+    future_grads,
+    generate(arima, h = h, times = nsim) |>
+      rename(graduates = .sim) |>
+      select(-.model)
+  ),
+  tar_target(
+    fig_future_grads,
+    sci_grads |>
+      ggplot(aes(x = year, y = graduates)) +
+      geom_line() +
+      geom_line(
+        # Only show first 99 sample paths
+        data = future_grads |> filter(stringr::str_length(.rep) <= 2),
+        aes(color = .rep)
+      ) +
+      labs(x = "Year", y = "Number of graduates") +
+      guides(color = "none")
   ),
 
   # Document

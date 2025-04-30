@@ -176,7 +176,7 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
     mutate(
       retire_prob = if_else(is.na(retire_prob), 0, retire_prob),
       retirees = retire_prob * working,
-      deaths = mortality * working
+      deaths = qx * working
     ) |>
     select(year, age, working, graduates, retirees, deaths)
   # Compute migrants
@@ -222,18 +222,18 @@ forecast_pop_discipline <- function(
   # (since we can't compute them using following year)
   fit_migrants <- df |>
     filter(year < last_yr, !is.na(graduates)) |>
-    model(fdm = FDM(migrants))
+    model(fdm = FDM(remainder))
   last_yr_migrants <- fit_migrants |>
     forecast(h = 1) |>
     as_tibble() |>
-    select(-migrants, -.model) |>
-    rename(migrants = .mean)
+    select(-remainder, -.model) |>
+    rename(remainder = .mean)
   # Add migrants into last year
   population <- bind_rows(
     df |> filter(year < last_yr),
     df |>
       filter(year == last_yr) |>
-      select(-migrants) |>
+      select(-remainder) |>
       left_join(
         last_yr_migrants,
         by = c("age", "year")
@@ -242,7 +242,7 @@ forecast_pop_discipline <- function(
 
   # Forecast mortality rates
   future_death_prob <- mortality |>
-    model(fdm = FDM(log(mortality))) |>
+    model(fdm = FDM(log(qx))) |>
     generate(h = h, times = nsim) |>
     rename(mortality = .sim) |>
     select(-.model)
@@ -251,7 +251,7 @@ forecast_pop_discipline <- function(
   future_migrants <- fit_migrants |>
     generate(h = h + 1, times = nsim) |>
     filter(year > last_yr) |>
-    rename(migrants = .sim) |>
+    rename(remainder = .sim) |>
     select(-.model)
 
   # Simulate future graduate numbers
@@ -295,7 +295,7 @@ forecast_pop_discipline <- function(
     transmute(
       age = age + 1,
       year = year + 1,
-      working = working - deaths - retirees + graduates + migrants,
+      working = working - deaths - retirees + graduates + remainder,
     ) |>
     filter(age <= 100) |>
     bind_rows(
@@ -327,7 +327,7 @@ forecast_pop_discipline <- function(
         deaths = working * mortality,
         retirees = working * retire_prob,
         retirees = if_else(retirees < 0, 0, retirees),
-        working = working - deaths - retirees + graduates + migrants,
+        working = working - deaths - retirees + graduates + remainder,
         working = if_else(age == 15, 0, working),
         working = if_else(working < 0, 0, working)
       ) |>
@@ -397,7 +397,7 @@ global_arma <- function(course_leavers) {
   global_fit <- tibble(y = y) |>
     mutate(t = row_number()) |>
     as_tsibble(index = t) |>
-    model(arima = ARIMA(y ~ 0 + pdq(d = 0)))
+    model(arima = ARIMA(y ~ 0 + pdq(p = 1, d = 0)))
 
   # Grab ARMA coefficients
   tidy(global_fit) |>
