@@ -3,7 +3,7 @@
 read_mortality <- function(mx_path, ex_path) {
   read_hmd_files(c(mx_path, ex_path)) |>
     filter(Sex == "Total", Year >= 1970) |>
-    collapse_ages() |>
+    collapse_ages(max_age = 101) |>
     suppressWarnings() |>
     select(
       year = Year,
@@ -32,6 +32,7 @@ compute_death_prob <- function(mortality) {
 # Graph showing the probability of death by age over time
 make_fig_mxt <- function(death_prob) {
   death_prob |>
+    filter(age <= 100) |>
     autoplot(qx) +
     scale_y_log10(labels = scales::label_number()) +
     labs(
@@ -57,9 +58,11 @@ make_future_mxt_fig <- function(object, show_order = 2) {
 
   # Set up list of plots
   p <- list()
-  p[[1]] <- vital:::age_plot(obj_x, meanvar, keys) + ggplot2::ylab(meanvar)
+  p[[1]] <- vital:::age_plot(obj_x, meanvar, keys) +
+    labs(x = "Age (x)", y = "")
   for (i in seq(show_order)) {
-    p[[i + 1]] <- vital:::age_plot(obj_x, agevar[i], keys)
+    p[[i + 1]] <- vital:::age_plot(obj_x, agevar[i], keys) +
+      labs(x = "Age (x)", y = "")
   }
   p[[show_order + 2]] <- patchwork::guide_area()
   for (i in seq(show_order)) {
@@ -70,6 +73,7 @@ make_future_mxt_fig <- function(object, show_order = 2) {
     future <- fit |> generate(h = 20, times = 10)
     p[[i + 2 + show_order]] <- p[[i + 2 + show_order]] +
       geom_line(data = future, aes(col = .rep, y = .sim)) +
+      labs(x = "Year (t)", y = "") +
       guides(color = "none")
   }
   patchwork::wrap_plots(p) +

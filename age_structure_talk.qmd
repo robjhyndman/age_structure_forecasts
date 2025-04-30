@@ -62,7 +62,7 @@ N_{x,t} &= \text{net number of migrants} \\
 # Pragmatic labour force model
 
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 \end{alertblock}
 \begin{textblock}{1.7}(13.3,2.1)
 \begin{block}{}
@@ -73,7 +73,7 @@ $t = $ Year
 
 \begin{align*}
 P_{x,t} &= \text{number of equivalent full-time workers} \\
-m_{x,t} &= \text{probability of death} \\
+q_{x,t} &= \text{probability of death} \\
 r_{x} &= \text{probability of retirement} \\
 g_{x} &= \text{proportion of graduates by age} \\
 G_{t} &= \text{total number of graduates in science} \\
@@ -84,7 +84,7 @@ E_{x,t} &= \text{remainder} \\
 
 # Working population: $P_{x,t}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -95,7 +95,7 @@ tar_read(fig_Pxt_census)
 
 # Working population: $P_{x,t}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -104,9 +104,9 @@ tar_read(fig_Pxt_census)
 tar_read(fig_Pxt)
 ```
 
-# Death rates: $m_{x,t}$
+# Death rates: $q_{x,t}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -117,7 +117,7 @@ tar_read(fig_mxt)
 
 # Retirement rates: $r_{x}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -129,7 +129,7 @@ tar_read(fig_r)
 
 # Retirement rates: $r_{x}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -140,7 +140,7 @@ tar_read(fig_rx2)
 
 # Graduate completions: $G_{t}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -151,7 +151,7 @@ tar_read(fig21b)
 
 # Graduate completions: $g_{x}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -163,7 +163,7 @@ tar_read(fig_completions)
 
 # Graduate completions: $g_{x}$
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
@@ -174,18 +174,18 @@ tar_read(fig_ave_completions)
 
 # Remainder: $E_{x,t}$
 \only<1>{\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 
 \end{alertblock}}
 \only<2>{\begin{alertblock}{}
-\centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - m_{x,t} - r_{x}) - g_{x}G_{t}$}
+\centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - q_{x,t} - r_{x}) - g_{x}G_{t}$}
 \end{alertblock}}
 \vspace*{10cm}
 
 # Remainder: $E_{x,t}$
 \begin{alertblock}{}
-\centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - m_{x,t} - r_{x}) - g_{x}G_{t}$}
+\centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - q_{x,t} - r_{x}) - g_{x}G_{t}$}
 \end{alertblock}
 
 ```{r}
@@ -195,14 +195,14 @@ tar_read(fig_error)
 
 # Forecasting models
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - m_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
+\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
 
 \end{alertblock}
 
 \begin{center}
 \begin{tabular}{rp{11cm}}
 $G_{t}$   & ARIMA model of total graduates by year \\
-$m_{x,t}$ & functional time series model \\
+$q_{x,t}$ & functional time series model \\
 $E_{x,t}$ & functional time series model
 \end{tabular}
 \end{center}\pause\vspace*{1cm}
@@ -225,17 +225,31 @@ Model: ARIMA(0,1,1) + drift
 \end{block}
 \end{textblock}
 
-# Forecasting models: $m_{x,t}$
+# Forecasting models: $q_{x,t}$
 
 ```{r}
 #| label: death_prob2
+#| fig-height: 4.5
 tar_read(fig_mxt)
 ```
 
-# Forecasting models: $m_{x,t}$
-
+# Forecasting models: $q_{x,t}$
+\vspace*{0.3cm}
 
 ```{r}
 #| label: mxt_model
+#| fig-height: 4.5
 tar_read(fig_model_mxt)
 ```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_1(x)$\end{textblock}
+\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_2(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{1,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{2,t}$\end{textblock}
