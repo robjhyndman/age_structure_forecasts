@@ -24,7 +24,8 @@ list(
   tar_target(ex_file, here::here("data/Exposures_1x1.txt"), format = "file"),
   tar_target(mortality, read_mortality(mx_file, ex_file)),
   tar_target(aus_death_prob, compute_death_prob(mortality)),
-  tar_target(fig_mxt, make_fig_mxt(aus_death_prob)),
+  tar_target(fig_mxt, make_fig_mxt(mortality)),
+  tar_target(fig_smooth_mxt, make_fig_mxt(aus_death_prob)),
 
   # Retirement data
   tar_target(

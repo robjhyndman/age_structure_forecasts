@@ -19,8 +19,8 @@ read_mortality <- function(mx_path, ex_path) {
 compute_death_prob <- function(mortality) {
   life_table(mortality) |>
     smooth_mortality(qx, k = 50) |>
-    mutate(death_prob = c(.smooth)) |>
-    select(year, age, death_prob) |>
+    mutate(mortality = c(.smooth)) |>
+    select(year, age, mortality) |>
     left_join(
       mortality |> select(year, age, population = exposures),
       by = c("year", "age")
@@ -32,7 +32,7 @@ compute_death_prob <- function(mortality) {
 # Graph showing the probability of death by age over time
 make_fig_mxt <- function(death_prob) {
   death_prob |>
-    autoplot(death_prob) +
+    autoplot(mortality) +
     scale_y_log10(labels = scales::label_number()) +
     labs(
       y = latex2exp::TeX("Probability of death ($m_{x,t}$)"),

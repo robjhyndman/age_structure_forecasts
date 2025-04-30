@@ -176,7 +176,7 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
     mutate(
       retire_prob = if_else(is.na(retire_prob), 0, retire_prob),
       retirees = retire_prob * working,
-      deaths = death_prob * working
+      deaths = mortality * working
     ) |>
     select(year, age, working, graduates, retirees, deaths)
   # Compute migrants
@@ -242,9 +242,9 @@ forecast_pop_discipline <- function(
 
   # Forecast mortality rates
   future_death_prob <- mortality |>
-    model(fdm = FDM(log(death_prob))) |>
+    model(fdm = FDM(log(mortality))) |>
     generate(h = h, times = nsim) |>
-    rename(death_prob = .sim) |>
+    rename(mortality = .sim) |>
     select(-.model)
 
   # Simulate future migrant numbers
@@ -324,7 +324,7 @@ forecast_pop_discipline <- function(
     N1 <- N1 |>
       left_join(next_year, by = c("age", "year", ".rep")) |>
       mutate(
-        deaths = working * death_prob,
+        deaths = working * mortality,
         retirees = working * retire_prob,
         retirees = if_else(retirees < 0, 0, retirees),
         working = working - deaths - retirees + graduates + migrants,
