@@ -64,8 +64,6 @@ make_future_mxt_fig <- function(object, data, h, times, yr) {
     scale_y_log10(labels = scales::label_number(), limits = c(2e-5, 1))
 }
 
-
-
 # Adaptation of vital:::autoplot.FDM to add in future sample paths
 make_future_fdm_fig <- function(object, show_order = 1:2) {
   obj_time <- time_components(object)

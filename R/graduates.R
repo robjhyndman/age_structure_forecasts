@@ -132,16 +132,18 @@ make_completions_ave <- function(completions) {
 
 make_fig_completions <- function(completions, average = FALSE) {
   p <- ggplot(completions)
-  if(average) {
-    p <- p + aes(x = age, y = pc) +
+  if (average) {
+    p <- p +
+      aes(x = age, y = pc) +
       labs(title = "Average graduate completions by age (2006 – 2023)")
   } else {
-    p <- p + aes(x = age, y = pc, colour = year, group = year) +
-    scale_color_gradientn(colours = rainbow(10)[1:8]) +
+    p <- p +
+      aes(x = age, y = pc, colour = year, group = year) +
+      scale_color_gradientn(colours = rainbow(10)[1:8]) +
       labs(title = "Graduate completions by year and age (2006 – 2023)")
   }
   p +
-    geom_line()  +
+    geom_line() +
     labs(
       x = "Age",
       y = "Percentage of graduates",
@@ -161,4 +163,38 @@ make_table2 <- function(ave_completions) {
       bold = TRUE
     ) |>
     kable_styling(latex_options = c("striped"))
+}
+
+
+# Level 4
+read_course_leavers <- function(file) {
+  out <- readxl::read_excel(file, sheet = "4-digit") |>
+    transmute(
+      category = `Broad Field of Education`,
+      discipline = `Narrow Field of Education`,
+      year = as.integer(Year),
+      graduates = Sum
+    ) |>
+    filter(category == "Natural and Physical Sciences") |>
+    select(-category)
+
+  # Combine "Other Natural and Physical Sciences" and "Natural and Physical Sciences (n.f.d.)"
+  out$discipline <- if_else(
+    out$discipline == "Natural and Physical Sciences (n.f.d.)" |
+      out$discipline == "Natural and Physical Sciences, nfd",
+    "Other Natural and Physical Sciences",
+    out$discipline
+  )
+  out |>
+    group_by(year, discipline) |>
+    summarise(graduates = sum(graduates), .groups = "drop")
+}
+
+# Level 2
+
+total_sci_grads <- function(course_leavers) {
+  course_leavers |>
+    group_by(year) |>
+    summarise(graduates = sum(graduates), .groups = "drop") |>
+    as_tsibble(index = year)
 }

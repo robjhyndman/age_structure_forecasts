@@ -15,5 +15,5 @@ make_future_Ext_fig <- function(object, data, h, times, yr) {
       y = latex2exp::TeX("Remainder"), # ($m_{x,t}$)"),
       title = paste("Simulated future remainder for", yr)
     ) +
-    scale_x_continuous(breaks = seq(0, 100, by = 10)) 
+    scale_x_continuous(breaks = seq(0, 100, by = 10))
 }
