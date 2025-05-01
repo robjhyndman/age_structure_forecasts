@@ -44,9 +44,15 @@ make_fig_mxt <- function(death_prob) {
 }
 
 make_future_mxt_fig <- function(object, data, h, times, yr) {
-  object |>
+  object <- object |>
     generate(h = h, times = times) |>
-    filter(year == yr, age <= 100) |>
+    filter(year == yr, age <= 100)
+  if (NROW(object) == 0) {
+    title <- "Probability of death for Australians"
+  } else {
+    title <- paste("Simulated future mortality:", yr)
+  }
+  object |>
     ggplot() +
     geom_line(
       data = life_table(data) |> filter(age <= 100),
@@ -58,7 +64,7 @@ make_future_mxt_fig <- function(object, data, h, times, yr) {
     labs(
       x = "Age",
       y = latex2exp::TeX("Probability of death"), # ($m_{x,t}$)"),
-      title = paste("Simulated future mortality for", yr)
+      title = title
     ) +
     scale_x_continuous(breaks = seq(0, 100, by = 10)) +
     scale_y_log10(labels = scales::label_number(), limits = c(2e-5, 1))

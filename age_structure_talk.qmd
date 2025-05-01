@@ -271,7 +271,9 @@ $\beta_{k,t} \sim$ ARIMA
 
 ```{r}
 #| label: death_prob3
-tar_read(fig_mxt) + ggplot2::guides(color = "none")
+tar_read(fig_mxt) + 
+  ggplot2::guides(color = "none") + 
+  ggplot2::labs(title = "Probability of death for Australians")
 ```
 
 # Forecasting models: $q_{x,t}$
@@ -373,7 +375,9 @@ $\beta_{k,t} \sim$ ARIMA
 
 ```{r}
 #| label: remainder2
-tar_read(fig_error) + ggplot2::guides(color = "none")
+tar_read(fig_error) + 
+  ggplot2::guides(color = "none") + 
+  ggplot2::labs(y = "Number of people", title = "Remainder")
 ```
 
 # Forecasting models: $E_{x,t}$
@@ -399,3 +403,42 @@ tar_read(fig_model_Ext1)
 #| label: future_Ext2
 tar_read(fig_model_Ext2)
 ```
+
+# Final forecasts: $P_{x,t}$
+\showmodel
+
+```{r}
+#| label: labour-force4
+tar_read(fig_Pxt) + 
+  ggplot2::ylim(-1,21000) + 
+  ggplot2::guides(color = "none") +
+  ggplot2::labs(title = "Working population")
+```
+
+
+# Final forecasts: $P_{x,t}$
+\showmodel
+
+```{r}
+#| label: labour-force-future0
+tar_read(fig_Pxt0) + ggplot2::ylim(-1,21000)
+```
+
+
+# Final forecasts: $P_{x,t}$
+\showmodel
+
+```{r}
+#| label: labour-force-future1
+tar_read(fig_Pxt1) + ggplot2::ylim(-1,21000)
+```
+
+
+# Final forecasts: $P_{x,t}$
+\showmodel
+
+```{r}
+#| label: labour-force-future2
+tar_read(fig_Pxt2) + ggplot2::ylim(-1,21000)
+```
+

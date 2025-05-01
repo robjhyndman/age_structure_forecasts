@@ -21,7 +21,7 @@ make_pop_fig <- function(
     labs(
       x = "Age",
       y = "Number of active scientists",
-      title = paste("Working Population:", subtitle, "(2006 – 2021)")
+      title = paste("Working population:", subtitle, "(2006 – 2021)")
     )
   if (interpolation) {
     p <- p +
@@ -59,7 +59,8 @@ make_component_fig <- function(census, variable) {
       x = "Age",
       y = ylab,
       title = paste0(
-        "Natural and Physical Sciences (",
+        ylab,
+        ": Natural and Physical Sciences (",
         minyear,
         " – ",
         maxyear,
@@ -91,4 +92,30 @@ make_fig1 <- function(census_science) {
     ) +
     scale_shape_manual(values = c(1, 2, 0)) +
     scale_color_manual(values = cols)
+}
+
+
+make_pop_future_fig <- function(object, data, yr) {
+  object <- object |> filter(year == yr)
+  if (NROW(object) == 0) {
+    title <- "Working population"
+  } else {
+    title <- paste("Simulated future working population:", yr)
+  }
+  data |>
+    as_tibble() |>
+    ggplot() +
+    aes(x = age, y = working, group = year) +
+    geom_line(color = "gray") +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    labs(
+      x = "Age",
+      y = "Number of active scientists",
+      title = title
+    ) +
+    geom_line(
+      data = object,
+      aes(x = age, y = working, group = .rep, col = .rep)
+    ) +
+    guides(color = "none")
 }

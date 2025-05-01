@@ -200,6 +200,18 @@ list(
       nsim = nsim
     )
   ),
+  tar_target(
+    fig_Pxt0,
+    make_pop_future_fig(future_pop_science2, census2_1, 2050) 
+  ),
+  tar_target(
+    fig_Pxt1,
+    make_pop_future_fig(future_pop_science2, census2_1, 2030) 
+  ),
+  tar_target(
+    fig_Pxt2,
+    make_pop_future_fig(future_pop_science2, census2_1, 2040) 
+  ),
 
   # Physics
   tar_target(
@@ -244,11 +256,11 @@ list(
       ggplot(aes(x = year, y = graduates)) +
       geom_line() +
       geom_line(
-        # Only show first 99 sample paths
-        data = future_grads |> filter(stringr::str_length(.rep) <= 2),
+        # Only show first 9 sample paths
+        data = future_grads |> filter(stringr::str_length(.rep) < 2),
         aes(color = .rep)
       ) +
-      labs(x = "Year", y = "Number of graduates") +
+      labs(x = "Year", y = "Number of graduates", title = "Total Science Graduates: Australia") +
       guides(color = "none")
   ),
 
@@ -264,6 +276,6 @@ list(
     talk,
     "age_structure_talk.qmd",
     output_file = "age_structure_talk.pdf",
-    extra_files = c("header.tex", "before-title.tex")
+    extra_files = c("setup.R", "header.tex", "before-title.tex")
   )
 )

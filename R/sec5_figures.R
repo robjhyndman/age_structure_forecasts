@@ -13,7 +13,7 @@ make_fig19 <- function(disciplines_combined) {
     scale_color_manual(values = cols, name = "Census Year") +
     labs(
       y = "Number of active scientists",
-      title = "Working Population by Discipline",
+      title = "Working population by discipline",
       subtitle = "Natural and Physical Sciences"
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
@@ -34,7 +34,7 @@ make_fig20 <- function(disciplines_combined) {
     ) +
     labs(
       y = "Number of active scientists",
-      title = "Interpolated Working Population by Discipline",
+      title = "Interpolated working population by discipline",
       subtitle = "Natural and Physical Sciences\n2006 – 2021"
     ) +
     theme(
@@ -118,7 +118,7 @@ make_fig23 <- function(future_disciplines_combined) {
     geom_line(aes(y = mean), linewidth = 0.75) +
     labs(
       y = "Number of working scientists",
-      title = "Forecast of Working Population by Discipline",
+      title = "Forecast of working population by discipline",
       subtitle = "Natural and Physical Sciences",
       color = "Forecast Year",
       fill = "Forecast Year"
@@ -157,8 +157,8 @@ make_fig24 <- function(disciplines_combined, future_disciplines_combined) {
     geom_line(data = sum_disciplines_combined, aes(y = working)) +
     labs(
       y = "Total number of working scientists (thousands)",
-      title = "Forecast of Total Working Population by Discipline",
-      subtitle = "Natural and Physical Sciences\nForecasted Years: 2022 - 2041"
+      title = "Forecast of total working population by discipline",
+      subtitle = "Natural and Physical Sciences\nForecasted years: 2022 - 2041"
     ) +
     scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
     scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +

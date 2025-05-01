@@ -36,10 +36,7 @@ ggplot2::theme_set(
       plot.background = ggplot2::element_rect(
         fill = "transparent",
         colour = "transparent"
-      )
+      ),
+      axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 10))
     )
 )
-# Also in base R plots
-#quartzFonts(
-#  sans = c("Fira Sans Regular", "Fira Sans Bold", "Fira Sans Italic", "Fira Sans Bold Italic")
-#)

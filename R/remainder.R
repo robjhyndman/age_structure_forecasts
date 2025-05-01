@@ -1,7 +1,14 @@
 make_future_Ext_fig <- function(object, data, h, times, yr) {
-  object |>
+  object <- object |> 
     generate(h = h, times = times) |>
-    filter(year == yr, age <= 100) |>
+    filter(year == yr, age <= 100)
+  if(NROW(object) == 0) {
+    title <- "Remainder"
+  } else {
+    title <- paste("Simulated future remainder:", yr)
+  }
+
+  object |>
     ggplot() +
     geom_line(
       data = data |> filter(age <= 100),
@@ -12,8 +19,8 @@ make_future_Ext_fig <- function(object, data, h, times, yr) {
     guides(color = "none") +
     labs(
       x = "Age",
-      y = latex2exp::TeX("Remainder"), # ($m_{x,t}$)"),
-      title = paste("Simulated future remainder for", yr)
+      y = latex2exp::TeX("Number of people"), # ($m_{x,t}$)"),
+      title = title
     ) +
     scale_x_continuous(breaks = seq(0, 100, by = 10))
 }
