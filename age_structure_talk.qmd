@@ -410,11 +410,20 @@ tar_read(fig_model_Ext2)
 ```{r}
 #| label: labour-force4
 tar_read(fig_Pxt) + 
-  ggplot2::ylim(-1,21000) + 
+  ggplot2::ylim(-1,13500) + 
   ggplot2::guides(color = "none") +
   ggplot2::labs(title = "Working population")
 ```
 
+
+# Final forecasts: $P_{x,t}$
+\showmodel
+
+```{r}
+#| label: labour-force-gray
+tar_load(fig_Pxt0)
+fig_Pxt0[[1]] + ggplot2::ylim(-1,13500) 
+```
 
 ```{r}
 #| label: labour-force-future
@@ -423,7 +432,7 @@ tar_load(fig_Pxt_future)
 for(i in seq_along(fig_Pxt_future)) {
   cat("\n\n# Final forecasts: $P_{x,t}$")
   cat("\n\\showmodel\n\n")
-  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1,21000))
+  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1,13500))
   cat("\n")
 }
 ```

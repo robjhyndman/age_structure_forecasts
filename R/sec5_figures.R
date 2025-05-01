@@ -120,10 +120,8 @@ make_fig23 <- function(future_disciplines_combined) {
       y = "Number of working scientists",
       title = "Forecast of working population by discipline",
       subtitle = "Natural and Physical Sciences",
-      color = "Forecast Year",
       fill = "Forecast Year"
     ) +
-    scale_color_manual(values = c("2025" = "#66666644", "2035" = "#c14b14")) +
     scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     theme(

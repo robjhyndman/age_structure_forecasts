@@ -125,7 +125,7 @@ make_pop_future_fig_year <- function(yr, object, data, ribbon = FALSE) {
         data = object,
         aes(x = age, y = working, group = .rep, col = .rep)
       ) 
-  } else {
+  } else if(NROW(object) > 0) {
     object <- object |>
       as_tibble() |>
       group_by(age) |>

@@ -206,7 +206,7 @@ list(
   ),
   tar_target(
     fig_Pxt_future,
-    make_pop_future_fig(future_pop_science2, census2_1, 2025:2035, ribbon = TRUE) 
+    make_pop_future_fig(future_pop_science2, census2_1, 2022:2035, ribbon = TRUE) 
   ),
   # Physics
   tar_target(
