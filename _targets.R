@@ -175,6 +175,19 @@ list(
   tar_target(h, 20),
   tar_target(nsim, 10),
   tar_target(
+    future_pop_science2,
+    forecast_pop2(
+      census2_1,
+      sci_grads,
+      ave_completions,
+      retirements,
+      aus_death_prob,
+      arma_coef_science,
+      h = h,
+      nsim = nsim
+    )
+  ),
+  tar_target(
     future_pop_science,
     forecast_pop(
       census4_1,

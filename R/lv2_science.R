@@ -146,3 +146,30 @@ find_var <- function(data, possible_names) {
     NULL
   }
 }
+
+
+# Forecast the working population for all of science
+
+forecast_pop2 <- function(
+  census1,
+  course_leavers,
+  completions,
+  retirements,
+  death_prob,
+  arma_coef_science,
+  h,
+  nsim
+) {
+  forecast_pop_discipline(
+    census1,
+    course_leavers,
+    completions,
+    retirements,
+    death_prob,
+    arma_coef_science,
+    h = h,
+    nsim = nsim
+  ) |>
+    as_tibble() |>
+    as_vital(index = year, key = c(age, .rep), .age = "age")
+}
