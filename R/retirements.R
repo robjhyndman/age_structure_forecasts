@@ -70,7 +70,6 @@ single_age_retirements <- function(retirement_data, death_prob) {
   return(retirement)
 }
 
-
 make_fig_r <- function(retirements) {
   ggplot(retirements, aes(x = age_group, y = pc)) +
     geom_col() +

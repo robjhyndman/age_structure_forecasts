@@ -147,7 +147,6 @@ find_var <- function(data, possible_names) {
   }
 }
 
-
 # Forecast the working population for all of science
 
 forecast_pop2 <- function(

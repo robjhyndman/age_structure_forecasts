@@ -1,8 +1,8 @@
 make_future_Ext_fig <- function(object, data, h, times, yr) {
-  object <- object |> 
+  object <- object |>
     generate(h = h, times = times) |>
     filter(year == yr, age <= 100)
-  if(NROW(object) == 0) {
+  if (NROW(object) == 0) {
     title <- "Remainder"
   } else {
     title <- paste("Simulated future remainder:", yr)

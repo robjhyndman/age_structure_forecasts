@@ -69,7 +69,6 @@ make_component_fig <- function(census, variable) {
     )
 }
 
-
 make_fig1 <- function(census_science) {
   cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF", "#000000")
 
@@ -94,28 +93,56 @@ make_fig1 <- function(census_science) {
     scale_color_manual(values = cols)
 }
 
+make_pop_future_fig <- function(object, data, yrs, ribbon = FALSE) {
+  lapply(yrs, make_pop_future_fig_year, object = object, data = data, ribbon = ribbon)
+}
 
-make_pop_future_fig <- function(object, data, yr) {
+make_pop_future_fig_year <- function(yr, object, data, ribbon = FALSE) {
   object <- object |> filter(year == yr)
+  if (!ribbon) {
+    object <- object |>
+      filter(stringr::str_length(.rep) < 2)
+  }
   if (NROW(object) == 0) {
     title <- "Working population"
   } else {
     title <- paste("Simulated future working population:", yr)
   }
-  data |>
+  p <- data |>
     as_tibble() |>
     ggplot() +
-    aes(x = age, y = working, group = year) +
-    geom_line(color = "gray") +
+    aes(x = age, y = working) +
+    geom_line(aes(group = year), color = "gray") +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     labs(
       x = "Age",
       y = "Number of active scientists",
       title = title
-    ) +
-    geom_line(
-      data = object,
-      aes(x = age, y = working, group = .rep, col = .rep)
-    ) +
+    )
+  if (!ribbon) {
+    p <- p +
+      geom_line(
+        data = object,
+        aes(x = age, y = working, group = .rep, col = .rep)
+      ) 
+  } else {
+    object <- object |>
+      as_tibble() |>
+      group_by(age) |>
+      summarise(
+        .lower = quantile(working, probs = 0.1),
+        .upper = quantile(working, probs = 0.9),
+        working = mean(working),
+      )
+    p <- p +
+      geom_ribbon(
+        data = object,
+        aes(ymin = .lower, ymax = .upper),
+        alpha = 0.3,
+        fill = "#c14b14"
+      ) +
+      geom_line(data = object, color = "#c14b14", linewidth = 1)
+  }
+  p +
     guides(color = "none")
 }

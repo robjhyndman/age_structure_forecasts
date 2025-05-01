@@ -28,7 +28,6 @@ compute_death_prob <- function(mortality) {
     as_vital(index = year, key = age, .age = "age", populaton = "exposures")
 }
 
-
 # Graph showing the probability of death by age over time
 make_fig_mxt <- function(death_prob) {
   death_prob |>

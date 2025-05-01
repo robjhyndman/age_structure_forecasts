@@ -458,7 +458,6 @@ ave_smooth_pr <- function(data) {
   })
 }
 
-
 make_discipline_table <- function() {
   tibble::tibble(
     Narrow_Discipline = c(

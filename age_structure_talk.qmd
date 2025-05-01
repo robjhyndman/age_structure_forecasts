@@ -416,29 +416,15 @@ tar_read(fig_Pxt) +
 ```
 
 
-# Final forecasts: $P_{x,t}$
-\showmodel
-
 ```{r}
-#| label: labour-force-future0
-tar_read(fig_Pxt0) + ggplot2::ylim(-1,21000)
-```
-
-
-# Final forecasts: $P_{x,t}$
-\showmodel
-
-```{r}
-#| label: labour-force-future1
-tar_read(fig_Pxt1) + ggplot2::ylim(-1,21000)
-```
-
-
-# Final forecasts: $P_{x,t}$
-\showmodel
-
-```{r}
-#| label: labour-force-future2
-tar_read(fig_Pxt2) + ggplot2::ylim(-1,21000)
+#| label: labour-force-future
+#| output: asis
+tar_load(fig_Pxt_future)
+for(i in seq_along(fig_Pxt_future)) {
+  cat("\n\n# Final forecasts: $P_{x,t}$")
+  cat("\n\\showmodel\n\n")
+  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1,21000))
+  cat("\n")
+}
 ```
 

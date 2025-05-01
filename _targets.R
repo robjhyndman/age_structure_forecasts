@@ -173,7 +173,7 @@ list(
 
   # Forecasts
   tar_target(h, 20),
-  tar_target(nsim, 10),
+  tar_target(nsim, 1000),
   tar_target(
     future_pop_science2,
     forecast_pop2(
@@ -205,14 +205,9 @@ list(
     make_pop_future_fig(future_pop_science2, census2_1, 2050) 
   ),
   tar_target(
-    fig_Pxt1,
-    make_pop_future_fig(future_pop_science2, census2_1, 2030) 
+    fig_Pxt_future,
+    make_pop_future_fig(future_pop_science2, census2_1, 2025:2035, ribbon = TRUE) 
   ),
-  tar_target(
-    fig_Pxt2,
-    make_pop_future_fig(future_pop_science2, census2_1, 2040) 
-  ),
-
   # Physics
   tar_target(
     physics,

@@ -165,7 +165,6 @@ make_table2 <- function(ave_completions) {
     kable_styling(latex_options = c("striped"))
 }
 
-
 # Level 4
 read_course_leavers <- function(file) {
   out <- readxl::read_excel(file, sheet = "4-digit") |>
