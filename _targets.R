@@ -36,21 +36,28 @@ list(
       model(fdm = FDM(log(qx)))
   ),
   tar_target(
-    future_mxt,
-    model_mxt |>
-      generate(h = h, times = nsim) |>
-      rename(qx = .sim) |>
-      select(-.model)
+    fig_model_fdm1,
+    make_future_fdm_fig(model_mxt, 1:2)
   ),
   tar_target(
-    future_mxt_2030,
-    model_mxt |>
-      forecast(h = h) |>
-      filter(year == 2030)
+    fig_model_fdm2,
+    make_future_fdm_fig(model_mxt, 3:4)
   ),
   tar_target(
-    fig_model_mxt,
-    make_future_mxt_fig(model_mxt)
+    fig_model_fdm3,
+    make_future_fdm_fig(model_mxt, 5:6)
+  ),
+  tar_target(
+    fig_model_mxt0,
+    make_future_mxt_fig(model_mxt, mortality, h, 10, 2050)
+  ),
+  tar_target(
+    fig_model_mxt1,
+    make_future_mxt_fig(model_mxt, mortality, h, 10, 2030)
+  ),
+  tar_target(
+    fig_model_mxt2,
+    make_future_mxt_fig(model_mxt, mortality, h, 10, 2040)
   ),
 
   # Retirement data
@@ -131,6 +138,37 @@ list(
       retirements,
       aus_death_prob
     )
+  ),
+
+  # Remainders
+  tar_target(
+    model_Ext,
+    census2_1 |>
+      model(fdm = FDM(remainder))
+  ),
+  tar_target(
+    fig_Emodel_fdm1,
+    make_future_fdm_fig(model_Ext, 1:2)
+  ),
+  tar_target(
+    fig_Emodel_fdm2,
+    make_future_fdm_fig(model_Ext, 3:4)
+  ),
+  tar_target(
+    fig_Emodel_fdm3,
+    make_future_fdm_fig(model_Ext, 5:6)
+  ),
+  tar_target(
+    fig_model_Ext0,
+    make_future_Ext_fig(model_Ext, census2_1, h, 10, 2050)
+  ),
+  tar_target(
+    fig_model_Ext1,
+    make_future_Ext_fig(model_Ext, census2_1, h, 10, 2030)
+  ),
+  tar_target(
+    fig_model_Ext2,
+    make_future_Ext_fig(model_Ext, census2_1, h, 10, 2040)
   ),
 
   # Forecasts

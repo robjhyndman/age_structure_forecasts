@@ -14,7 +14,7 @@ format:
     include-in-header: header.tex
     keep-tex: true
     fig-width: 9
-    fig-height: 4.1
+    fig-height: 4.5
 highlight-style: tango
 execute:
   echo: false
@@ -33,7 +33,6 @@ abstract: |
 library(targets)
 source("setup.R")
 ```
-
 
 # Ideal labour force model
 
@@ -57,7 +56,6 @@ N_{x,t} &= \text{net number of migrants} \\
 \end{align*}
 
 \vspace*{10cm}
-
 
 # Pragmatic labour force model
 
@@ -83,10 +81,7 @@ E_{x,t} &= \text{remainder} \\
 \vspace*{10cm}
 
 # Working population: $P_{x,t}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: labour-force2
@@ -94,10 +89,7 @@ tar_read(fig_Pxt_census)
 ```
 
 # Working population: $P_{x,t}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: labour-force3
@@ -105,10 +97,7 @@ tar_read(fig_Pxt)
 ```
 
 # Death rates: $q_{x,t}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: death_prob
@@ -116,22 +105,15 @@ tar_read(fig_mxt)
 ```
 
 # Retirement rates: $r_{x}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: retirement
 tar_read(fig_r)
 ```
 
-
 # Retirement rates: $r_{x}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: retirementx
@@ -139,10 +121,7 @@ tar_read(fig_rx2)
 ```
 
 # Graduate completions: $G_{t}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: course_leavers
@@ -150,22 +129,15 @@ tar_read(fig21b)
 ```
 
 # Graduate completions: $g_{x}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: graduates
 tar_read(fig_completions)
 ```
 
-
 # Graduate completions: $g_{x}$
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 ```{r}
 #| label: graduates_ave
@@ -173,31 +145,26 @@ tar_read(fig_ave_completions)
 ```
 
 # Remainder: $E_{x,t}$
-\only<1>{\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-
-\end{alertblock}}
-\only<2>{\begin{alertblock}{}
+\showmodel
+\begin{alertblock}{}
 \centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - q_{x,t} - r_{x}) - g_{x}G_{t}$}
-\end{alertblock}}
+\end{alertblock}
 \vspace*{10cm}
 
 # Remainder: $E_{x,t}$
+\showmodel
 \begin{alertblock}{}
 \centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - q_{x,t} - r_{x}) - g_{x}G_{t}$}
 \end{alertblock}
 
 ```{r}
 #| label: error_component
+#| fig-height: 4.1
 tar_read(fig_error)
 ```
 
 # Forecasting models
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-
-\end{alertblock}
+\showmodel
 
 \begin{center}
 \begin{tabular}{rp{11cm}}
@@ -209,12 +176,15 @@ $E_{x,t}$ & functional time series model
 
 * Future sample paths of all components simulated to obtain probabilistic forecasts of $P_{x,t}$
 
-# Forecasting models: graduates $G_{t}$
+# Forecasting models: $G_{t}$
+\showmodel
 
 ```{r}
 #| label: graduates_forecast
 tar_read(fig_future_grads)
-if(fabletools::model_sum(tar_read(arima)[[1]][[1]]) != "ARIMA(0,1,1) w/ drift") {
+if (
+  fabletools::model_sum(tar_read(arima)[[1]][[1]]) != "ARIMA(0,1,1) w/ drift"
+) {
   stop("Wrong model")
 }
 ```
@@ -226,20 +196,20 @@ Model: ARIMA(0,1,1) + drift
 \end{textblock}
 
 # Forecasting models: $q_{x,t}$
+\showmodel
 
 ```{r}
 #| label: death_prob2
-#| fig-height: 4.5
 tar_read(fig_mxt)
 ```
 
 # Forecasting models: $q_{x,t}$
+\showmodel
 \vspace*{0.3cm}
 
 ```{r}
-#| label: mxt_model
-#| fig-height: 4.5
-tar_read(fig_model_mxt)
+#| label: fdm_model1
+tar_read(fig_model_fdm1)
 ```
 
 \begin{textblock}{5.2}(0.3,6.2)
@@ -253,3 +223,179 @@ $\beta_{k,t} \sim$ ARIMA
 \begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_2(x)$\end{textblock}
 \begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{1,t}$\end{textblock}
 \begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{2,t}$\end{textblock}
+
+# Forecasting models: $q_{x,t}$
+\showmodel
+\vspace*{0.3cm}
+
+```{r}
+#| label: fdm_model2
+tar_read(fig_model_fdm2)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_3(x)$\end{textblock}
+\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_4(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{3,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{4,t}$\end{textblock}
+
+# Forecasting models: $q_{x,t}$
+\showmodel
+\vspace*{0.3cm}
+
+```{r}
+#| label: fdm_model3
+tar_read(fig_model_fdm3)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_5(x)$\end{textblock}
+\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_6(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{5,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{6,t}$\end{textblock}
+
+# Forecasting models: $q_{x,t}$
+\showmodel
+
+```{r}
+#| label: death_prob3
+tar_read(fig_mxt) + ggplot2::guides(color = "none")
+```
+
+# Forecasting models: $q_{x,t}$
+\showmodel
+
+```{r}
+#| label: future_mxt0
+tar_read(fig_model_mxt0)
+```
+
+# Forecasting models: $q_{x,t}$
+\showmodel
+
+```{r}
+#| label: future_mxt1
+tar_read(fig_model_mxt1)
+```
+
+# Forecasting models: $q_{x,t}$
+\showmodel
+
+```{r}
+#| label: future_mxt2
+tar_read(fig_model_mxt2)
+```
+
+# Remainder: $E_{x,t}$
+\showmodel
+
+```{r}
+#| label: error_component2
+tar_read(fig_error)
+```
+# Forecasting models: $E_{x,t}$
+\showmodel
+\vspace*{0.3cm}
+
+```{r}
+#| label: fdm_Emodel1
+tar_read(fig_Emodel_fdm1)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$E_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_1(x)$\end{textblock}
+\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_2(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{1,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{2,t}$\end{textblock}
+
+# Forecasting models: $E_{x,t}$
+\showmodel
+\vspace*{0.3cm}
+
+```{r}
+#| label: fdm_Emodel2
+tar_read(fig_Emodel_fdm2)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$E_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_3(x)$\end{textblock}
+\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_4(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{3,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{4,t}$\end{textblock}
+
+# Forecasting models: $E_{x,t}$
+\showmodel
+\vspace*{0.3cm}
+
+```{r}
+#| label: fdm_Emodel3
+tar_read(fig_Emodel_fdm3)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$E_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_5(x)$\end{textblock}
+\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_6(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{5,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{6,t}$\end{textblock}
+
+# Forecasting models: $E_{x,t}$
+\showmodel
+
+```{r}
+#| label: remainder2
+tar_read(fig_error) + ggplot2::guides(color = "none")
+```
+
+# Forecasting models: $E_{x,t}$
+\showmodel
+
+```{r}
+#| label: future_Ext0
+tar_read(fig_model_Ext0)
+```
+
+# Forecasting models: $E_{x,t}$
+\showmodel
+
+```{r}
+#| label: future_Ext1
+tar_read(fig_model_Ext1)
+```
+
+# Forecasting models: $E_{x,t}$
+\showmodel
+
+```{r}
+#| label: future_Ext2
+tar_read(fig_model_Ext2)
+```
