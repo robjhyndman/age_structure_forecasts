@@ -124,7 +124,7 @@ make_pop_future_fig_year <- function(yr, object, data, ribbon = FALSE) {
       geom_line(
         data = object,
         aes(x = age, y = working, group = .rep, col = .rep)
-      ) 
+      )
   } else if(NROW(object) > 0) {
     object <- object |>
       as_tibble() |>

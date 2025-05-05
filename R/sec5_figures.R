@@ -99,37 +99,6 @@ make_fig22 <- function(disciplines_combined) {
     )
 }
 
-make_fig23 <- function(future_disciplines_combined) {
-  eg_forecast <- future_disciplines_combined |>
-    as_tibble() |>
-    filter(year %in% c(2025, 2035)) |>
-    group_by(discipline, age, year) |>
-    summarise(
-      mean = mean(working),
-      lo = quantile(working, prob = 0.05),
-      hi = quantile(working, prob = 0.95),
-      .groups = "drop"
-    )
-
-  # Overlay
-  ggplot(eg_forecast) +
-    aes(x = age, color = factor(year)) +
-    geom_ribbon(aes(ymin = lo, ymax = hi, fill = factor(year)), alpha = 0.1) +
-    geom_line(aes(y = mean), linewidth = 0.75) +
-    labs(
-      y = "Number of working scientists",
-      title = "Forecast of working population by discipline",
-      subtitle = "Natural and Physical Sciences",
-      fill = "Forecast Year"
-    ) +
-    scale_fill_manual(values = c("2025" = "#66666644", "2035" = "#c14b1444")) +
-    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
-    theme(
-      legend.position = "top"
-    ) +
-    facet_wrap(~discipline, scales = "free_y")
-}
-
 make_fig24 <- function(disciplines_combined, future_disciplines_combined) {
   sum_disciplines_combined <- disciplines_combined |>
     as_tibble() |>

@@ -271,8 +271,8 @@ $\beta_{k,t} \sim$ ARIMA
 
 ```{r}
 #| label: death_prob3
-tar_read(fig_mxt) + 
-  ggplot2::guides(color = "none") + 
+tar_read(fig_mxt) +
+  ggplot2::guides(color = "none") +
   ggplot2::labs(title = "Probability of death for Australians")
 ```
 
@@ -375,8 +375,8 @@ $\beta_{k,t} \sim$ ARIMA
 
 ```{r}
 #| label: remainder2
-tar_read(fig_error) + 
-  ggplot2::guides(color = "none") + 
+tar_read(fig_error) +
+  ggplot2::guides(color = "none") +
   ggplot2::labs(y = "Number of people", title = "Remainder")
 ```
 
@@ -409,8 +409,8 @@ tar_read(fig_model_Ext2)
 
 ```{r}
 #| label: labour-force4
-tar_read(fig_Pxt) + 
-  ggplot2::ylim(-1,13500) + 
+tar_read(fig_Pxt) +
+  ggplot2::ylim(-1, 13500) +
   ggplot2::guides(color = "none") +
   ggplot2::labs(title = "Working population")
 ```
@@ -422,18 +422,42 @@ tar_read(fig_Pxt) +
 ```{r}
 #| label: labour-force-gray
 tar_load(fig_Pxt0)
-fig_Pxt0[[1]] + ggplot2::ylim(-1,13500) 
+fig_Pxt0[[1]] + ggplot2::ylim(-1, 13500)
 ```
 
 ```{r}
 #| label: labour-force-future
 #| output: asis
 tar_load(fig_Pxt_future)
-for(i in seq_along(fig_Pxt_future)) {
+for (i in seq_along(fig_Pxt_future)) {
   cat("\n\n# Final forecasts: $P_{x,t}$")
   cat("\n\\showmodel\n\n")
-  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1,13500))
+  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1, 13500))
   cat("\n")
 }
 ```
 
+# Final forecasts by discipline
+\showmodel
+
+```{r}
+#| label: labour-force-future
+#| output: asis
+tar_load(fig_Pxt_future_discipline)
+for (i in seq_along(fig_Pxt_future_discipline)) {
+  cat("\n\n# Final forecasts by discipline")
+  cat("\n\\showmodel\n\n")
+  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1, 13500))
+  cat("\n")
+}
+```
+
+
+# More information
+\fontsize{18}{24}\sf
+
+\vspace*{3cm}
+
+\begin{alertblock}{}
+\centerline{\href{https://robjhyndman.com/age_structure_forecasts}{robjhyndman.com/age\_structure\_forecasts}}
+\end{alertblock}

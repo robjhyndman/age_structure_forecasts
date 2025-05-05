@@ -202,11 +202,16 @@ list(
   ),
   tar_target(
     fig_Pxt0,
-    make_pop_future_fig(future_pop_science2, census2_1, 2050) 
+    make_pop_future_fig(future_pop_science2, census2_1, 2050)
   ),
   tar_target(
     fig_Pxt_future,
-    make_pop_future_fig(future_pop_science2, census2_1, 2022:2035, ribbon = TRUE) 
+    make_pop_future_fig(
+      future_pop_science2,
+      census2_1,
+      2022:2035,
+      ribbon = TRUE
+    )
   ),
   # Physics
   tar_target(
@@ -229,7 +234,15 @@ list(
   tar_target(fig21, make_fig21(course_leavers)),
   tar_target(fig21b, make_fig21(course_leavers, combine = TRUE)),
   tar_target(fig22, make_fig22(census4_1)),
-  tar_target(fig23, make_fig23(future_pop_science)),
+  tar_target(
+    fig_Pxt_future_discipline,
+    make_pop_future_fig_discipline(
+      2022:2035,
+      future_pop_science,
+      census4_1,
+      no_other = TRUE
+    )
+  ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
   tar_target(
     fig_grad_forecasts,
@@ -255,7 +268,11 @@ list(
         data = future_grads |> filter(stringr::str_length(.rep) < 2),
         aes(color = .rep)
       ) +
-      labs(x = "Year", y = "Number of graduates", title = "Total Science Graduates: Australia") +
+      labs(
+        x = "Year",
+        y = "Number of graduates",
+        title = "Total Science Graduates: Australia"
+      ) +
       guides(color = "none")
   ),
 
