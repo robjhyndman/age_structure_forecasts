@@ -42,7 +42,11 @@ make_fig20 <- function(disciplines_combined) {
     )
 }
 
-make_fig21 <- function(course_leavers, combine = FALSE) {
+make_fig21 <- function(course_leavers, combine = FALSE, no_other = TRUE) {
+  if(no_other) {
+    course_leavers <- course_leavers |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
   course_leavers$discipline <- course_leavers$discipline |>
     forcats::fct_relevel(
       "Physics and Astronomy",
@@ -52,7 +56,7 @@ make_fig21 <- function(course_leavers, combine = FALSE) {
       "Biological Sciences",
       "Other Natural and Physical Sciences"
     )
-  subtitle <- "Natural and Physical Sciences (2006 – 2023)"
+  subtitle <- "(2006 – 2023)"
   if (combine) {
     course_leavers <- course_leavers |>
       group_by(year) |>
@@ -71,7 +75,7 @@ make_fig21 <- function(course_leavers, combine = FALSE) {
   if (!combine) {
     p <- p +
       facet_wrap(~discipline, scales = "free_y") +
-      labs(title = paste("Graduates by Discipline:", subtitle))
+      labs(title = paste("Graduates by discipline:", subtitle))
   } else {
     p <- p +
       labs(title = paste("Total graduates:", subtitle))
@@ -99,7 +103,13 @@ make_fig22 <- function(disciplines_combined) {
     )
 }
 
-make_fig24 <- function(disciplines_combined, future_disciplines_combined) {
+make_fig24 <- function(disciplines_combined, future_disciplines_combined, no_other = TRUE) {
+  if(no_other) {
+    disciplines_combined <- disciplines_combined |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+    future_disciplines_combined <- future_disciplines_combined |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
   sum_disciplines_combined <- disciplines_combined |>
     as_tibble() |>
     group_by(discipline, year) |>
@@ -132,7 +142,13 @@ make_fig24 <- function(disciplines_combined, future_disciplines_combined) {
     facet_wrap(~discipline, scales = "free_y")
 }
 
-make_fig_grad_forecasts <- function(grads, future_grads) {
+make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
+  if(no_other) {
+    grads <- grads |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+    future_grads <- future_grads |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
   future_grads <- future_grads |>
     group_by(discipline) |>
     summarise(
@@ -153,8 +169,7 @@ make_fig_grad_forecasts <- function(grads, future_grads) {
     geom_line(data = grads, aes(y = graduates)) +
     labs(
       y = "Number of graduates",
-      title = "Forecast of Graduates",
-      subtitle = "Natural and Physical Sciences\nForecasted Years: 2024–2041"
+      title = "Forecasts of total graduates by discipline: 2024–2041",
     ) +
     scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
     facet_wrap(~discipline, scales = "free_y")

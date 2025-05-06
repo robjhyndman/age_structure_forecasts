@@ -430,24 +430,67 @@ fig_Pxt0[[1]] + ggplot2::ylim(-1, 13500)
 #| output: asis
 tar_load(fig_Pxt_future)
 for (i in seq_along(fig_Pxt_future)) {
-  cat("\n\n# Final forecasts: $P_{x,t}$")
+  cat("\n\n# Forecasts: $P_{x,t}$")
   cat("\n\\showmodel\n\n")
   print(fig_Pxt_future[[i]] + ggplot2::ylim(-1, 13500))
   cat("\n")
 }
 ```
 
-# Final forecasts by discipline
-\showmodel
+# Population by discipline
+\showmodeli
 
 ```{r}
-#| label: labour-force-future
+#| label: labour-force-disciplines
+tar_load(fig_Pxt_discipline)
+fig_Pxt_discipline[[1]] +
+  patchwork::plot_annotation(title = "Working population by discipline")
+```
+
+# Graduates by discipline
+\showmodeli
+
+```{r}
+#| label: graduates-disciplines
+tar_read(fig21)
+```
+
+# Graduate forecasts
+\showmodeli
+
+```{r}
+#| label: graduates-disciplines-forecasts
+tar_read(fig_future_grads_discipline)
+```
+
+# Population by discipline
+\showmodeli
+
+```{r}
+#| label: labour-force-disciplines2
+tar_load(fig_Pxt_discipline)
+fig_Pxt_discipline[[1]] +
+  patchwork::plot_annotation(title = "Working population by discipline")
+```
+
+# Population by discipline
+\showmodeli
+
+```{r}
+#| label: labour-force-disciplines0
+tar_load(fig_Pxt_discipline0)
+fig_Pxt_discipline0[[1]] +
+  patchwork::plot_annotation(title = "Working population by discipline")
+```
+
+```{r}
+#| label: labour-force-future-disciplines
 #| output: asis
 tar_load(fig_Pxt_future_discipline)
 for (i in seq_along(fig_Pxt_future_discipline)) {
-  cat("\n\n# Final forecasts by discipline")
-  cat("\n\\showmodel\n\n")
-  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1, 13500))
+  cat("\n\n# Forecasts by discipline")
+  cat("\n\\showmodeli\n\n")
+  print(fig_Pxt_future_discipline[[i]] + ggplot2::ylim(-1, 13500))
   cat("\n")
 }
 ```

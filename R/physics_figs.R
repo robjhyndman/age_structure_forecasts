@@ -9,7 +9,7 @@ make_fig16 <- function(physics, future_physics) {
       aes(colour = year)
     ) +
     labs(y = "Number of working scientists") +
-    scale_color_gradientn(colors = rainbow(10)[1:8]) +
+    scale_color_gradientn(colors = rainbow(10)) +
     labs(
       title = "Simulation 1",
       subtitle = "Forecasted Years: 2022 - 2041"
@@ -25,7 +25,7 @@ make_fig16 <- function(physics, future_physics) {
       aes(colour = year)
     ) +
     labs(y = NULL) + # Remove y-axis label
-    scale_color_gradientn(colors = rainbow(10)[1:8]) +
+    scale_color_gradientn(colors = rainbow(10)) +
     labs(
       title = "Simulation 2",
       subtitle = "Forecasted Years: 2022 - 2041"

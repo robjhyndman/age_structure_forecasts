@@ -125,6 +125,19 @@ list(
     fig_Pxt,
     make_pop_fig(census2_1, "Natural and Physical Sciences", TRUE, TRUE)
   ),
+  tar_target(
+    fig_Pxt_discipline,
+    #make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
+    make_pop_future_fig_discipline(
+      2050,
+      future_pop_science,
+      census4_1,
+      no_other = TRUE,
+      color_data = TRUE,
+      ymax = ymax
+    )
+  ),
+
   tar_target(fig_error, make_component_fig(census2_1, remainder)),
 
   # Census 4 digit
@@ -234,13 +247,25 @@ list(
   tar_target(fig21, make_fig21(course_leavers)),
   tar_target(fig21b, make_fig21(course_leavers, combine = TRUE)),
   tar_target(fig22, make_fig22(census4_1)),
+  tar_target(ymax, get_ymax(2022:2035, future_pop_science, no_other = TRUE)),
+  tar_target(
+    fig_Pxt_discipline0,
+    make_pop_future_fig_discipline(
+      2050,
+      future_pop_science,
+      census4_1,
+      no_other = TRUE,
+      ymax
+    )
+  ),
   tar_target(
     fig_Pxt_future_discipline,
     make_pop_future_fig_discipline(
       2022:2035,
       future_pop_science,
       census4_1,
-      no_other = TRUE
+      no_other = TRUE,
+      ymax
     )
   ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
@@ -274,6 +299,20 @@ list(
         title = "Total Science Graduates: Australia"
       ) +
       guides(color = "none")
+  ),
+
+  # Graduate forecasts by discipline
+  tar_target(
+    future_grads_discipline,
+    course_leavers |>
+      fit_global_model(arma_coef_science) |>
+      generate(h = h, times = nsim) |>
+      rename(graduates = .sim) |>
+      select(-.model)
+  ),
+  tar_target(
+    fig_future_grads_discipline,
+    make_fig_future_grads_discipline(course_leavers, future_grads_discipline)
   ),
 
   # Document

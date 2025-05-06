@@ -139,7 +139,7 @@ make_fig_completions <- function(completions, average = FALSE) {
   } else {
     p <- p +
       aes(x = age, y = pc, colour = year, group = year) +
-      scale_color_gradientn(colours = rainbow(10)[1:8]) +
+      scale_color_gradientn(colours = rainbow(10)) +
       labs(title = "Graduate completions by year and age (2006 – 2023)")
   }
   p +

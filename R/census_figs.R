@@ -2,13 +2,19 @@ make_pop_fig <- function(
   census,
   subtitle,
   interpolation = FALSE,
-  highlight_census = FALSE
+  highlight_census = FALSE,
+  no_other = TRUE
 ) {
   if (!interpolation) {
     census <- census |>
       as_tibble() |>
       mutate(year = factor(year, levels = rev(seq(2006, 2021, by = 5))))
   }
+  if (no_other & "discipline" %in% names(census)) {
+    census <- census |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
+
   p <- census |>
     as_tibble() |>
     ggplot() +
@@ -23,6 +29,9 @@ make_pop_fig <- function(
       y = "Number of active scientists",
       title = paste("Working population:", subtitle, "(2006 – 2021)")
     )
+  if ("discipline" %in% names(census)) {
+    p <- p + facet_wrap(~discipline, scales = "free_y")
+  }
   if (interpolation) {
     p <- p +
       geom_line(
@@ -94,7 +103,13 @@ make_fig1 <- function(census_science) {
 }
 
 make_pop_future_fig <- function(object, data, yrs, ribbon = FALSE) {
-  lapply(yrs, make_pop_future_fig_year, object = object, data = data, ribbon = ribbon)
+  lapply(
+    yrs,
+    make_pop_future_fig_year,
+    object = object,
+    data = data,
+    ribbon = ribbon
+  )
 }
 
 make_pop_future_fig_year <- function(yr, object, data, ribbon = FALSE) {
@@ -105,8 +120,10 @@ make_pop_future_fig_year <- function(yr, object, data, ribbon = FALSE) {
   }
   if (NROW(object) == 0) {
     title <- "Working population"
-  } else {
+  } else if (!ribbon) {
     title <- paste("Simulated future working population:", yr)
+  } else {
+    title <- paste("90% forecast interval for working population:", yr)
   }
   p <- data |>
     as_tibble() |>
@@ -125,7 +142,7 @@ make_pop_future_fig_year <- function(yr, object, data, ribbon = FALSE) {
         data = object,
         aes(x = age, y = working, group = .rep, col = .rep)
       )
-  } else if(NROW(object) > 0) {
+  } else if (NROW(object) > 0) {
     object <- object |>
       as_tibble() |>
       group_by(age) |>
