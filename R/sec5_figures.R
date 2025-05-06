@@ -47,15 +47,6 @@ make_fig21 <- function(course_leavers, combine = FALSE, no_other = TRUE) {
     course_leavers <- course_leavers |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
-  course_leavers$discipline <- course_leavers$discipline |>
-    forcats::fct_relevel(
-      "Physics and Astronomy",
-      "Mathematical Sciences",
-      "Chemical Sciences",
-      "Earth Sciences",
-      "Biological Sciences",
-      "Other Natural and Physical Sciences"
-    )
   subtitle <- "(2006 – 2023)"
   if (combine) {
     course_leavers <- course_leavers |>
