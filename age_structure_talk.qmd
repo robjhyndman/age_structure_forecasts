@@ -497,10 +497,17 @@ for (i in seq_along(fig_Pxt_future_discipline)) {
 
 
 # More information
-\fontsize{18}{24}\sf
 
-\vspace*{3cm}
-
+\begin{textblock}{8}(4,3.6)
 \begin{alertblock}{}
-\centerline{\href{https://robjhyndman.com/age_structure_forecasts}{robjhyndman.com/age\_structure\_forecasts}}
+\fontsize{18}{22}\sf\bfseries\centering
+\href{https://robjhyndman.com/isf2025}{robjhyndman.com/isf2025}
 \end{alertblock}
+\end{textblock}
+
+\begin{textblock}{8}(4,5.6)
+\begin{block}{}
+\fontsize{18}{22}\sf\bfseries\centering
+\href{https://robjhyndman.com/postdoc}{robjhyndman.com/postdoc}
+\end{block}
+\end{textblock}
