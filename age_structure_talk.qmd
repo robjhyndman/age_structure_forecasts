@@ -96,7 +96,7 @@ tar_read(fig_Pxt_census)
 tar_read(fig_Pxt)
 ```
 
-# Death rates: $q_{x,t}$
+# Death probability: $q_{x,t}$
 \showmodel
 
 ```{r}

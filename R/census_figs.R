@@ -38,9 +38,9 @@ make_pop_fig <- function(
         data = census |> filter(!year %in% seq(2006, 2021, by = 5)),
         linewidth = 0.5
       ) +
-      scale_color_gradientn(colours = rainbow(10))
+      scale_color_gradientn(colours = rainbow(1000)[1:800])
   } else {
-    cols <- c("#ff0000", "#32ff00", "#0065ff", "#ff0099")
+    cols <- c("#ff0000", "#67ff00", "#00ceff", "#ca00ff")
     names(cols) <- seq(2006, 2021, by = 5)
     p <- p +
       scale_color_manual(values = cols)

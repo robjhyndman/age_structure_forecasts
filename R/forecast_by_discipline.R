@@ -135,6 +135,11 @@ make_fig_future_grads_discipline <- function(course_leavers, future_grads_discip
       alpha = 0.3,
       fill = "#c14b14"
     ) +
+    geom_line(
+      data = future_grads_discipline_pi,
+      aes(x = year, y = mean),
+      color = "#c14b14"
+    ) +
     labs(
       x = "Year",
       y = "Number of graduates",
