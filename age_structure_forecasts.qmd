@@ -65,25 +65,19 @@ options(
 
 # Introduction {#sec-intro}
 
-In planning for the future labour market, it is necessary to forecast the age structure of the workforce, in order to enable informed decision-making on policies concerning universities and immigration. We demonstrate a statistical modelling approach to this problem, illustrated using various scientific disciplines in Australia, forecasting future workforce age structures over the next decade. The forecasts described have been used by the Australian Academy of Science as part of _Australian Science, Australia’s Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia’s ambitions [@AAS2035].
+In planning for the future labour market, it is necessary to forecast the age structure of the workforce, in order to enable informed decision-making on policies, especially concerning universities and immigration. We propose a statistical modelling approach to this problem, illustrated using various scientific disciplines in Australia, forecasting future workforce age structures over the next decade. The forecasts described have been used by the Australian Academy of Science as part of _Australian Science, Australia’s Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia’s ambitions [@AAS2035].
 
-The economic implications of workforce age structure shifts are well-documented [e.g., @Bloom2007], affecting productivity, pensions and superannuation, and skill shortages [@PC2013; @OECD2019a; @OECD2019b; @pension].
+The economic implications of workforce age structure shifts are well-documented [e.g., @Bloom2007], affecting productivity, pensions and superannuation, and skill shortages [@PC2013; @OECD2019a; @OECD2019b; @pension]. The social implications are also significant, with an aging workforce leading to changes in workplace dynamics, potential problems with intergenerational knowledge transfer, and the need for policies that support older workers. Yet this problem does not appear to have been previously addressed from a statistical modeling perspective.
 
-Our approach builds on functional data models, introduced to demographic modelling by @HU07. They combined nonparametric smoothing and functional principal components for age-specific demographic rates. These models were then used by @HB08 for mortality, fertility, and migration rates, providing stochastic data generating processes for the components of demographic balance equations. These separate component models were then simulated to form future sample paths, leading to age- and sex-specific stochastic population forecasts.
+Our approach builds on functional data models, introduced to demographic modelling by @HU07. They combined nonparametric smoothing and functional principal components for age-specific demographic rates. These models were then used by @HB08 for mortality, fertility, and migration rates, providing stochastic data generating processes for the components of demographic balance equations. These separate component models were then simulated to form future sample paths, leading to age- and sex-specific stochastic population forecasts. The modelling framework was later extended by @HBY13 to ensure coherence of forecasts between sexes or other demographic groups. 
 
-This framework is adaptable to workforce dynamics by redefining the demographic components, replacing fertility with workforce entry. The latter functions more like a migration process than a birth process because graduates can enter the workforce at any age.
+We propose to adapt this framework to workforce dynamics by redefining the demographic components in two ways. First, we replace fertility with workforce entry, which functions more like a migration process than a birth process because graduates can enter the workforce at any age. Second, we allow workers to leave the workforce through two processes: retirement and death. Of course, people may also leave the workforce for other reasons, such as a career change or family commitments, but since we do not have data on these processes, we model them implicitly via a remainder term.
 
-This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. For consistency, the report refers to ASCED’s Narrow Fields as "disciplines".
-
-We forecast the number of individuals in each one-year age group who are active in the workforce and hold a bachelor’s degree or higher in the following scientific disciplines: Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.).
-
-Projections extend over a 20-year period to 2041, with particular focus on workforce composition in 2035. These estimates account for key demographic factors, including mortality, retirement, graduation, and migration.
-
-We describe the methodology in @sec-methodology, data sources in @sec-data, and statistical techniques used to generate the forecasts. The results in @sec-results illustrates the application of the ideas to scientific disciplines, focusing on comparison and contrast rather than procedural details. Finally, we provide some discussion and conclusions in @sec-conclusion. The results aim to inform future workforce planning and policy decisions to support the growth of Australia’s scientific community.
+We describe the methodology in @sec-methodology. By way of illustration, we apply the methodology to major scientific disciplines in Australia, focusing on the Natural and Physical Sciences. We describe the data sources in @sec-data, with the results provided in @sec-results. The aim of this analysis is to inform future workforce planning and policy decisions to support the growth of Australia’s scientific community. Finally, we provide some discussion and conclusions in @sec-conclusion. 
 
 # Methodology {#sec-methodology}
 
-Let $P_{i,x,t}$ denote the number of equivalent full-time workers in scientific discipline $i$ who are aged $x$ at the start of year $t$, where $i=1,\dots,I$ and $x=15,16,\dots$. The starting age of 15 is the minimum age at which individuals are counted as part of the labour force in the Australian Census [@ABSLFSP]. Forecasts are generated for $P_{i,x,T+h}$ across all ages and disciplines, for some forecast horizon $h>0$.
+Suppose our workforce is divided into $I$ groups, indexed by $i=1,\dots,I$. In our application, these are scientific disciplines, but in principle they could refer to any subdivision of workers. Let $P_{i,x,t}$ denote the number of equivalent full-time workers in area or discipline $i$ who are aged $x$ at the start of year $t$, where $i=1,\dots,I$ and $x=15,16,\dots$. The starting age of 15 is the minimum age at which individuals are counted as part of the labour force in the Australian Census [@ABSLFSP]. Forecasts are generated for $P_{i,x,T+h}$ across all ages and disciplines, for some forecast horizon $h>0$.
 
 Let $D_{i,x,t}$ denote the number of deaths, and $R_{i,x,t}$ the number of retirements, of people aged $x$ in scientific discipline $i$ in year $t$. This is the number of equivalent full-time workers leaving the workforce during year $t$ who were aged $x$ *at the start* of year $t$.
 
@@ -104,6 +98,13 @@ To obtain forecasts of $P$, forecasts of $D$, $R$, $N$, and $G$ must then be com
 # Data {#sec-data}
 
 ## Data Sources
+
+This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. For consistency, the report refers to ASCED’s Narrow Fields as "disciplines".
+
+We forecast the number of individuals in each one-year age group who are active in the workforce and hold a bachelor’s degree or higher in the following scientific disciplines: Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.).
+
+Projections extend over a 20-year period to 2041, with particular focus on workforce composition in 2035. These estimates account for key demographic factors, including mortality, retirement, graduation, and migration.
+
 
 This analysis utilises Australian data sources to generate accurate forecasts. These include the ABS, the Human Mortality Database (HMD), and the Department of Education.
 
@@ -367,7 +368,7 @@ The projections indicate wider prediction intervals for younger age groups due t
 #| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across scientific disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
 #| fig-height: 5.5
 # 2025 and 2035
-tar_read(fig23)
+#tar_read(fig23)
 ```
 
 The key findings from @fig-forecast-working-population are summarised below:
