@@ -69,97 +69,54 @@ In planning for the future labour market, it is necessary to forecast the age st
 
 The economic implications of workforce age structure shifts are well-documented [e.g., @Bloom2007], affecting productivity, pensions and superannuation, and skill shortages [@PC2013; @OECD2019a; @OECD2019b; @pension]. The social implications are also significant, with an aging workforce leading to changes in workplace dynamics, potential problems with intergenerational knowledge transfer, and the need for policies that support older workers. Yet this problem does not appear to have been previously addressed from a statistical modeling perspective.
 
-Our approach builds on functional data models, introduced to demographic modelling by @HU07. They combined nonparametric smoothing and functional principal components for age-specific demographic rates. These models were then used by @HB08 for mortality, fertility, and migration rates, providing stochastic data generating processes for the components of demographic balance equations. These separate component models were then simulated to form future sample paths, leading to age- and sex-specific stochastic population forecasts. The modelling framework was later extended by @HBY13 to ensure coherence of forecasts between sexes or other demographic groups. 
+Our approach builds on functional data models, introduced to demographic modelling by @HU07. They combined nonparametric smoothing and functional principal components for age-specific demographic rates. These models were then used by @HB08 for mortality, fertility, and migration rates, providing stochastic data generating processes for the components of demographic balance equations. These separate component models were then simulated to form future sample paths, leading to age- and sex-specific stochastic population forecasts. The modelling framework was later extended by @HBY13 to ensure coherence of forecasts between sexes or other demographic groups.
 
 We propose to adapt this framework to workforce dynamics by redefining the demographic components in two ways. First, we replace fertility with workforce entry, which functions more like a migration process than a birth process because graduates can enter the workforce at any age. Second, we allow workers to leave the workforce through two processes: retirement and death. Of course, people may also leave the workforce for other reasons, such as a career change or family commitments, but since we do not have data on these processes, we model them implicitly via a remainder term.
 
-We describe the methodology in @sec-methodology. By way of illustration, we apply the methodology to major scientific disciplines in Australia, focusing on the Natural and Physical Sciences. We describe the data sources in @sec-data, with the results provided in @sec-results. The aim of this analysis is to inform future workforce planning and policy decisions to support the growth of Australia’s scientific community. Finally, we provide some discussion and conclusions in @sec-conclusion. 
+We describe the methodology in @sec-methodology. By way of illustration, we apply the methodology to major scientific disciplines in Australia, focusing on the Natural and Physical Sciences. We describe the data sources in @sec-data, with the results provided in @sec-results. The aim of this analysis is to inform future workforce planning and policy decisions to support the growth of Australia’s scientific community. Finally, we provide some discussion and conclusions in @sec-conclusion.
 
 # Methodology {#sec-methodology}
 
-Suppose our workforce is divided into $I$ groups, indexed by $i=1,\dots,I$. In our application, these are scientific disciplines, but in principle they could refer to any subdivision of workers. Let $P_{i,x,t}$ denote the number of equivalent full-time workers in area or discipline $i$ who are aged $x$ at the start of year $t$, where $i=1,\dots,I$ and $x=15,16,\dots$. The starting age of 15 is the minimum age at which individuals are counted as part of the labour force in the Australian Census [@ABSLFSP]. Forecasts are generated for $P_{i,x,T+h}$ across all ages and disciplines, for some forecast horizon $h>0$.
+Suppose our workforce is divided into $I$ groups, indexed by $i=1,\dots,I$. In our application, these are scientific disciplines, but in principle they could refer to any subdivision of workers. Let $P_{i,x,t}$ denote the number of equivalent full-time workers in group $i$ who are aged $x$ at the start of year $t$, where $x=15,16,\dots$. The starting age of 15 is chosen because it is the minimum age at which individuals are counted as part of the labour force in the Australian Census [@ABSLFSP]. Forecasts are required for $P_{i,x,T+h}$ across all ages and groups, for some forecast horizon $h>0$.
 
-Let $D_{i,x,t}$ denote the number of deaths, and $R_{i,x,t}$ the number of retirements, of people aged $x$ in scientific discipline $i$ in year $t$. This is the number of equivalent full-time workers leaving the workforce during year $t$ who were aged $x$ *at the start* of year $t$.
+People can leave the workforce of a group through death, retirement, career change, or emigration. They can enter the workforce through graduation, immigration, or career change. Unfortunately, we typically do not have data on many of these processes, so we will combine career change and migration into a remainder term, which we denote as $E_{i,x,t}$. We usually do have data on numbers of deaths ($D_{i,x,t}$), numbers of retirements ($R_{i,x,t}$), and numbers of graduates ($G_{i,x,t}$); the numbers in each case are for people aged $x$ at the start of year $t$.
 
-Two migration processes are required: one representing new Australian workers in the discipline graduating from university courses ($N_{i,x,t}$), and the other representing the net migration process resulting from scientists leaving or arriving in Australia ($G_{i,x,t}$). New workers are treated as a migration process because they can be of any age (unlike births).
-
-The population can be forecasted using a model similar to the stochastic population model of @HB08, excluding the birth process. The demographic growth-balance equation can be written as:
+The population can be forecasted using a model similar to the stochastic population model of @HB08, excluding the birth process:
 $$
-P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + N_{i,x,t} + G_{i,x,t}, \quad x = 15,16,\dots
+P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t}, \quad x = 15,16,\dots
 $$ {#eq-dgb}
-That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus the net migrants (which may be negative). The assumption is that $D_{i,x,t} + R_{i,x,t} \le P_{i,x,t}$ and $N_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, they will not be replaced through new graduates or migrants of the same age.
+That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus any other changes due to migration or career change (which may be negative). We assume that $D$, $R$ and $G$ are all non-negative, $D_{i,x,t} + R_{i,x,t} \le P_{i,x,t}$, and $E_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, they will not be replaced through new graduates or migrants of the same age.
 
-As a first approximation, the components $D$, $R$, $N$ and $G$ can be assumed to behave independently. In reality, there may be a negative correlation between $G$ and $N$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
+As a first approximation, the components $D$, $R$, $E$ and $G$ can be assumed to behave independently for each combination of $i$, $x$ and $t$. In reality, there may be a negative correlation between $G$ and $E$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
 
-Data on $D$, $N$, and $R$ is required, and the remaining component $G$ will be estimated using @eq-dgb.
-
-To obtain forecasts of $P$, forecasts of $D$, $R$, $N$, and $G$ must then be computed. Each of these can be estimated using a functional data model [@HU07].
+To use @eq-dgb, data on $P$, $D$, $R$, and $G$ is required, and the remainder component $E$ will be calculated using @eq-dgb. It is unlikely that we have available separate death and retirement counts for each group, so we will instead use probabilities of death and retirement across all groups, giving $D_{i,x,t} = P_{i,x,t}q_{x,t}$ and $R_{i,x,t} = P_{i,x,t}r_{x,t}$ where $q_{x,t}$ is the probability of death at each $x$ in year $t$, and $r_{x,t}$ is the probability of retirement at each $x$ in year $t$. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_t$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines. So our more realistic model becomes
+$$
+P_{i,x+1,t+1} = P_{i,x,t}(1 - q_{x,t} - r_{x,t}) + g_xG_{i,t} + E_{i,x,t}, \quad x = 15,16,\dots
+$$ {#eq-dgb2}
+To obtain forecasts of $P$, forecasts of $q$, $r$, $G$, and $E$ must then be computed. Each of these can be estimated using a functional data model [@HU07].
 
 # Data {#sec-data}
 
-## Data Sources
+## Data sources
 
-This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. For consistency, the report refers to ASCED’s Narrow Fields as "disciplines".
+This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. We refer to ASCED's Narrow Fields as "disciplines"; these comprise Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.). We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline.
 
-We forecast the number of individuals in each one-year age group who are active in the workforce and hold a bachelor’s degree or higher in the following scientific disciplines: Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.).
+## Labour force participation {#sec-labour}
 
-Projections extend over a 20-year period to 2041, with particular focus on workforce composition in 2035. These estimates account for key demographic factors, including mortality, retirement, graduation, and migration.
+Data on $P_{i,x,t}$ are sourced from the *Census of Population and Housing* (2006, 2011, 2016, and 2021) [@ABSCensus]. This dataset encompasses labour force participation status, age group, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP; @ABSQALFP], and the industries in which individuals work.
 
+However, labour force participation data is available only for 2016 and 2021 [@ABSLFFP]. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall patterns remain consistent. While participation rates were generally stable between 2016 and 2021, smaller groups experienced more volatility. Younger and older age groups within some disciplines were particularly affected by this volatility, especially when sample sizes were small. For example, in a group of five 15--19-year-olds, a single individual's employment status change could significantly shift the participation rate. Similarly, fluctuations in smaller cohorts of older scientists impacted participation rates. Averaging the rates from 2016 and 2021 helps mitigate this volatility and provides a more stable estimate for 2006 and 2011. Any discrepancies in participation rates are minimal due to the small cohort sizes, making this a more reliable approach than relying on a single year.
 
-This analysis utilises Australian data sources to generate accurate forecasts. These include the ABS, the Human Mortality Database (HMD), and the Department of Education.
-
-Specifically, the *Census of Population and Housing* (2006, 2011, 2016, and 2021) [@ABSCensus] provides data on the population of individuals with bachelor's degrees or higher who are active in the labour market. This dataset encompasses labour force participation status, age group, educational qualification level (QALLP), discipline (QALFP), and the industries in which individuals work. Labour force participation data is available only for 2016 and 2021 [@ABSLFFP]. QALLP captures the highest level of completed non-school qualification, while QALFP identifies the corresponding field of study [@ABSQALFP].
-
-Australian age-specific death counts and population exposures from 1971 to 2021 were sourced from the @HMD. This dataset includes death counts and population exposures categorised by age.
-
-Retirement data is sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. It provides insights into expected retirement ages for workers in age groups ranging from 45 to 70 across various industries.
-
-Graduate completion statistics from 2006 to 2023, categorised by age group and including individuals with a bachelor’s degree or higher, are derived from the *Award Course Completions* dataset [@DeptEdu]. Additionally, the Department of Education provides data on the number of graduates with a bachelor’s degree or higher, categorised by discipline and year, for the same period [@DeptEdu_Private]. These datasets include both domestic and international students.
-
-Data limitations include the availability of labour force participation data only for 2016 and 2021, the absence of full-time worker data outside census years, and the aggregated nature of retirement intentions data. These gaps are addressed using specific handling of labour force participation data, cohort interpolation methods, and smoothed disaggregation, as detailed in Sections -@sec-labour, -@sec-cohort, and -@sec-smooth.
-
-Another limitation is that retirement intentions data is unavailable by educational discipline, with industry-level data serving as the closest proxy. Since scientists work across multiple industries, this does not capture discipline-specific retirement patterns but is used in this context through methods outlined in @sec-retirement.
-
-## Labour Force Participation {#sec-labour}
-
-Labour force participation data is available for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from these later years are applied, assuming overall patterns remain consistent. While participation rates were generally stable between 2016 and 2021, smaller groups experienced more volatility.
-
-Younger and older age groups within some disciplines were particularly affected by this volatility, especially when sample sizes were small. For example, in a group of five 15--19-year-olds, a single individual's employment status change could significantly shift the participation rate. Similarly, fluctuations in smaller cohorts of older scientists impacted participation rates. Averaging the rates from 2016 and 2021 helps mitigate this volatility and provides a more stable estimate for 2006 and 2011. Any discrepancies in participation rates are minimal due to the small cohort sizes, making this a more reliable approach than relying on a single year.
-
-@fig-labour-force displays the labour force participation rates for the broader category of Natural and Physical Sciences for 2016, 2021, and their average, which serves as a proxy for 2006 and 2011. While estimation is conducted separately at both the discipline and category levels, the figure below illustrates this approach using the broader category as an example.
-
-```{r}
-#| label: fig-labour-force
-#| eval: true
-#| fig-cap: Labour force participation rates by one-year age groups for 2016 and 2021, along with the average of these two years, which is used as a proxy for 2006 and 2011.
-tar_read(fig1)
-```
-
-## Cohort Interpolation {#sec-cohort}
-
-The Census data on scientists active in the labour market, provided by the ABS in one-year age groups, is shown in @fig-census as a line graph to highlight differences across Census years.
-
-As data is only available in Census years (2006, 2011, 2016, 2021), cohort interpolation will be used to estimate intercensal values for the intervening years. These are the years between Census points (e.g., 2007, 2008, 2009, etc.), for which direct population data are unavailable.
-
-Cohort interpolation methods, as described by @STUPP88, approximate these missing values by leveraging available Census data. For this analysis, linear interpolation is applied to estimate the population distribution for the years between Census points, as it provides reasonable approximations given the available data. In this context, linear interpolation produces gradual transitions that reflect realistic population growth and decline.
-
-The completed historical dataset forms the basis for forecasting future workforce trends. The results of this interpolation are shown in @fig-cohort-interpolation.
-
-```{r}
-#| label: fig-census
-#| eval: true
-#| fig-cap: Distribution of scientists active in the labour market by age across  Census years (2006, 2011, 2016, 2021).
-tar_read(fig_Pxt_census)
-```
+The census data on scientists active in the labour market, provided by the ABS in one-year age groups, is shown in @fig-cohort-interpolation as the thick lines. As data is only available in census years (2006, 2011, 2016, 2021), cohort interpolation is used to estimate values for the intervening years. Cohort interpolation methods [@STUPP88] apply linear interpolation within each age cohort between census years.
 
 ```{r}
 #| label: fig-cohort-interpolation
 #| eval: true
-#| fig-cap: Interpolated number of scientists in Australia, 2006--2021, using linear cohort interpolation.
+#| fig-cap: Interpolated number of scientists in Australia, 2006--2021, using linear cohort interpolation between census years. Thicker lines are used to denote census years.
 tar_read(fig_Pxt)
 ```
 
-## Smoothed Disaggregation {#sec-smooth}
+## Retirement distribution {#sec-smooth}
 
 Retirement intentions data is categorised by the industry of an individual's main job and is provided in broad age groups, as shown in @fig-beforedisaggregation. While the ABS dataset covers 19 industries, only the key industries relevant to this study are displayed in the figure.
 
@@ -171,8 +128,6 @@ To estimate single-year age distributions, a monotonic cubic spline [@SHW04] is 
 #| fig-cap: Retirement intentions for key industries before smoothed disaggregation.
 tar_read(fig_r)
 ```
-
-## Retirement Distribution by Age {#sec-retirement}
 
 After smoothing the retirement intentions data, the appropriate industry-level retirement distribution or combination of distributions must be selected. Since scientists work across multiple industries, industry-level data must be adapted to reflect discipline-specific trends. While distributions may vary, retirement trends generally follow similar patterns across sectors. By focusing on the top industries, which account for the majority of workers in each discipline, a stable foundation for analysis is ensured, minimising unnecessary variability arising from changing worker proportions in different industries over time.
 
@@ -197,6 +152,22 @@ tar_read(fig_rx2)
 ```
 
 In this approach, retirement is treated as a final state, meaning that once a scientist retires, they are not reintroduced into the workforce. This assumption considers workforce exit to be final. Mortality data, discussed in the next section, is incorporated into the calculation of the total probability of leaving the workforce, adjusting for the possibility of death before retirement. This ensures that the combined probability of exiting the workforce (through retirement or death) does not exceed 100%.
+
+
+Projections extend over a 20-year period to 2041, with particular focus on workforce composition in 2035. These estimates account for key demographic factors, including mortality, retirement, graduation, and migration.
+
+
+This analysis utilises Australian data sources to generate accurate forecasts. These include the ABS, the Human Mortality Database (HMD), and the Department of Education.
+
+Australian age-specific death counts and population exposures from 1971 to 2021 were sourced from the @HMD. This dataset includes death counts and population exposures categorised by age.
+
+Retirement data is sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. It provides insights into expected retirement ages for workers in age groups ranging from 45 to 70 across various industries.
+
+Graduate completion statistics from 2006 to 2023, categorised by age group and including individuals with a bachelor’s degree or higher, are derived from the *Award Course Completions* dataset [@DeptEdu]. Additionally, the Department of Education provides data on the number of graduates with a bachelor’s degree or higher, categorised by discipline and year, for the same period [@DeptEdu_Private]. These datasets include both domestic and international students.
+
+Data limitations include the availability of labour force participation data only for 2016 and 2021, the absence of full-time worker data outside census years, and the aggregated nature of retirement intentions data. These gaps are addressed using specific handling of labour force participation data, cohort interpolation methods, and smoothed disaggregation, as detailed in Sections -@sec-labour, -@sec-cohort, and -@sec-smooth.
+
+Another limitation is that retirement intentions data is unavailable by educational discipline, with industry-level data serving as the closest proxy. Since scientists work across multiple industries, this does not capture discipline-specific retirement patterns but is used in this context through methods outlined in @sec-retirement.
 
 ## Death Probabilities by Age
 
