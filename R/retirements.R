@@ -74,7 +74,7 @@ make_fig_r <- function(retirements) {
   ggplot(retirements, aes(x = age_group, y = pc)) +
     geom_col() +
     labs(
-      title = "Retirement intentions of Australian scientists (2022 – 23)",
+      title = "Retirement intentions of Australian scientists (2022 - 23)",
       x = "Age group",
       y = "Percentage of retirement intentions"
     ) +
@@ -84,15 +84,27 @@ make_fig_r <- function(retirements) {
     )
 }
 
-make_fig_rx <- function(retirements, var) {
+make_fig_rx <- function(retirements, retirement_data) {
+  retirement_data <- retirement_data |>
+    mutate(
+      lower = as.numeric(substr(age_group,1,2)),
+      upper = as.numeric(substr(age_group,4,5)),
+      upper = if_else(is.na(upper), 100, upper),
+      nages = upper - lower + 1,
+    ) 
+  retirements <- retirements |>
+    select(-pc) |>
+    left_join(retirement_data, by = join_by(age == lower)) |>
+    tidyr::fill(pc, nages, .direction = "down") 
   retirements |>
     ggplot() +
-    aes(x = age, y = {{ var }}) +
-    geom_line() +
+    aes(x = age) +
+    geom_line(aes(y = pc/100/nages), color = "gray") +
+    geom_line(aes(y = retire_prob), color = "blue") +
     labs(
       x = "Age",
       y = latex2exp::TeX("Probability of retirement"), # ($r_{x,t}$)"),
-      title = "Probability of retirement for Australian scientists (2022 – 23)"
+      title = "Probability of retirement for Australian scientists (2022 - 23)"
     ) +
     scale_x_continuous(breaks = seq(40, 100, by = 10))
 }

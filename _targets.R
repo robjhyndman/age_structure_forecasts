@@ -71,8 +71,7 @@ list(
     single_age_retirements(retirement_data, aus_death_prob)
   ),
   tar_target(fig_r, make_fig_r(retirement_data)),
-  tar_target(fig_rx, make_fig_rx(retirements, pc)),
-  tar_target(fig_rx2, make_fig_rx(retirements, retire_prob)),
+  tar_target(fig_rx2, make_fig_rx(retirements, retirement_data)),
 
   # Graduates
   tar_target(

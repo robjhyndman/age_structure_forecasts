@@ -27,7 +27,7 @@ make_pop_fig <- function(
     labs(
       x = "Age",
       y = "Number of active scientists",
-      title = paste("Working population:", subtitle, "(2006 – 2021)")
+      title = paste("Working population:", subtitle, "(2006 - 2021)")
     )
   if ("discipline" %in% names(census)) {
     p <- p + facet_wrap(~discipline, scales = "free_y")
@@ -71,7 +71,7 @@ make_component_fig <- function(census, variable) {
         ylab,
         ": Natural and Physical Sciences (",
         minyear,
-        " – ",
+        " - ",
         maxyear,
         ")"
       )

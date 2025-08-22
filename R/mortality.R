@@ -36,7 +36,7 @@ make_fig_mxt <- function(death_prob) {
     labs(
       x = "Age",
       y = latex2exp::TeX("Probability of death"), # ($m_{x,t}$)"),
-      title = "Probability of death for Australians (1971 – 2021)",
+      title = "Probability of death for Australians (1971 - 2021)",
     ) +
     scale_x_continuous(breaks = seq(0, 100, by = 10)) +
     scale_y_log10(labels = scales::label_number(), limits = c(2e-5, 1))

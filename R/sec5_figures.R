@@ -35,7 +35,7 @@ make_fig20 <- function(disciplines_combined) {
     labs(
       y = "Number of active scientists",
       title = "Interpolated working population by discipline",
-      subtitle = "Natural and Physical Sciences\n2006 – 2021"
+      subtitle = "Natural and Physical Sciences\n2006 - 2021"
     ) +
     theme(
       legend.position = "top"
@@ -47,7 +47,7 @@ make_fig21 <- function(course_leavers, combine = FALSE, no_other = TRUE) {
     course_leavers <- course_leavers |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
-  subtitle <- "(2006 – 2023)"
+  subtitle <- "(2006 - 2023)"
   if (combine) {
     course_leavers <- course_leavers |>
       group_by(year) |>
@@ -160,7 +160,7 @@ make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
     geom_line(data = grads, aes(y = graduates)) +
     labs(
       y = "Number of graduates",
-      title = "Forecasts of total graduates by discipline: 2024–2041",
+      title = "Forecasts of total graduates by discipline: 2024-2041",
     ) +
     scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
     facet_wrap(~discipline, scales = "free_y")

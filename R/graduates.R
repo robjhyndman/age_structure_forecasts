@@ -135,12 +135,12 @@ make_fig_completions <- function(completions, average = FALSE) {
   if (average) {
     p <- p +
       aes(x = age, y = pc) +
-      labs(title = "Average graduate completions by age (2006 – 2023)")
+      labs(title = "Average graduate completions by age (2006 - 2023)")
   } else {
     p <- p +
       aes(x = age, y = pc, colour = year, group = year) +
       scale_color_gradientn(colours = rainbow(10)) +
-      labs(title = "Graduate completions by year and age (2006 – 2023)")
+      labs(title = "Graduate completions by year and age (2006 - 2023)")
   }
   p +
     geom_line() +
