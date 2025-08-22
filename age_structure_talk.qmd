@@ -1,7 +1,7 @@
 ---
 title: "Forecasting the age structure of the scientific workforce in Australia"
 author: Rob J Hyndman & Kelly Nguyen
-date: 30 June 2025
+date: 2 December 2025
 toc: false
 format:
   presentation-beamer:

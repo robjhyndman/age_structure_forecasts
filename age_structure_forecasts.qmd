@@ -81,7 +81,7 @@ Suppose our workforce is divided into $I$ groups, indexed by $i=1,\dots,I$. In o
 
 People can leave the workforce of a group through death, retirement, career change, or emigration. They can enter the workforce through graduation, immigration, or career change. Unfortunately, we typically do not have data on many of these processes, so we will combine career change, emigration and immigration into a remainder term, which we denote as $E_{i,x,t}$. Suppose we do have data on numbers of deaths ($D_{i,x,t}$), numbers of retirements ($R_{i,x,t}$), and numbers of graduates ($G_{i,x,t}$); the numbers in each case are for people aged $x$ at the start of year $t$. Then population changes can be described using a model similar to the stochastic population model of @HB08, excluding the birth process:
 $$
-P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t}, 
+P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t},
 $$ {#eq-dgb}
 That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus any other changes due to migration or career change (which may be negative). We assume that $D$, $R$ and $G$ are all non-negative, $D_{i,x,t} + R_{i,x,t} \le P_{i,x,t}$, and $E_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, forw $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, they will not be replaced by new workers of the same age.
 
@@ -89,7 +89,7 @@ As a first approximation, the components $D$, $R$, $E$ and $G$ can be assumed to
 
 To use @eq-dgb, data on $P$, $D$, $R$, and $G$ is required, and the remainder component $E$ will be calculated using @eq-dgb. It is unlikely that we have available separate death and retirement counts for each group, so we will instead use probabilities of death and retirement across all groups, giving $D_{i,x,t} = P_{i,x,t}q_{x,t}$ and $R_{i,x,t} = P_{i,x,t}r_{x,t}$ where $q_{x,t}$ is the probability of death at each $x$ in year $t$, and $r_{x,t}$ is the probability of retirement at each $x$ in year $t$. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_t$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines. So our more realistic model becomes
 $$
-P_{i,x+1,t+1} = P_{i,x,t}(1 - q_{x,t} - r_{x,t}) + g_xG_{i,t} + E_{i,x,t}, 
+P_{i,x+1,t+1} = P_{i,x,t}(1 - q_{x,t} - r_{x,t}) + g_xG_{i,t} + E_{i,x,t},
 $$ {#eq-dgb2}
 To obtain forecasts of $P$, forecasts of $q$, $r$, $G$, and $E$ must then be computed. Each of these can be estimated using a functional time series model [@HU07].
 
@@ -101,7 +101,7 @@ This analysis focuses on the Natural and Physical Sciences as defined in the Aus
 
 ## Labour force participation {#sec-labour}
 
-Data on $P_{i,x,t}$ are sourced from the *Census of Population and Housing* (2006, 2011, 2016, and 2021) [@ABSCensus]. This dataset encompasses labour force participation status, age group, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation data is available only for 2016 and 2021 [@ABSLFFP]. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent. 
+Data on $P_{i,x,t}$ are sourced from the *Census of Population and Housing* (2006, 2011, 2016, and 2021) [@ABSCensus]. This dataset encompasses labour force participation status, age group, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation data is available only for 2016 and 2021 [@ABSLFFP]. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
 
 The census data on scientists active in the labour market, provided by the ABS in one-year age groups, is shown in @fig-cohort-interpolation as the thick lines. As data is only available in census years (2006, 2011, 2016, 2021), cohort interpolation is used to estimate values for the intervening years (shown as thin lines). Cohort finterpolation methods [@STUPP88] apply linear interpolation within each age cohort between census years.
 
@@ -135,7 +135,7 @@ The data show that a significant portion of workers plan to retire between the a
 #| label: fig-retirements
 #| eval: true
 #| fig-cap: Age distribution of retirement intentions for the 2022--2023 Australian financial year.
-tar_read(fig_rx)
+tar_read(fig_rx2)
 ```
 
 From this distribution, the empirical probability of retirement at each age can be calculated using standard life table methods [@MRC18]. These probabilities are shown in @fig-retirements2. These probabilities, which exhibit a significant increase after age 59, are used to estimate $R_{i,x,t}$ from $P_{i,x,t}$​, and are treated as fixed for the simulation, assuming that retirement patterns will remain stable over time.
