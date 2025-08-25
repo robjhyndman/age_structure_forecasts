@@ -155,7 +155,10 @@ make_fig_completions <- function(
     )
   if (by_year) {
     p <- p +
-      geom_line(aes(colour = year, group = year)) +
+      geom_line(
+        aes(colour = year, group = year),
+        alpha = 0.2 + 0.8 * (!average)
+      ) +
       scale_color_gradientn(colours = rainbow(10))
   }
   if (average) {
