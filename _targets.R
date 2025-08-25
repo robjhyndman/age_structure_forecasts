@@ -247,7 +247,10 @@ list(
 
   # Disciplines combined
   tar_target(fig19, make_fig19(census4_1)),
-  tar_target(fig20, make_fig20(census4_1)),
+  tar_target(
+    fig20,
+    make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
+  ),
   tar_target(fig21, make_fig21(course_leavers)),
   tar_target(fig21b, make_fig21(course_leavers, combine = TRUE)),
   tar_target(fig22, make_fig22(census4_1)),
