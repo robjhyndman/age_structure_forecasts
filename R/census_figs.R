@@ -30,7 +30,14 @@ make_pop_fig <- function(
       title = paste("Working population:", subtitle, "(2006 - 2021)")
     )
   if ("discipline" %in% names(census)) {
-    p <- p + facet_wrap(~discipline, scales = "free_y")
+    p <- p +
+      facet_wrap(~discipline, scales = "free_y") +
+      theme(
+        legend.direction = "horizontal",
+        legend.position = "inside",
+        legend.position.inside = c(2 / 3, 1 / 2),
+        legend.justification = c(-1, 5)
+      )
   }
   if (interpolation) {
     p <- p +
