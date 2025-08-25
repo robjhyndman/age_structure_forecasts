@@ -5,10 +5,12 @@ make_pop_fig <- function(
   highlight_census = FALSE,
   no_other = TRUE
 ) {
+  census$Year <- census$year
+  censuses <- seq(2006, 2021, by = 5)
   if (!interpolation) {
     census <- census |>
       as_tibble() |>
-      mutate(year = factor(year, levels = rev(seq(2006, 2021, by = 5))))
+      mutate(Year = factor(Year, levels = rev(censuses)))
   }
   if (no_other & "discipline" %in% names(census)) {
     census <- census |>
@@ -18,10 +20,10 @@ make_pop_fig <- function(
   p <- census |>
     as_tibble() |>
     ggplot() +
-    aes(x = age, y = working, color = year, group = year) +
+    aes(x = age, y = working, color = Year, group = Year) +
     geom_line(
-      data = census |> filter(year %in% seq(2006, 2021, by = 5)),
-      linewidth = 0.5 + 0.5 * highlight_census
+      data = census |> filter(Year %in% censuses),
+      linewidth = 0.4 + 0.6 * highlight_census
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     labs(
@@ -36,14 +38,15 @@ make_pop_fig <- function(
         legend.direction = "horizontal",
         legend.position = "inside",
         legend.position.inside = c(2 / 3, 1 / 2),
-        legend.justification = c(-1, 5)
+        legend.justification = c(-0.4, 3)
       )
   }
   if (interpolation) {
     p <- p +
       geom_line(
-        data = census |> filter(!year %in% seq(2006, 2021, by = 5)),
-        linewidth = 0.5
+        data = census |> filter(!Year %in% censuses),
+        linewidth = 0.4,
+        alpha = 0.7
       ) +
       scale_color_gradientn(colours = rainbow(1000)[1:800])
   } else {
