@@ -101,7 +101,7 @@ This analysis focuses on the Natural and Physical Sciences as defined in the Aus
 
 ## Labour force participation
 
-Data on $P_{i,x,t}$ are sourced from the *Census of Population and Housing* [@ABSCensus] for census years 2006, 2011, 2016, and 2021. This dataset encompasses one-year age groups, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation status [@ABSLFFP] is available only for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
+Data on $P_{i,x,t}$ were sourced from the *Census of Population and Housing* [@ABSCensus] for census years 2006, 2011, 2016, and 2021. This dataset encompasses one-year age groups, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation status [@ABSLFFP] is available only for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
 
 The resulting data on scientists who are active in the Australian labour market is shown in @fig-cohort-interpolation as the thick lines. Cohort interpolation [@STUPP88], applying linear interpolation within each age cohort between census years, is used to estimate values for the intercensal years (shown as thin lines).
 
@@ -114,7 +114,7 @@ tar_read(fig20)
 
 ## Retirements
 
-Retirement data is sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. The data are categorised by the industry of an individual's main job, and are provided in four broad age groups (45--59, 60--64, 65--69 and 70+). There are 19 industry categories, but the majority of scientists work in Education and Training, Professional, Scientific and Technical Services, and Health Care and Social Assistance, representing 15.8%, 15.5%, and 14.6%, respectively. The proportions in other industries are much smaller. We take a weighted average of retirement intentions using these top three industries, with proportions rescaled to sum to 1. The data are shown in @fig-retirements as the gray line. To obtain a single-year-or-age retirement distribution, we disaggregate the data using a monotonic cubic spline applied to the cumulative values of these age groups [@SHW04]. The resulting smoothed distribution is shown as the blue line in @fig-retirements.
+Retirement data was sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. The data are categorised by the industry of an individual's main job, and are provided in four broad age groups (45--59, 60--64, 65--69 and 70+). There are 19 industry categories, with the largest numbers of scientists working in Education and Training (15.8%), Professional, Scientific and Technical Services (15.5%), and Health Care and Social Assistance (14.6%). The proportions in other industries are much smaller. We take a weighted average of retirement intentions using these top three industries, with proportions rescaled to sum to 1. The resulting values are shown in @fig-retirements as the gray line. To obtain a single-year-of-age retirement distribution, we disaggregate the data using a monotonic cubic spline applied to the cumulative values of these age groups [@SHW04]. The resulting smoothed distribution is shown as the black line in @fig-retirements.
 
 ```{r}
 #| label: fig-retirements
@@ -127,12 +127,12 @@ These probabilities are used to estimate $r_{x,t}$, and are treated as fixed for
 
 ## Deaths
 
-Age-specific mortality rates from 1971 to 2021 are obtained from the @HMD. Using standard life table methods, these rates are converted into age-specific probabilities of death, as shown in @fig-death-probs. Over time, mortality probabilities have generally declined across all age groups, reflecting improvements in Australian life expectancy.
+Age-specific mortality rates from 1971 to 2021 were obtained from the @HMD. Using standard life table methods, these rates are converted into age-specific probabilities of death, as shown in @fig-death-probs. Over time, mortality probabilities have generally declined across all age groups, reflecting improvements in Australian life expectancy.
 
 ```{r}
 #| label: fig-death-probs
 #| eval: true
-#| fig-cap: Age-specific probabilities of death (on a logarithmic scale) for each year from 1971 to 2021.
+#| fig-cap: "$q_{x,t}$: Age-specific probabilities of death (on a logarithmic scale) for each year from 1971 to 2021."
 tar_read(fig_mxt)
 ```
 
@@ -140,7 +140,7 @@ No data are available for specific industry groups, so we assume that all scient
 
 ## Graduate Completions
 
-Graduate completion statistics are obtained from the *Award Course Completions* dataset [@DeptEdu]. @fig-completions2 shows the distribution of graduate completions with a bachelor's degree or higher, by age for each year from 2006 to 2023. Some missing values result in gaps in certain lines, but the overall pattern remains highly consistent across years. Given this consistency, the data is averaged across all available years, and then smoothed by applying monotonic cubic splines to the cumulative values [@SHW04]. The resulting averaged distribution, shown as the black line in @fig-completions2, smooths out year-to-year fluctuations and provides a stable estimate of $g_x$.
+Graduate completion statistics were obtained from the *Award Course Completions* dataset [@DeptEdu]. @fig-completions2 shows the distribution of graduate completions with a bachelor's degree or higher, by age for each year from 2006 to 2023. Some missing values result in gaps in certain lines, but the overall pattern remains highly consistent across years. Given this consistency, the data is averaged across all available years, and then smoothed by applying monotonic cubic splines to the cumulative values [@SHW04]. The resulting averaged distribution, shown as the black line in @fig-completions2, smooths out year-to-year fluctuations and provides a stable estimate of $g_x$.
 
 ```{r}
 #| label: fig-completions2
@@ -149,10 +149,10 @@ Graduate completion statistics are obtained from the *Award Course Completions* 
 tar_read(fig_ave_completions)
 ```
 
-The Department of Education provides data on the number of graduates with a bachelor's degree or higher, categorised by discipline and year [@DeptEdu_Private]. These datasets include both domestic and international students. Estimate of $G_{i,t}$, the total number of graduates in each discipline $i$ and year $t$, are shown in @fig21.
+The Department of Education provides data on the number of graduates with a bachelor's degree or higher, categorised by discipline and year [@DeptEdu_Private]. These datasets include both domestic and international students. Estimate of $G_{i,t}$, the total number of graduates in each discipline $i$ and year $t$, are shown in @fig-21.
 
 ```{r}
-#| label: fig21
+#| label: fig-21
 #| fig-cap: "Total number of graduates with a bachelor's degree or higher by discipline from 2006 to 2023."
 tar_read(fig21)
 ```
