@@ -98,7 +98,12 @@ list(
   tar_target(fig_completions, make_fig_completions(completions_step)),
   tar_target(
     fig_ave_completions,
-    make_fig_completions(ave_completions, average = TRUE)
+    make_fig_completions(
+      completions_step,
+      ave_completions,
+      average = TRUE,
+      by_year = TRUE
+    )
   ),
   tar_target(tab2, make_table2(ave_completions)),
 

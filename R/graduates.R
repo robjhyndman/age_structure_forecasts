@@ -130,24 +130,39 @@ make_completions_ave <- function(completions) {
   return(ave_completions)
 }
 
-make_fig_completions <- function(completions, average = FALSE) {
-  p <- ggplot(completions)
-  if (average) {
-    p <- p +
-      aes(x = age, y = pc) +
-      labs(title = "Average graduate completions by age (2006 - 2023)")
-  } else {
-    p <- p +
-      aes(x = age, y = pc, colour = year, group = year) +
-      scale_color_gradientn(colours = rainbow(10)) +
-      labs(title = "Graduate completions by year and age (2006 - 2023)")
+make_fig_completions <- function(
+  completions,
+  ave_completions = NULL,
+  by_year = TRUE,
+  average = FALSE
+) {
+  if (average & is.null(ave_completions)) {
+    stop("Please provide ave_completions if average = TRUE")
   }
-  p +
-    geom_line() +
+  if (average & !by_year) {
+    title <- "Average graduate completions by age (2006 - 2023)"
+  } else if (by_year) {
+    title <- "Graduate completions by year and age (2006 - 2023)"
+  } else {
+    stop("Please select either by_year or average")
+  }
+  p <- ggplot(completions) +
+    aes(x = age, y = pc) +
     labs(
       x = "Age",
       y = "Percentage of graduates",
-    ) +
+      title = title
+    )
+  if (by_year) {
+    p <- p +
+      geom_line(aes(colour = year, group = year)) +
+      scale_color_gradientn(colours = rainbow(10))
+  }
+  if (average) {
+    p <- p +
+      geom_line(data = ave_completions)
+  }
+  p +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     scale_y_continuous(labels = scales::percent_format(scale = 1))
 }
