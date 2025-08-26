@@ -479,15 +479,10 @@ make_discipline_table <- function() {
   ) |>
     kableExtra::kbl(
       format = "latex",
-      col.names = c("Narrow Fields", "Detailed Fields")
+      col.names = c("Narrow Fields", "Detailed Fields"),
+      booktabs = TRUE,
+      linesep = ""
     ) |>
-    kableExtra::add_header_above(
-      c("Broad Field: Natural and Physical Sciences" = 2),
-      bold = TRUE
-    ) |>
-    kableExtra::kable_styling(
-      latex_options = c("striped"),
-      full_width = FALSE
-    ) |>
-    kableExtra::column_spec(2, width = "20em")
+    kableExtra::row_spec(0, bold = TRUE) |>
+    kableExtra::column_spec(2, width = "9cm")
 }

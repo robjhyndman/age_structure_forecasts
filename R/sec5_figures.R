@@ -43,10 +43,21 @@ make_fig20 <- function(disciplines_combined) {
 }
 
 make_fig21 <- function(course_leavers, combine = FALSE, no_other = TRUE) {
-  if(no_other) {
+  if (no_other) {
     course_leavers <- course_leavers |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
+  course_leavers$discipline <- factor(
+    course_leavers$discipline,
+    levels = c(
+      "Biological Sciences",
+      "Chemical Sciences",
+      "Earth Sciences",
+      "Mathematical Sciences",
+      "Physics and Astronomy",
+      "Other Natural and Physical Sciences"
+    )
+  )
   subtitle <- "(2006 - 2023)"
   if (combine) {
     course_leavers <- course_leavers |>
@@ -66,7 +77,7 @@ make_fig21 <- function(course_leavers, combine = FALSE, no_other = TRUE) {
   if (!combine) {
     p <- p +
       facet_wrap(~discipline, scales = "free_y") +
-      labs(title = paste("Graduates by discipline:", subtitle))
+      labs(title = "Graduates by discipline")
   } else {
     p <- p +
       labs(title = paste("Total graduates:", subtitle))
@@ -74,9 +85,26 @@ make_fig21 <- function(course_leavers, combine = FALSE, no_other = TRUE) {
   p
 }
 
-make_fig22 <- function(disciplines_combined) {
+make_fig22 <- function(disciplines_combined, no_other = TRUE) {
+  disciplines_combined$discipline <- factor(
+    disciplines_combined$discipline,
+    levels = c(
+      "Biological Sciences",
+      "Chemical Sciences",
+      "Earth Sciences",
+      "Mathematical Sciences",
+      "Physics and Astronomy",
+      "Other Natural and Physical Sciences"
+    )
+  )
+  if (no_other) {
+    disciplines_combined <- disciplines_combined |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
+  disciplines_combined$Year <- disciplines_combined$year
+  disciplines_combined$Age <- disciplines_combined$age
   ggplot(disciplines_combined) +
-    aes(x = age, y = remainder, group = year, color = year) +
+    aes(x = Age, y = remainder, group = Year, color = Year) +
     geom_line() +
     facet_wrap(~discipline, scales = "free_y") +
     scale_x_continuous(breaks = seq(10, 100, by = 10)) +
@@ -85,17 +113,23 @@ make_fig22 <- function(disciplines_combined) {
     ) +
     labs(
       y = "Remainder",
-      title = "Remainder by discipline",
-      subtitle = "Natural and Physical Sciences (2006 - 2020)"
+      title = "Remainder by discipline"
     ) +
     geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5) +
     theme(
-      legend.position = "top"
+      legend.direction = "horizontal",
+      legend.position = "inside",
+      legend.position.inside = c(2 / 3, 1 / 2),
+      legend.justification = c(-0.4, 3)
     )
 }
 
-make_fig24 <- function(disciplines_combined, future_disciplines_combined, no_other = TRUE) {
-  if(no_other) {
+make_fig24 <- function(
+  disciplines_combined,
+  future_disciplines_combined,
+  no_other = TRUE
+) {
+  if (no_other) {
     disciplines_combined <- disciplines_combined |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
     future_disciplines_combined <- future_disciplines_combined |>
@@ -134,7 +168,7 @@ make_fig24 <- function(disciplines_combined, future_disciplines_combined, no_oth
 }
 
 make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
-  if(no_other) {
+  if (no_other) {
     grads <- grads |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
     future_grads <- future_grads |>

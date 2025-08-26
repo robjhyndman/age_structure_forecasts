@@ -140,9 +140,9 @@ make_fig_completions <- function(
     stop("Please provide ave_completions if average = TRUE")
   }
   if (average & !by_year) {
-    title <- "Average graduate completions by age (2006 - 2023)"
+    title <- "Average graduate completions"
   } else if (by_year) {
-    title <- "Graduate completions by year and age (2006 - 2023)"
+    title <- "Graduate completions"
   } else {
     stop("Please select either by_year or average")
   }
@@ -155,11 +155,11 @@ make_fig_completions <- function(
     )
   if (by_year) {
     p <- p +
-      geom_line(
+      geom_step(
         aes(colour = year, group = year),
         alpha = 0.2 + 0.8 * (!average)
       ) +
-      scale_color_gradientn(colours = rainbow(10))
+      scale_color_gradientn(colours = rainbow(10), name = "Year")
   }
   if (average) {
     p <- p +

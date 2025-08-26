@@ -16,6 +16,19 @@ make_pop_fig <- function(
     census <- census |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
+  if ("discipline" %in% names(census)) {
+    census$discipline <- factor(
+      census$discipline,
+      levels = c(
+        "Biological Sciences",
+        "Chemical Sciences",
+        "Earth Sciences",
+        "Mathematical Sciences",
+        "Physics and Astronomy",
+        "Other Natural and Physical Sciences"
+      )
+    )
+  }
 
   p <- census |>
     as_tibble() |>
@@ -29,7 +42,7 @@ make_pop_fig <- function(
     labs(
       x = "Age",
       y = "Number of active scientists",
-      title = paste("Working population:", subtitle, "(2006 - 2021)")
+      title = "Working population by discipline",
     )
   if ("discipline" %in% names(census)) {
     p <- p +

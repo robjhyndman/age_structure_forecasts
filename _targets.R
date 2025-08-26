@@ -254,15 +254,14 @@ list(
   tar_target(fig21, make_fig21(course_leavers)),
   tar_target(fig21b, make_fig21(course_leavers, combine = TRUE)),
   tar_target(fig22, make_fig22(census4_1)),
-  tar_target(ymax, get_ymax(2022:2035, future_pop_science, no_other = TRUE)),
+  tar_target(ymax, get_ymax(2022:2035, future_pop_science)),
   tar_target(
     fig_Pxt_discipline0,
     make_pop_future_fig_discipline(
       2050,
       future_pop_science,
       census4_1,
-      no_other = TRUE,
-      ymax
+      ymax = ymax
     )
   ),
   tar_target(
@@ -271,8 +270,7 @@ list(
       2022:2035,
       future_pop_science,
       census4_1,
-      no_other = TRUE,
-      ymax
+      ymax = ymax
     )
   ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
@@ -328,12 +326,13 @@ list(
     report,
     "age_structure_forecasts.qmd",
     output_file = "age_structure_forecasts.pdf",
-    extra_files = c("refs.bib", "preamble.tex")
-  ),
-  tar_quarto(
-    talk,
-    "age_structure_talk.qmd",
-    output_file = "age_structure_talk.pdf",
-    extra_files = c("setup.R", "header.tex", "before-title.tex")
+    extra_files = c("refs.bib", "preamble.tex"),
+    quiet = FALSE
   )
+  # tar_quarto(
+  #   talk,
+  #   "age_structure_talk.qmd",
+  #   output_file = "age_structure_talk.pdf",
+  #   extra_files = c("setup.R", "header.tex", "before-title.tex")
+  # )
 )

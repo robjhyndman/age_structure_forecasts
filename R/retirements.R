@@ -99,12 +99,12 @@ make_fig_rx <- function(retirements, retirement_data) {
   retirements |>
     ggplot() +
     aes(x = age) +
-    geom_line(aes(y = pc / 100 / nages), color = "gray") +
+    geom_step(aes(y = pc / 100 / nages), color = "gray") +
     geom_line(aes(y = retire_prob), color = "black") +
     labs(
       x = "Age",
       y = latex2exp::TeX("Probability of retirement"), # ($r_{x,t}$)"),
-      title = "Probability of retirement for Australian scientists (2022 - 23)"
+      title = "Probability of retirement for Australian scientists"
     ) +
     scale_x_continuous(breaks = seq(40, 100, by = 10))
 }

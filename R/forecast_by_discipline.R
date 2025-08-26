@@ -1,7 +1,7 @@
 get_ymax <- function(
   yrs,
   object,
-  no_other = FALSE
+  no_other = TRUE
 ) {
   # Remove other group
   if (no_other) {
@@ -24,7 +24,7 @@ make_pop_future_fig_discipline <- function(
   yrs,
   object,
   data,
-  no_other = FALSE,
+  no_other = TRUE,
   ymax,
   color_data = FALSE
 ) {
@@ -109,7 +109,11 @@ make_pop_future_fig_discipline_year <- function(
     patchwork::plot_layout(guides = "collect", axis_titles = "collect")
 }
 
-make_fig_future_grads_discipline <- function(course_leavers, future_grads_discipline, no_other = TRUE) {
+make_fig_future_grads_discipline <- function(
+  course_leavers,
+  future_grads_discipline,
+  no_other = TRUE
+) {
   if (no_other) {
     course_leavers <- course_leavers |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
@@ -117,14 +121,14 @@ make_fig_future_grads_discipline <- function(course_leavers, future_grads_discip
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
   future_grads_discipline_pi <- future_grads_discipline |>
-      as_tibble() |>
-      group_by(discipline, year) |>
-      summarise(
-        lo = quantile(graduates, prob = 0.05),
-        mean = mean(graduates),
-        hi = quantile(graduates, prob = 0.95),
-        .groups = "drop"
-      )
+    as_tibble() |>
+    group_by(discipline, year) |>
+    summarise(
+      lo = quantile(graduates, prob = 0.05),
+      mean = mean(graduates),
+      hi = quantile(graduates, prob = 0.95),
+      .groups = "drop"
+    )
   course_leavers |>
     ggplot(aes(x = year)) +
     facet_wrap(~discipline, scales = "free_y") +
