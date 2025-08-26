@@ -2,13 +2,15 @@
 
 \renewbibmacro*{url+urldate}{%
   \ifthenelse{\iffieldundef{url}\OR\NOT\iffieldundef{doi}}
-    {}
-    {\printfield{url}
+  {}
+  {\printfield{url}
     \iffieldundef{urlday}
-      {}
-      {
-       \setunit{\addspace}%
-       \mkbibparens{visited \stripzeros{\thefield{urlday}}~\mkbibmonth{\thefield{urlmonth}} \printfield{urlyear}}
-      }
+    {}
+    {
+      \setunit{\addspace}%
+      \mkbibparens{visited \stripzeros{\thefield{urlday}}~\mkbibmonth{\thefield{urlmonth}} \printfield{urlyear}}
     }
+  }
 }
+
+\usepackage[section]{placeins}

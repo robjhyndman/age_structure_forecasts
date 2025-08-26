@@ -32,12 +32,9 @@ format:
     keep-tex: true
 filters:
   - blindable-div
-execute:
-  eval: false
 ---
 
 ```{r setup, include=FALSE}
-#| eval: true
 library(targets)
 
 # Set default colors
@@ -87,43 +84,47 @@ That is, the population each year is equal to the population from the previous y
 
 As a first approximation, the components $D$, $R$, $E$ and $G$ can be assumed to behave independently for each combination of $i$, $x$ and $t$. In reality, there may be a negative correlation between $G$ and $E$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
 
-To use @eq-dgb, data on $P$, $D$, $R$, and $G$ is required, and the remainder component $E$ will be calculated using @eq-dgb. It is unlikely that we have available separate death and retirement counts for each group, so we will instead use probabilities of death and retirement across all groups, giving $D_{i,x,t} = P_{i,x,t}q_{x,t}$ and $R_{i,x,t} = P_{i,x,t}r_{x,t}$ where $q_{x,t}$ is the probability of death at each $x$ in year $t$, and $r_{x,t}$ is the probability of retirement at each $x$ in year $t$. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_t$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines. So our more realistic model becomes
+To use @eq-dgb, data on $P$, $D$, $R$, and $G$ is required, and the remainder component $E$ will be calculated using @eq-dgb. It is unlikely that we have available separate death and retirement counts for each group, and retirement data is not available in all years. So we will instead use probabilities of death and retirement across all groups, and assume retirement probability does not change over time, giving $D_{i,x,t} = P_{i,x,t}q_{x,t}$ and $R_{i,x,t} = P_{i,x,t}r_{x}$ where $q_{x,t}$ is the probability of death at each age $x$ in year $t$, and $r_{x}$ is the probability of retirement at each age $x$. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_t$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines. So our more realistic model becomes
 $$
-P_{i,x+1,t+1} = P_{i,x,t}(1 - q_{x,t} - r_{x,t}) + g_xG_{i,t} + E_{i,x,t},
+P_{i,x+1,t+1} = P_{i,x,t}(1 - q_{x,t} - r_{x}) + g_xG_{i,t} + E_{i,x,t},
 $$ {#eq-dgb2}
 To obtain forecasts of $P$, forecasts of $q$, $r$, $G$, and $E$ must then be computed. Each of these can be estimated using a functional time series model [@HU07].
 
 # Data {#sec-data}
 
-## Data sources
+This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. We refer to ASCED's Narrow Fields as "disciplines"; these comprise Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.). @tbl-disciplines lists the detailed fields within each scientific discipline.
 
-This analysis focuses on the Natural and Physical Sciences as defined in the Australian Standard Classification of Education (ASCED) by the @ABSASCED. We refer to ASCED's Narrow Fields as "disciplines"; these comprise Physics and Astronomy, Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences not further defined (n.f.d.). We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline.
+```{r}
+#| label: tbl-disciplines
+#| tbl-cap: Classification of scientific disciplines, based on the ASCED Narrow Fields of Education within the Broad Field of Natural and Physical Sciences. The table lists their corresponding Detailed Fields.  "n.e.c." stands for "Not Elsewhere Classified."
+tar_read(discipline_table)
+```
 
-## Labour force participation
 
-Data on $P_{i,x,t}$ were sourced from the *Census of Population and Housing* [@ABSCensus] for census years 2006, 2011, 2016, and 2021. This dataset encompasses one-year age groups, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation status [@ABSLFFP] is available only for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
+We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline.
 
-The resulting data on scientists who are active in the Australian labour market is shown in @fig-cohort-interpolation as the thick lines. Cohort interpolation [@STUPP88], applying linear interpolation within each age cohort between census years, is used to estimate values for the intercensal years (shown as thin lines).
+## Working Population
+
+Data on the working population were sourced from the *Census of Population and Housing* [@ABSCensus] for census years 2006, 2011, 2016, and 2021. This dataset encompasses one-year age groups, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation status [@ABSLFFP] is available only for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
+
+The resulting estimates of the number of scientists who are active in the Australian labour market is shown in @fig-cohort-interpolation as the thick lines. Cohort interpolation [@STUPP88], applying linear interpolation within each age cohort between census years, is used to estimate values for the intercensal years (shown as thin lines).
 
 ```{r}
 #| label: fig-cohort-interpolation
-#| eval: true
 #| fig-cap: "$P_{i,x,t}$: Estimated number of working scientists in Australia by discipline and age, 2006--2021. Thicker lines are used to denote census years."
 tar_read(fig20)
 ```
 
 ## Retirements
 
-Retirement data was sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. The data are categorised by the industry of an individual's main job, and are provided in four broad age groups (45--59, 60--64, 65--69 and 70+). There are 19 industry categories, with the largest numbers of scientists working in Education and Training (15.8%), Professional, Scientific and Technical Services (15.5%), and Health Care and Social Assistance (14.6%). The proportions in other industries are much smaller. We take a weighted average of retirement intentions using these top three industries, with proportions rescaled to sum to 1. The resulting values are shown in @fig-retirements as the gray line. To obtain a single-year-of-age retirement distribution, we disaggregate the data using a monotonic cubic spline applied to the cumulative values of these age groups [@SHW04]. The resulting smoothed distribution is shown as the black line in @fig-retirements.
+Retirement data was sourced from the *Retirement and Retirement Intentions* dataset (Catalogue 6238) for the 2022--2023 financial year [@ABS6238]. The data are categorised by the industry of an individual's main job, and are provided in four broad age groups (45--59, 60--64, 65--69 and 70+). There are 19 industry categories, with the largest numbers of scientists working in Education and Training (15.8%), Professional, Scientific and Technical Services (15.5%), and Health Care and Social Assistance (14.6%). The proportions in other industries are much smaller. We take a weighted average of retirement intentions using these top three industries, with proportions rescaled to sum to 1. The resulting values are shown in @fig-retirements as the gray line. To obtain a single-year-of-age retirement distribution, we disaggregate the data using a monotonic cubic spline applied to the cumulative values of these age groups [@SHW04]. The resulting smoothed distribution ($r_x$) is shown as the black line in @fig-retirements.
 
 ```{r}
 #| label: fig-retirements
-#| eval: true
-#| fig-cap: "$r_x$: Age distribution of retirement intentions for the 2022--2023 Australian financial year. The blue line shows the smoothed distribution."
+#| fig-cap: "$r_x$: Age distribution of retirement intentions, based on data from the 2022--2023 Australian financial year. The blue line shows the smoothed probabilities."
 tar_read(fig_rx2)
 ```
 
-These probabilities are used to estimate $r_{x,t}$, and are treated as fixed for the simulation, assuming that retirement patterns will remain stable over time.
 
 ## Deaths
 
@@ -131,7 +132,6 @@ Age-specific mortality rates from 1971 to 2021 were obtained from the @HMD. Usin
 
 ```{r}
 #| label: fig-death-probs
-#| eval: true
 #| fig-cap: "$q_{x,t}$: Age-specific probabilities of death (on a logarithmic scale) for each year from 1971 to 2021."
 tar_read(fig_mxt)
 ```
@@ -140,86 +140,57 @@ No data are available for specific industry groups, so we assume that all scient
 
 ## Graduate Completions
 
-Graduate completion statistics were obtained from the *Award Course Completions* dataset [@DeptEdu]. @fig-completions2 shows the distribution of graduate completions with a bachelor's degree or higher, by age for each year from 2006 to 2023. Some missing values result in gaps in certain lines, but the overall pattern remains highly consistent across years. Given this consistency, the data is averaged across all available years, and then smoothed by applying monotonic cubic splines to the cumulative values [@SHW04]. The resulting averaged distribution, shown as the black line in @fig-completions2, smooths out year-to-year fluctuations and provides a stable estimate of $g_x$.
+Graduate completion statistics were obtained from the *Award Course Completions* dataset [@DeptEdu]. @fig-completions shows the distribution of graduate completions with a bachelor's degree or higher, by age for each year from 2006 to 2023. Some missing values result in gaps in certain lines, but the overall pattern remains highly consistent across years. Given this consistency, the data is averaged across all available years, and then smoothed by applying monotonic cubic splines to the cumulative values [@SHW04]. The resulting averaged distribution, shown as the black line in @fig-completions, smooths out year-to-year fluctuations and provides an  estimate of $g_x$.
 
 ```{r}
-#| label: fig-completions2
-#| eval: true
-#| fig-cap: Percentage distribution of graduate completions by age over the years 2006 to 2023. The black line shows a smoothed estimate of the average distribution.
+#| label: fig-completions
+#| fig-cap: "$g_x$: Estimated distribution of graduate completions by age (black). This is estimated by averaging and smoothing the data for the years 2006 to 2023 (coloured)."
 tar_read(fig_ave_completions)
 ```
 
-The Department of Education provides data on the number of graduates with a bachelor's degree or higher, categorised by discipline and year [@DeptEdu_Private]. These datasets include both domestic and international students. Estimate of $G_{i,t}$, the total number of graduates in each discipline $i$ and year $t$, are shown in @fig-21.
+The Department of Education provides data on the number of graduates with a bachelor's degree or higher, categorised by discipline and year [@DeptEdu_Private]. This dataset includes both domestic and international students. The total number of graduates in each discipline $i$ and year $t$, are shown in @fig-graduates.
 
 ```{r}
-#| label: fig-21
-#| fig-cap: "Total number of graduates with a bachelor's degree or higher by discipline from 2006 to 2023."
+#| label: fig-graduates
+#| fig-cap: "$G_{i,t}$: Total number of graduates with a bachelor's degree or higher by discipline from 2006 to 2023."
 tar_read(fig21)
 ```
 
+The large increase in the working population observed in the 2021 Census for Mathematical Sciences (@fig-cohort-interpolation) can be partly attributed to the sharp rise in graduate numbers between 2016 and 2021.
 
-## Net Migration
+## Remainder
 
-The demographic growth-balance equation (@eq-dgb), when rearranged, provides an estimate of net migration:
+The demographic growth-balance equation (@eq-dgb2), when rearranged, provides an estimate of the remainder, including net migration and career changes:
 $$
-G_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} + D_{i,x,t} + R_{i,x,t} - N_{i,x,t}, \quad x = 15,16,\dots
-$$ {#eq-netmigration}
+E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t}(1 - q_{x,t} - r_{x}) - g_xG_{i,t},
+$$ {#eq-remainder}
+These remainders are shown in @fig-remainder.
 
-In this equation, $G$ represents the difference required to balance population changes over time after accounting for deaths ($D$), retirements ($R$), new graduates ($N$), and the population at time $t$. It serves as the residual value, reflecting the components influencing the workforce's age structure.
+```{r}
+#| label: fig-remainder
+#| fig-cap: Estimated remainder $E_{i,x,t}$ by discipline, age and year (2006--2020), calculated using the demographic growth-balance equation.
+tar_read(fig22)
+```
 
 # Results {#sec-results}
 
-@tbl-disciplines lists the scientific disciplines (as per @ABSASCED Narrow Fields) included in this analysis, along with their corresponding Detailed Fields. This table provides essential context for understanding the specific areas classified under each discipline.
 
-```{r}
-#| label: tbl-disciplines
-#| eval: true
-#| tbl-cap: Classification of scientific disciplines, based on the ASCED Narrow Fields of Education within the Broad Field of Natural and Physical Sciences. The table lists their corresponding Detailed Fields.  "n.e.c." stands for "Not Elsewhere Classified."
-tar_read(discipline_table)
-```
-
-## Working Population
-
-The Australian Census provide working population data every five years. @fig-working-population shows the age distribution of scientists active in the labour market as recorded in the Census for the years 2006, 2011, 2016, and 2021. There are notable differences over time, and between disciplines. The number of working scientists has increased over time, especially in Mathematical Sciences in the latest 2021 Census, as well as in Biological Sciences and Other Natural and Physical Sciences. The right tail has gradually grown heavier, reflecting an increasing proportion of older scientists, while the distribution has also become wider, indicating a broader age range in the workforce.
-
-The working population for years between census are estimated using linear cohort interpolation [@STUPP88], with the resulting population estimates shown in @fig-interpolated-working-population. These interpolated values form the basis for forecasting the future working population, representing the values of $P_{i,x,t}$.
-
-```{r}
-#| label: fig-working-population
-#| eval: true
-#| fig-cap: "Age distribution of the working population across scientific disciplines based on Census data from 2006, 2011, 2016, and 2021. Each panel represents a different discipline, with lines indicating the number of active scientists in the Australian labour market by age for each Census year."
-#| fig-height: 5.5
-tar_read(fig19)
-```
-
-```{r}
-#| label: fig-interpolated-working-population
-#| eval: true
-#| fig-cap: "Age distribution of the working population across scientific disciplines, interpolated from Census data using linear cohort interpolation. Each panel represents a different discipline, with lines indicating the number of active scientists in the Australian labour market by age and year."
-#| fig-height: 6
-tar_read(fig20)
-```
 
 ## Graduate Completions
-
-@fig-grad-forecasts shows the number of total graduate completions from 2006 to 2023 ($\sum_x N_{i,x,t}$). A significant positive trend is observed in three disciplines: Mathematical Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.). Note that the Y-axis scales vary across disciplines to reflect differences in the number of completions.
-
-The increase in the working population observed in the 2021 Census for Mathematical Sciences, as mentioned earlier, can be partly attributed to the sharp rise in graduate numbers between 2016 and 2021. This surge in graduates during that period provides insight into the corresponding growth in the working population.
 
 To forecast future graduate numbers, a global ARIMA model was employed, following the principles outlined by @HM21. ARIMA is a time series forecasting method that identifies underlying trends in past data, assuming these trends will continue. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves robustness by incorporating information across disciplines. The model is then used to generate discipline-specific forecasts, with simulations run 500 times to account for variability and generate 90% prediction intervals. The results, along with these intervals, are shown in @fig-grad-forecasts.
 
 ```{r}
 #| label: fig-grad-forecasts
-#| eval: true
 #| fig-cap: "Forecast number of graduates by discipline, 2024-2041, with 90% prediction intervals, based on historical data from 2006--2023."
 tar_read(fig_grad_forecasts)
 ```
 
-Since workforce projections require not only total graduate numbers but also their age distribution, the forecasted totals (depicted in @fig-grad-forecasts) are disaggregated by age using the percentage distribution of graduate completions by age across all disciplines (as shown in @fig-completions2). This enables an estimation of how many graduates will enter each age group in future years, ensuring consistency with observed patterns in the broader graduate population.
+Since workforce projections require not only total graduate numbers but also their age distribution, the forecasted totals (depicted in @fig-grad-forecasts) are disaggregated by age using the percentage distribution of graduate completions by age across all disciplines (as shown in @fig-completions). This enables an estimation of how many graduates will enter each age group in future years, ensuring consistency with observed patterns in the broader graduate population.
 
 ## Net Migration
 
-Net migration ($G_{i,x,t}$) is estimated using the demographic growth-balance equation, which is rearranged to calculate the net number of migrants each year (@eq-netmigration). @fig-net-migration-disciplines shows the age distribution of net migration among scientists between 2006 and 2020.  Emigration during the early career stage is largely driven by international students graduating and returning home. This negative net migration in the early career stage is a significant factor across all disciplines.
+Net migration ($G_{i,x,t}$) is estimated using the demographic growth-balance equation, which is rearranged to calculate the net number of migrants each year (@eq-remainder). @fig-net-migration-disciplines shows the age distribution of net migration among scientists between 2006 and 2020.  Emigration during the early career stage is largely driven by international students graduating and returning home. This negative net migration in the early career stage is a significant factor across all disciplines.
 
 Significant emigration is observed between the ages of 20 and 27, primarily driven by international students leaving Australia after completing their studies, with some domestic graduates also seeking employment overseas. As the graduate data includes both domestic and international students, this emigration is largely influenced by international students returning home.
 
@@ -233,7 +204,6 @@ In contrast, core scientific disciplines, which have smaller populations, show m
 
 ```{r}
 #| label: fig-net-migration-disciplines
-#| eval: true
 #| fig-cap: Estimated net migration by age across scientific disciplines (2006--2020). Each panel represents a different discipline, showing net migration trends across age groups.
 #| fig-height: 6
 tar_read(fig22)
@@ -245,8 +215,8 @@ To forecast the future age structure of the scientific workforce in Australia, a
 
 1.  **Death Probabilities:** Fit a functional data model [@HU07] to the death probabilities shown in @fig-death-probs, with ARIMA models for the coefficients. This model is used to simulate values of age-specific death probabilities in future years.
 2.  **Net Migration:** Fit a separate functional data model to the age-specific migrant numbers shown in @fig-net-migration-disciplines, with ARIMA models for the coefficients. This model simulates values of age-specific net migrant numbers in future years.
-3.  **Graduate Numbers:** Fit an ARIMA model [@fpp3] to simulate total numbers of graduates in each future year from the numbers shown in @fig-grad-forecasts. These graduate numbers will then be disaggregated by age using the age distribution shown in @fig-completions2 to estimate age-specific graduate numbers in each year.
-4.  **Retirements:** Estimate retirements in each year by multiplying the number of people of working age in each age bracket (@fig-interpolated-working-population) by the retirement probabilities shown in @fig-retirements2. Fixed age-specific retirement probabilities are used.
+3.  **Graduate Numbers:** Fit an ARIMA model [@fpp3] to simulate total numbers of graduates in each future year from the numbers shown in @fig-grad-forecasts. These graduate numbers will then be disaggregated by age using the age distribution shown in @fig-completions to estimate age-specific graduate numbers in each year.
+4.  **Retirements:** Estimate retirements in each year by multiplying the number of people of working age in each age bracket (@fig-interpolated-working-population) by the retirement probabilities shown in @fig-retirements. Fixed age-specific retirement probabilities are used.
 5.  **Deaths:** Estimate deaths in each year by multiplying the number of people of working age in each age bracket by the forecast death probabilities.
 6.  **Demographic Growth-Balance:** Use the demographic growth-balance equation [@eq-dgb] to obtain the next year's age-specific population values. This step incorporates the graduate numbers, net migration, retirements, and deaths, to produce the forecasted population for the next year.
 
@@ -254,7 +224,6 @@ A total of 500 simulations are run to obtain a distribution of possible future p
 
 ```{r}
 #| label: fig-future-physics
-#| eval: true
 #| fig-height: 3
 #| fig-cap: Two example simulations from a set of 500, using historical data from 2006-2021 to forecast age-specific population distributions for 2022-2041.
 tar_read(fig16)
@@ -280,7 +249,6 @@ The projections indicate wider prediction intervals for younger age groups due t
 
 ```{r}
 #| label: fig-forecast-working-population
-#| eval: true
 #| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across scientific disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
 #| fig-height: 5.5
 # 2025 and 2035
@@ -301,7 +269,6 @@ These trends are further validated by the total workforce projections shown in @
 
 ```{r}
 #| label: fig-forecast-total-working-scientists
-#| eval: true
 #| fig-cap: "Forecasted total number of working scientists across scientific disciplines from 2022 to 2041. The shaded region represents the 90% prediction interval, the coloured line indicates the mean estimate, and the black line represents historical data."
 tar_read(fig24)
 ```
