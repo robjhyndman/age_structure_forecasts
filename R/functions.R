@@ -295,7 +295,8 @@ forecast_pop_discipline <- function(
     transmute(
       age = age + 1,
       year = year + 1,
-      working = working - deaths - retirees + graduates + remainder,
+      working = pmax(0, working - deaths - retirees + graduates + remainder),
+      working = round(working)
     ) |>
     filter(age <= 100) |>
     bind_rows(
@@ -303,7 +304,8 @@ forecast_pop_discipline <- function(
     )
 
   N <- N |>
-    left_join(tmp, by = c("age", "year"))
+    left_join(tmp, by = c("age", "year")) |>
+    mutate(working = if_else(is.na(working), 0, working))
 
   # Now iterate to generate population each year
   # Pull out year to process
@@ -323,18 +325,20 @@ forecast_pop_discipline <- function(
       )
     N1 <- N1 |>
       left_join(next_year, by = c("age", "year", ".rep")) |>
+      mutate(working = if_else(is.na(working), 0, working)) |>
       mutate(
-        deaths = rpois(
+        deaths = rbinom(
           n = NROW(N1),
-          lambda = pmax(0, working * mortality)
+          size = working,
+          prob = mortality
         ),
-        retirees = rpois(
+        retirees = rbinom(
           n = NROW(N1),
-          lambda = pmax(0, (working - deaths) * retire_prob)
+          size = working - deaths,
+          prob = retire_prob
         ),
-        working = working - deaths - retirees + graduates + remainder,
-        working = if_else(age == 15, 0, working),
-        working = if_else(working < 0, 0, working)
+        working = pmax(0, working - deaths - retirees + graduates + remainder),
+        working = if_else(age == 15, 0, round(working)),
       ) |>
       filter(age <= 100) |>
       select(-deaths, -retirees)
