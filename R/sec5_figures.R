@@ -175,6 +175,7 @@ make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
   future_grads <- future_grads |>
+    filter(year <= 2035) |>
     group_by(discipline) |>
     summarise(
       mean = mean(graduates),
@@ -194,8 +195,8 @@ make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
     geom_line(data = grads, aes(y = graduates)) +
     labs(
       y = "Number of graduates",
-      title = "Forecasts of total graduates by discipline: 2024-2041",
+      title = "Forecasts of total graduates by discipline",
     ) +
-    scale_x_continuous(breaks = seq(2010, 2040, by = 5)) +
+    scale_x_continuous(breaks = seq(2010, 2035, by = 5)) +
     facet_wrap(~discipline, scales = "free_y")
 }
