@@ -324,9 +324,14 @@ forecast_pop_discipline <- function(
     N1 <- N1 |>
       left_join(next_year, by = c("age", "year", ".rep")) |>
       mutate(
-        deaths = working * mortality,
-        retirees = working * retire_prob,
-        retirees = if_else(retirees < 0, 0, retirees),
+        deaths = rpois(
+          n = NROW(N1),
+          lambda = pmax(0, working * mortality)
+        ),
+        retirees = rpois(
+          n = NROW(N1),
+          lambda = pmax(0, (working - deaths) * retire_prob)
+        ),
         working = working - deaths - retirees + graduates + remainder,
         working = if_else(age == 15, 0, working),
         working = if_else(working < 0, 0, working)
