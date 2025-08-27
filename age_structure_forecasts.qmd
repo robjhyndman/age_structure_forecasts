@@ -76,19 +76,22 @@ We describe the methodology in @sec-methodology. By way of illustration, we appl
 
 Suppose our workforce is divided into $I$ groups, indexed by $i=1,\dots,I$. In our application, these are scientific disciplines, but in principle they could refer to any subdivision of workers. Let $P_{i,x,t}$ denote the number of equivalent full-time workers in group $i$ who are aged $x$ at the start of year $t$, where $x=15,16,\dots$. The starting age of 15 is chosen because it is the minimum age at which individuals are counted as part of the labour force in the Australian Census [@ABSLFSP]. We assume that data are available for years $t=1,\dots,T$, and that forecasts are required for $P_{i,x,T+h}$ across all ages and groups, for some forecast horizon $h>0$.
 
-People can leave the workforce of a group through death, retirement, career change, or emigration. They can enter the workforce through graduation, immigration, or career change. Unfortunately, we typically do not have data on many of these processes, so we will combine career change, emigration and immigration into a remainder term, which we denote as $E_{i,x,t}$. Suppose we do have data on numbers of deaths ($D_{i,x,t}$), numbers of retirements ($R_{i,x,t}$), and numbers of graduates ($G_{i,x,t}$); the numbers in each case are for people aged $x$ at the start of year $t$. Then population changes can be described using a model similar to the stochastic population model of @HB08, excluding the birth process:
+People can leave the workforce of a group through death, retirement, emigration, or career change; they can enter the workforce through graduation, immigration, or career change. Unfortunately, we typically do not have data on many of these processes, so we will combine career change, emigration and immigration into a remainder term, which we denote as $E_{i,x,t}$. Let $D_{i,x,t}$ denote the number of deaths of workers in group $i$ of age $x$ in year $t$, $R_{i,x,t}$ denote the number of retirements from the same group of workers, and $G_{i,x,t}$ denote the number of new graduates of age $x$ in year $t$ who take up work in group $i$. The numbers in each case are for people aged $x$ at the *start* of year $t$. Then population changes can be described using a model similar to the stochastic population model of @HB08, excluding the birth process:
 $$
 P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t},
 $$ {#eq-dgb}
-That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus any other changes due to migration or career change (which may be negative). We assume that $D$, $R$ and $G$ are all non-negative, $D_{i,x,t} + R_{i,x,t} \le P_{i,x,t}$, and $E_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, forw $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, they will not be replaced by new workers of the same age.
+where
 
-As a first approximation, the components $D$, $R$, $E$ and $G$ can be assumed to behave independently for each combination of $i$, $x$ and $t$. In reality, there may be a negative correlation between $G$ and $E$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
+* $D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{i,x,t})$, with $q_{i,x,t}$ being the probability of death for group $i$ at age $x$ in year $t$;
+* $R_{i,x,t} \sim \text{Binomial}((P_{i,x,t}-D_{i,x,t}), r_{i,x,t})$, with $r_{i,x,t}$ being the probability of retirement from group $i$ at age $x$ in year $t$.
 
-To use @eq-dgb, data on $P$, $D$, $R$, and $G$ is required, and the remainder component $E$ will be calculated using @eq-dgb. It is unlikely that we have available separate death and retirement counts for each group, and retirement data is not available in all years. So we will instead use probabilities of death and retirement across all groups, and assume retirement probability does not change over time, giving $D_{i,x,t} = P_{i,x,t}q_{x,t}$ and $R_{i,x,t} = P_{i,x,t}r_{x}$ where $q_{x,t}$ is the probability of death at each age $x$ in year $t$, and $r_{x}$ is the probability of retirement at each age $x$. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_t$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines. So our more realistic model becomes
-$$
-P_{i,x+1,t+1} = P_{i,x,t}(1 - q_{x,t} - r_{x}) + g_xG_{i,t} + E_{i,x,t},
-$$ {#eq-dgb2}
-To obtain forecasts of $P$, forecasts of $q$, $r$, $G$, and $E$ must then be computed. Each of these can be estimated using a functional time series model [@HU07].
+That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus any other changes due to migration or career change (which may be negative). We assume that $E_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, for $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, and $x$ is above the threshold, they will not be replaced by new workers of the same age.
+
+As a first approximation, the components $q$, $r$, $E$ and $G$ can be assumed to behave independently for each combination of $i$, $x$ and $t$. In reality, there may be a negative correlation between $G$ and $E$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
+
+It is unlikely that we have available separate death and retirement counts for each group, and retirement data is not available in all years. So we will let $q_{i,x,t} = q_{x,t}$ and $r_{i,x,t} = r_{x}$, assuming that death rates and retirement rates are the same across all groups, and that retirement rates do not change over time. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_{i,t}$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines.
+
+To obtain forecasts of $P$, we use functional time series models [@HU07] for each of $q$, $G$, and $E$, and simulate future sample paths.
 
 # Data {#sec-data}
 
@@ -100,14 +103,13 @@ This analysis focuses on the Natural and Physical Sciences as defined in the Aus
 tar_read(discipline_table)
 ```
 
-
 We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline.
 
 ## Working Population
 
 Data on the working population were sourced from the *Census of Population and Housing* [@ABSCensus] for census years 2006, 2011, 2016, and 2021. This dataset encompasses one-year age groups, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation status [@ABSLFFP] is available only for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
 
-The resulting estimates of the number of scientists who are active in the Australian labour market is shown in @fig-cohort-interpolation as the thick lines. Cohort interpolation [@STUPP88], applying linear interpolation within each age cohort between census years, is used to estimate values for the intercensal years (shown as thin lines).
+The resulting estimates of the number of scientists who are active in the Australian labour market is shown in @fig-cohort-interpolation as the thick lines. Cohort interpolation [@STUPP88], applying linear interpolation within each age cohort between census years, is used to estimate values for the intercensal years (shown as thin lines), giving $P_{i,x,t}$ for each discipline $i$, age $x$, and year $t$.
 
 ```{r}
 #| label: fig-cohort-interpolation
@@ -124,7 +126,6 @@ Retirement data was sourced from the *Retirement and Retirement Intentions* data
 #| fig-cap: "$r_x$: Age distribution of retirement intentions, based on data from the 2022--2023 Australian financial year. The blue line shows the smoothed probabilities."
 tar_read(fig_rx2)
 ```
-
 
 ## Deaths
 
@@ -148,7 +149,7 @@ Graduate completion statistics were obtained from the *Award Course Completions*
 tar_read(fig_ave_completions)
 ```
 
-The Department of Education provides data on the number of graduates with a bachelor's degree or higher, categorised by discipline and year [@DeptEdu_Private]. This dataset includes both domestic and international students. The total number of graduates in each discipline $i$ and year $t$, are shown in @fig-graduates.
+The Department of Education provides data on the number of graduates with a bachelor's degree or higher, categorised by discipline and year [@DeptEdu_Private]. This dataset includes both domestic and international students. The total number of graduates, $G_{i,t}$, in each discipline $i$ and year $t$, are shown in @fig-graduates.
 
 ```{r}
 #| label: fig-graduates
@@ -160,53 +161,53 @@ The large increase in the working population observed in the 2021 Census for Mat
 
 ## Remainder
 
-The demographic growth-balance equation (@eq-dgb2), when rearranged, provides an estimate of the remainder, including net migration and career changes:
+The demographic growth-balance equation (@eq-dgb), when rearranged, provides an expression for the remainder including net migration and career changes:
 $$
-E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t}(1 - q_{x,t} - r_{x}) - g_xG_{i,t},
+E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} - D_{i,x,t} - R_{i,x,t} - g_xG_{i,t},
 $$ {#eq-remainder}
-These remainders are shown in @fig-remainder.
+However, we do not have data on $D_{i,x,t}$ and $R_{i,x,t}$, so we replace these by their expected values, $P_{i,x,t} q_{x,t}$ and $P_{i,x,t}(1-q_{x,t}) r_x$, respectively. We can only estimate remainders up to 2020 because we need data for both year $t$ and year $t+1$ in @eq-remainder, and our working population data only extends to 2021. The estimated remainders are shown in @fig-remainder.
+
 
 ```{r}
 #| label: fig-remainder
-#| fig-cap: Estimated remainder $E_{i,x,t}$ by discipline, age and year (2006--2020), calculated using the demographic growth-balance equation.
+#| fig-cap: Estimated remainder $E_{i,x,t}$ by discipline, age and year (2006--2020).
 tar_read(fig22)
 ```
+
+The inclusion of international students in the graduate data leads to large positive values of the remainder for the teenage years, followed by large negative values when these students return to their home countries after graduation.
 
 # Results {#sec-results}
 
-
+To forecast future working population numbers, $P_{i,x,t}$, we use the demographic growth-balance equation (@eq-dgb), with forecasts of the components $G_{i,t}$, $q_{x,t}$, and $E_{i,x,t}$. To account for the uncertainty in each of the forecast components, we use a simulation-based approach, running 500 simulations to generate a forecast distribution of possible future outcomes.
 
 ## Graduate Completions
 
-To forecast future graduate numbers, a global ARIMA model was employed, following the principles outlined by @HM21. ARIMA is a time series forecasting method that identifies underlying trends in past data, assuming these trends will continue. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves robustness by incorporating information across disciplines. The model is then used to generate discipline-specific forecasts, with simulations run 500 times to account for variability and generate 90% prediction intervals. The results, along with these intervals, are shown in @fig-grad-forecasts.
+To forecast future graduate numbers, $G_{i,t}$, a global ARIMA model was employed, following the principles outlined by @HM21. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves robustness by incorporating information across disciplines. The forecast distributions are shown in @fig-grad-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
 
 ```{r}
 #| label: fig-grad-forecasts
-#| fig-cap: "Forecast number of graduates by discipline, 2024-2041, with 90% prediction intervals, based on historical data from 2006--2023."
+#| fig-cap: "Forecast of $G_{i,t}$: the number of graduates by discipline, 2024-2035, with 90% prediction intervals, based on historical data from 2006--2023."
 tar_read(fig_grad_forecasts)
 ```
 
-Since workforce projections require not only total graduate numbers but also their age distribution, the forecasted totals (depicted in @fig-grad-forecasts) are disaggregated by age using the percentage distribution of graduate completions by age across all disciplines (as shown in @fig-completions). This enables an estimation of how many graduates will enter each age group in future years, ensuring consistency with observed patterns in the broader graduate population.
+## Death Probabilities
 
-## Net Migration
+```{r}
+#| label: fig-death-probs-forecasts
+#| fig-cap: "Forecasts of $q_{x,t}$: age-specific probabilities of death (on a logarithmic scale) for 2035, with 90% prediction intervals, based on historical data from 1971--2021."
+tar_read(fig_model_mxt3)
+```
 
-Net migration ($G_{i,x,t}$) is estimated using the demographic growth-balance equation, which is rearranged to calculate the net number of migrants each year (@eq-remainder). @fig-net-migration-disciplines shows the age distribution of net migration among scientists between 2006 and 2020.  Emigration during the early career stage is largely driven by international students graduating and returning home. This negative net migration in the early career stage is a significant factor across all disciplines.
+The death probabilities, $q_{x,t}$, were forecast using a functional data model [@HU07], with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
 
-Significant emigration is observed between the ages of 20 and 27, primarily driven by international students leaving Australia after completing their studies, with some domestic graduates also seeking employment overseas. As the graduate data includes both domestic and international students, this emigration is largely influenced by international students returning home.
+## Remainder
 
-Beyond this age range, net migration fluctuates between small levels of immigration and emigration. However, these variations are relatively minor, with annual net migration reaching no more than approximately 15 individuals per age group. Given the small magnitudes, these fluctuations may not reflect meaningful migration patterns but rather noise or systematic cohort effects due to input data limitations.
-
-As outlined in the methodology, these estimates rely on forecasting the other components ($D$, $N$, and $R$). Therefore, only estimated historical values up to 2020 are shown here. While historical data on the working population extends to 2021, net migration values for 2021 can only be obtained by incorporating forecasted components due to the structure of the equation.
-
-Other Natural and Physical Sciences and Natural and Physical Sciences (n.f.d.) show little to no immigration beyond this stage. Given their larger workforce sizes (as seen on the y-axis), these disciplines exhibit more stable net migration patterns.
-
-In contrast, core scientific disciplines, which have smaller populations, show more fluctuation in migration levels after the early career stage. This variability is likely due to workforce mobility, the sensitivity of estimates for smaller populations, and cohort effects, rather than reflecting actual migration dynamics.
+The remainder, $E_{i,x,t}$, is also modelled using a functional data model [@HU07], with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-net-migration-disciplines, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
 
 ```{r}
 #| label: fig-net-migration-disciplines
-#| fig-cap: Estimated net migration by age across scientific disciplines (2006--2020). Each panel represents a different discipline, showing net migration trends across age groups.
-#| fig-height: 6
-tar_read(fig22)
+#| fig-cap: "Forecasts of $E_{i,x,t}$: the remainder by discipline for 2035, with 90% prediction intervals, based on historical data from 2006--2020."
+tar_read(fig_model_Ext3)
 ```
 
 ## Simulating Future Populations
