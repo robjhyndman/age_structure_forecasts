@@ -191,6 +191,16 @@ list(
     fig_model_Ext2,
     make_future_Ext_fig(model_Ext, census2_1, h, 10, 2040)
   ),
+  # By discipline
+  tar_target(
+    model_Ext_discipline,
+    census4_1 |>
+      model(fdm = FDM(remainder))
+  ),
+  tar_target(
+    fig_model_Ext3,
+    make_future_Ext_fig2(model_Ext_discipline, census4_1, h, 10, 2035)
+  ),
 
   # Forecasts
   tar_target(h, 20),
