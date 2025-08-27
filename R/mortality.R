@@ -43,6 +43,7 @@ make_fig_mxt <- function(death_prob) {
     scale_y_log10(labels = scales::label_number(), limits = c(2e-5, 1))
 }
 
+# Graph showing simulated future mortality from a fitted model
 make_future_mxt_fig <- function(object, data, h, times, yr) {
   object <- object |>
     generate(h = h, times = times) |>
@@ -61,6 +62,42 @@ make_future_mxt_fig <- function(object, data, h, times, yr) {
     ) +
     geom_line(aes(x = age, y = .sim, col = .rep, group = .rep)) +
     guides(color = "none") +
+    labs(
+      x = "Age",
+      y = latex2exp::TeX("Probability of death"), # ($m_{x,t}$)"),
+      title = title
+    ) +
+    scale_x_continuous(breaks = seq(0, 100, by = 10)) +
+    scale_y_log10(labels = scales::label_number(), limits = c(2e-5, 1))
+}
+
+# Graph showing prediction intervals for future mortality from a fitted model
+make_future_mxt_fig2 <- function(object, data, h, times, yr) {
+  object <- object |>
+    forecast(h = h) |>
+    filter(year == yr, age <= 100) |>
+    mutate(
+      pi = hilo(qx),
+      lo = pi$lower,
+      hi = pi$upper
+    )
+  if (NROW(object) == 0) {
+    title <- "Probability of death for Australians"
+  } else {
+    title <- paste("Future death probabilities:", yr)
+  }
+  data |>
+    life_table() |>
+    filter(age <= 100) |>
+    ggplot(aes(x = age)) +
+    geom_line(aes(y = qx, group = year), color = "grey") +
+    geom_ribbon(
+      data = object,
+      aes(ymin = lo, ymax = hi),
+      alpha = 0.3,
+      fill = "#c14b14"
+    ) +
+    geom_line(data = object, aes(y = .mean), color = "#c14b14") +
     labs(
       x = "Age",
       y = latex2exp::TeX("Probability of death"), # ($m_{x,t}$)"),

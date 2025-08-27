@@ -59,6 +59,10 @@ list(
     fig_model_mxt2,
     make_future_mxt_fig(model_mxt, mortality, h, 10, 2040)
   ),
+  tar_target(
+    fig_model_mxt3,
+    make_future_mxt_fig2(model_mxt, mortality, h, 10, 2035)
+  ),
 
   # Retirement data
   tar_target(
