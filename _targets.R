@@ -165,7 +165,8 @@ list(
   tar_target(
     model_Ext,
     census2_1 |>
-      model(fdm = FDM(remainder))
+      filter(year <= 2020) |>
+      model(fdm = FDM(remainder, coherent = TRUE))
   ),
   tar_target(
     fig_Emodel_fdm1,
@@ -195,7 +196,8 @@ list(
   tar_target(
     model_Ext_discipline,
     census4_1 |>
-      model(fdm = FDM(remainder))
+      filter(year <= 2020) |>
+      model(fdm = FDM(remainder, coherent = TRUE))
   ),
   tar_target(
     fig_model_Ext3,

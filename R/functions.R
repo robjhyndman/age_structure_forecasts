@@ -222,7 +222,7 @@ forecast_pop_discipline <- function(
   # (since we can't compute them using following year)
   fit_migrants <- df |>
     filter(year < last_yr, !is.na(graduates)) |>
-    model(fdm = FDM(remainder))
+    model(fdm = FDM(remainder, coherent = TRUE))
   last_yr_migrants <- fit_migrants |>
     forecast(h = 1) |>
     as_tibble() |>

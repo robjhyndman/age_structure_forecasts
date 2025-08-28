@@ -202,7 +202,7 @@ The death probabilities, $q_{x,t}$, were forecast using a functional data model 
 
 ## Remainder
 
-The remainder, $E_{i,x,t}$, is also modelled using a functional data model [@HU07], with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-net-migration-disciplines, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
+The remainder, $E_{i,x,t}$, is also modelled using a functional data model [@HU07], with stationary ARMA models fitted to the coefficients. The forecasts for one year are shown in @fig-net-migration-disciplines, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
 
 ```{r}
 #| label: fig-net-migration-disciplines
