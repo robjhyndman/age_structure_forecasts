@@ -105,7 +105,7 @@ tar_read(discipline_table)
 
 We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline.
 
-## Working Population
+## Working population
 
 Data on the working population were sourced from the *Census of Population and Housing* [@ABSCensus] for census years 2006, 2011, 2016, and 2021. This dataset encompasses one-year age groups, the highest level of completed non-school qualification level (QALLP), the corresponding field of study [QALFP, @ABSQALFP], and the industries in which individuals work. However, labour force participation status [@ABSLFFP] is available only for 2016 and 2021. To estimate worker numbers for 2006 and 2011, the average participation rates from 2016 and 2021 were applied, assuming overall age distributions remain consistent.
 
@@ -139,7 +139,7 @@ tar_read(fig_mxt)
 
 No data are available for specific industry groups, so we assume that all scientists have the same mortality probabilities as the general population. These probabilities serve as estimates of $q_{x,t}$.
 
-## Graduate Completions
+## Graduate completions
 
 Graduate completion statistics were obtained from the *Award Course Completions* dataset [@DeptEdu]. @fig-completions shows the distribution of graduate completions with a bachelor's degree or higher, by age for each year from 2006 to 2023. Some missing values result in gaps in certain lines, but the overall pattern remains highly consistent across years. Given this consistency, the data is averaged across all available years, and then smoothed by applying monotonic cubic splines to the cumulative values [@SHW04]. The resulting averaged distribution, shown as the black line in @fig-completions, smooths out year-to-year fluctuations and provides an  estimate of $g_x$.
 
@@ -178,9 +178,9 @@ The inclusion of international students in the graduate data leads to large posi
 
 # Results {#sec-results}
 
-To forecast future working population numbers, $P_{i,x,t}$, we use the demographic growth-balance equation (@eq-dgb), with forecasts of the components $G_{i,t}$, $q_{x,t}$, and $E_{i,x,t}$. To account for the uncertainty in each of the forecast components, we use a simulation-based approach, running 500 simulations to generate a forecast distribution of possible future outcomes.
+To forecast future working population numbers, $P_{i,x,t}$, we use the demographic growth-balance equation (@eq-dgb), with forecasts of the components $G_{i,t}$, $q_{x,t}$, and $E_{i,x,t}$. To account for the combined uncertainty from all of the forecast components, we use a simulation-based approach, running 1000 simulations to generate a forecast distribution of possible future outcomes.
 
-## Graduate Completions
+## Graduate completions
 
 To forecast future graduate numbers, $G_{i,t}$, a global ARIMA model was employed, following the principles outlined by @HM21. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves robustness by incorporating information across disciplines. The forecast distributions are shown in @fig-grad-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
 
@@ -190,7 +190,7 @@ To forecast future graduate numbers, $G_{i,t}$, a global ARIMA model was employe
 tar_read(fig_grad_forecasts)
 ```
 
-## Death Probabilities
+## Death probabilities
 
 ```{r}
 #| label: fig-death-probs-forecasts
@@ -210,29 +210,20 @@ The remainder, $E_{i,x,t}$, is also modelled using a functional data model [@HU0
 tar_read(fig_model_Ext3)
 ```
 
-## Simulating Future Populations
+## Simulating future populations
 
-To forecast the future age structure of the scientific workforce in Australia, a simulation-based approach is employed. This approach uses a stochastic population model, adapted from the demographic growth-balance model described in @HB08 and excluding birth processes, to project future populations. This model incorporates uncertainties in demographic processes, generating a range of potential future scenarios for the scientific workforce. The following steps outline the process for projecting the future working population:
+We use the demographic growth-balance model @eq-dgb to simulate future populations, using the models described above for graduate completions, death probabilities and the remander terms. The following steps outline the process:
 
-1.  **Death Probabilities:** Fit a functional data model [@HU07] to the death probabilities shown in @fig-death-probs, with ARIMA models for the coefficients. This model is used to simulate values of age-specific death probabilities in future years.
-2.  **Net Migration:** Fit a separate functional data model to the age-specific migrant numbers shown in @fig-net-migration-disciplines, with ARIMA models for the coefficients. This model simulates values of age-specific net migrant numbers in future years.
-3.  **Graduate Numbers:** Fit an ARIMA model [@fpp3] to simulate total numbers of graduates in each future year from the numbers shown in @fig-grad-forecasts. These graduate numbers will then be disaggregated by age using the age distribution shown in @fig-completions to estimate age-specific graduate numbers in each year.
-4.  **Retirements:** Estimate retirements in each year by multiplying the number of people of working age in each age bracket (@fig-interpolated-working-population) by the retirement probabilities shown in @fig-retirements. Fixed age-specific retirement probabilities are used.
-5.  **Deaths:** Estimate deaths in each year by multiplying the number of people of working age in each age bracket by the forecast death probabilities.
-6.  **Demographic Growth-Balance:** Use the demographic growth-balance equation [@eq-dgb] to obtain the next year's age-specific population values. This step incorporates the graduate numbers, net migration, retirements, and deaths, to produce the forecasted population for the next year.
-
-A total of 500 simulations are run to obtain a distribution of possible future population scenarios, allowing for quantification of forecast uncertainty. @fig-future-physics shows two example simulations. Historical data (2006--2021) are shown in gray, with simulated future populations (2022--2041) in colour. While both simulations exhibit similar trends, differences arise due to inherent uncertainties in model inputs, including variations in graduate numbers, migration patterns, and workforce exits through death and retirement. These sources of uncertainty are incorporated into the model, contributing to the range of possible future trajectories.
+A total of 1000 simulations are run to obtain a distribution of possible future population scenarios.
+The average of the 1000 simulations provides the mean age-specific forecast, while quantiles estimate forecast uncertainty. @fig-forecast-working-population presents the mean and 90% prediction intervals for 2025 and 2035.
 
 ```{r}
-#| label: fig-future-physics
-#| fig-height: 3
-#| fig-cap: Two example simulations from a set of 500, using historical data from 2006-2021 to forecast age-specific population distributions for 2022-2041.
-tar_read(fig16)
+#| label: fig-forecast-working-population
+#| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across scientific disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
+#| fig-height: 5.5
+# 2025 and 2035
+#tar_read(fig23)
 ```
-
-## Forecast Results
-
-The average of the 500 simulations provides the mean age-specific forecast, while quantiles estimate forecast uncertainty. @fig-forecast-working-population presents the mean and 90% prediction intervals for 2025 and 2035.
 
 In 2035, forecast variability is highest at younger ages, starting from 15 and widening before gradually narrowing as the workforce ages. The prediction interval becomes especially narrow during the retirement phase, where the workforce dynamics become more predictable, indicating greater certainty in this portion of the forecast.
 
@@ -247,14 +238,6 @@ Summing over age groups allows for estimating the total number of working scient
 After 500 simulations of the future population for each discipline, the projections ten years apart (2025 and 2035) shown in @fig-forecast-working-population provide a basis for comparing estimates of the current and future workforce.
 
 The projections indicate wider prediction intervals for younger age groups due to uncertainty in future graduate numbers, while mid-to-late career estimates primarily reflect the aging of existing cohorts. Across disciplines, the typical working population spans from the mid-to-late 20s (10th percentile) to the mid-50s and early 60s (90th percentile). Since retirements increase after the late 50s, workforce participation beyond 60 serves as a benchmark for identifying trends in delayed retirement and extended career duration.
-
-```{r}
-#| label: fig-forecast-working-population
-#| fig-cap: "Projected age distribution of the working population in 2025 and 2035 across scientific disciplines. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates for each year."
-#| fig-height: 5.5
-# 2025 and 2035
-#tar_read(fig23)
-```
 
 The key findings from @fig-forecast-working-population are summarised below:
 
