@@ -104,7 +104,7 @@ make_pop_future_fig_discipline_year <- function(
   p[[length(p) + 1]] <- patchwork::guide_area()
   patchwork::wrap_plots(p) +
     patchwork::plot_annotation(
-      title = "90% forecast interval for working population by discipline",
+      title = "Forecast of working population by discipline",
     ) +
     patchwork::plot_layout(guides = "collect", axis_titles = "collect")
 }

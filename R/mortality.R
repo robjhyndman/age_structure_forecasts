@@ -84,7 +84,7 @@ make_future_mxt_fig2 <- function(object, data, h, times, yr) {
   if (NROW(object) == 0) {
     title <- "Probability of death for Australians"
   } else {
-    title <- paste("Future death probabilities:", yr)
+    title <- paste("Forecasts of death probabilities:", yr)
   }
   data |>
     life_table() |>

@@ -43,7 +43,7 @@ make_future_Ext_fig2 <- function(object, data, h, times, yr, no_other = TRUE) {
   if (NROW(object) == 0) {
     title <- "Remainder"
   } else {
-    title <- paste("Future remainder:", yr)
+    title <- paste("Forecasts of remainder by discpline:", yr)
   }
 
   data |>
