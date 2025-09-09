@@ -194,6 +194,7 @@ make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
     geom_line(aes(y = mean), color = "#c14b14") +
     geom_line(data = grads, aes(y = graduates)) +
     labs(
+      x = "Year",
       y = "Number of graduates",
       title = "Forecasts of total graduates by discipline",
     ) +

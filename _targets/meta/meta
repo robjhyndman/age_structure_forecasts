@@ -38,7 +38,6 @@ retirements|stem|98fc8f89f4835fc2|672d9aa52831fc1f|e8c177d119788498|-2147145637|
 model_mxt|stem|9ff210f1e441fa25|0f737d55f872f528|b772b466a11347ea|372278740||t20340.1109517001s|s1393344b|1393344|rds|local|vector|||0.957||
 fig_smooth_mxt|stem|bc14d2ec21a8aacb|92e1d56ba927fcc6|35abe5d625fef698|-1738686253||t20340.1109631311s|s2127091b|2127091|rds|local|vector|||0.073||
 fig_future_grads_discipline|stem|eb18b491c28bb24e|086761252f5925b2|dc7ba743e2571508|655974970||t20340.1109825991s|s2095549b|2095549|rds|local|vector|||0.173||
-fig_grad_forecasts|stem|7a76f6c0582bc6fa|548e84914372ebda|7df16aa5c85b192f|-1333409939||t20340.1109968471s|s1432038b|1432038|rds|local|vector|||0.276||
 future_grads|stem|5e7f1f082e4c2f75|ab325bda5d320b2b|0482f211a762bf0f|930238291||t20340.1110011624s|s204924b|204924|rds|local|vector|||0.274||
 census2_1|stem|cb9bd9f5c263e322|03474997e00a3635|741a532aa5bf7b9b|836477669||t20340.1110062571s|s50405b|50405|rds|local|vector|||0.418||
 census4_1|stem|8e7d764f9b795ded|e3f1c1831e5bcde7|97697694398b015d|1168736925||t20340.1110291785s|s280019b|280019|rds|local|vector|||1.937||
@@ -74,10 +73,12 @@ ymax|stem|d6f4f4cb41d4fbfb|bab96ce28dc5d271|055a6545581e6c25|-919912214||t20340.
 future_physics|stem|80048c87b14a089b|efda2c8587eed98b|ddd6e1ab22fa62f0|2112989517||t20340.1152437224s|s7297379b|7297379|rds|local|vector|||1.499||
 fig16|stem|1c39b16884352fa1|c5332af2b08ecb1d|1177d06d0169113b|6782121||t20340.116532655s|s9439798b|9439798|rds|local|vector|||0.846||
 fig_model_mxt3|stem|30558dad2cbb5eae|f3d3fab1adf0304d|59aff89f02f1e5f3|-97878675||t20340.1575388963s|s4054100b|4054100|rds|local|vector|||2.756||
-fig_model_Ext3|stem|cb96e3568cea2ac0|8805d98049c6a25b|103b77d792b73626|-1368059252||t20340.1576746754s|s8345365b|8345365|rds|local|vector|||7.966||
-fig_Pxt_discipline|stem|5a41d6cb5d18258e|aa00528f21767b05|c5c2e329afe064e7|-2120736094||t20340.1578223701s|s3994559b|3994559|rds|local|vector|||3.501||
-fig_Pxt_future_discipline|stem|ec4fe1aa3925588f|589b23733cfb5f47|c5c2e329afe064e7|928565292||t20340.1580728433s|s35987855b|35987855|rds|local|vector|||6.869||
-fig_Pxt_discipline0|stem|3efb917ae7dd0c41|1691f6ecac46e4d6|c5c2e329afe064e7|-397563225||t20340.1581814353s|s3632730b|3632730|rds|local|vector|||2.205||
+fig_model_Ext3|stem|206b3dcd6967c0be|8805d98049c6a25b|aaba27433fe921d0|-1368059252||t20340.2065171377s|s8343613b|8343613|rds|local|vector|||8.87||
+fig_Pxt_future_discipline_talk|stem|1479c968e6a8b9ce|13ce6f9b8eab72ea|8ea066884afa9d85|1602396937||t20340.2433280749s|s4355699b|4355699|rds|local|vector|||7.175||
+fig_Pxt_discipline|stem|311a84c296f22243|aa00528f21767b05|8ea066884afa9d85|-2120736094||t20340.2436682568s|s50144970b|50144970|rds|local|vector|||2.467||
+fig_Pxt_future_discipline|stem|440f385518aab506|2beb8a0f0fd67159|8ea066884afa9d85|928565292||t20340.2440019339s|s50382833b|50382833|rds|local|vector|||3.159||
+fig_Pxt_discipline0|stem|1c0088b1cf343b6e|1691f6ecac46e4d6|8ea066884afa9d85|-397563225||t20340.2443120687s|s50084808b|50084808|rds|local|vector|||2.394||
+fig_grad_forecasts|stem|ece8bbf6b505ee44|548e84914372ebda|99f39d92694644ef|-1333409939||t20340.3159560383s|s1216957b|1216957|rds|local|vector|||0.347||
 aas_smooth|function|d7dcb9c6909b96ca
 read_mortality|function|1119b7bd1f3d84b3
 compute_death_prob|function|c96c2fe57bcf5138
@@ -86,10 +87,10 @@ find_var|function|09f4244365246ae8
 make_fig16|function|512bb615b9ff0358
 make_fig19|function|ccf2b133521b198f
 ave_smooth_pr|function|9d18ed2e791a6674
-make_pop_future_fig_discipline_year|function|5af43f25197cdaf7
+make_pop_future_fig_discipline_year|function|cc4c9431fc7ac75d
 make_table2|function|2e4e2515174ef90e
 make_future_mxt_fig2|function|e032d06c3a5f2f7e
-make_fig_grad_forecasts|function|51b5cc5e278c3895
+make_fig_grad_forecasts|function|216d2cf2f1f64454
 total_sci_grads|function|64b7d36f89c91031
 make_future_fdm_fig|function|9bed206573693310
 aas_step|function|29cd004dd604b642
@@ -104,7 +105,7 @@ read_retirements|function|6b71bae9fec39bbe
 global_arma|function|07d6669cfdd006d1
 add_migrants|function|33945c3ebb9998fe
 cohort_interpolation|function|8fdd837173ab9d57
-make_future_Ext_fig2|function|1e30afdbe1c5dca1
+make_future_Ext_fig2|function|0df61a3cdc7e0cb9
 make_future_Ext_fig|function|ab4e419098eca527
 make_component_fig|function|54ab9e4516de0f05
 make_fig20|function|4facdbcfdaaa34d0
@@ -119,7 +120,7 @@ read_completions|function|257ed29fad7bb560
 get_ymax|function|68f3d171bfdcaca8
 make_fig_mxt|function|c7c79344262663e4
 read_census_year|function|ff561785f864f0e6
-make_pop_future_fig_discipline|function|9d026800e1bd12cc
+make_pop_future_fig_discipline|function|2bb36652db8e9543
 make_single_age_oneyear|function|17bf0e974a134fe6
 forecast_pop_discipline|function|eee0aee560cfaa08
 simulate_future_graduates|function|25eb6b4c433fa7c9
@@ -133,4 +134,4 @@ single_age_retirements|function|dca5a486ba4b338a
 make_completions_ave|function|0ae90de29b746b98
 make_completions_step|function|31bce181888cfe01
 make_census_single_year|function|df993e5619836383
-report|stem|0d979a9e28ff4380|ef2fcc1c2d1c9c7c|7de1b1e25f51024f|1449383296|age_structure_forecasts.pdf*age_structure_forecasts_files*age_structure_forecasts.qmd*_extensions/quarto-monash/blindable-div/_extension.yml*_extensions/quarto-monash/blindable-div/blindable-div.lua*_extensions/quarto-monash/presentation/_extension.yml*_extensions/quarto-monash/presentation/_images/background/bg-01.png*_extensions/quarto-monash/presentation/_images/background/bg-02.png*_extensions/quarto-monash/presentation/_images/background/bg-03.png*_extensions/quarto-monash/presentation/_images/background/bg-04.png*_extensions/quarto-monash/presentation/_images/background/bg-05.png*_extensions/quarto-monash/presentation/_images/background/bg-06.png*_extensions/quarto-monash/presentation/_images/background/bg-07.png*_extensions/quarto-monash/presentation/_images/background/bg-08.png*_extensions/quarto-monash/presentation/_images/background/bg-09.png*_extensions/quarto-monash/presentation/_images/background/bg-10.png*_extensions/quarto-monash/presentation/_images/background/bg-11.png*_extensions/quarto-monash/presentation/_images/background/bg-12.png*_extensions/quarto-monash/presentation/_images/background/bg-13.png*_extensions/quarto-monash/presentation/_images/logo/monash-one-line-black-rgb.png*_extensions/quarto-monash/presentation/_images/logo/monash-shield.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-black-rgb.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-blue-rgb-transparent.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-blue-rgb.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-reversed-white.png*_extensions/quarto-monash/presentation/beamer/beamerthemeMonash.sty*_extensions/quarto-monash/presentation/beamer/before-title.tex*_extensions/quarto-monash/presentation/beamer/toc.tex*_extensions/quarto-monash/wp/_extension.yml*_extensions/quarto-monash/wp/AACSB.png*_extensions/quarto-monash/wp/AMBA.png*_extensions/quarto-monash/wp/before-body.tex*_extensions/quarto-monash/wp/before-title.tex*_extensions/quarto-monash/wp/EQUIS.png*_extensions/quarto-monash/wp/MBSportrait.jpg*_extensions/quarto-monash/wp/monash2.png*_extensions/quarto-monash/wp/title.tex*preamble.tex*refs.bib|t20340.1629352781s|s9358490b|9358490|file|local|vector|||43.569||
+report|stem|00fb2d452639eed0|ef2fcc1c2d1c9c7c|be32bf3f278ce317|1449383296|age_structure_forecasts.pdf*age_structure_forecasts_files*age_structure_forecasts.qmd*_extensions/quarto-monash/blindable-div/_extension.yml*_extensions/quarto-monash/blindable-div/blindable-div.lua*_extensions/quarto-monash/presentation/_extension.yml*_extensions/quarto-monash/presentation/_images/background/bg-01.png*_extensions/quarto-monash/presentation/_images/background/bg-02.png*_extensions/quarto-monash/presentation/_images/background/bg-03.png*_extensions/quarto-monash/presentation/_images/background/bg-04.png*_extensions/quarto-monash/presentation/_images/background/bg-05.png*_extensions/quarto-monash/presentation/_images/background/bg-06.png*_extensions/quarto-monash/presentation/_images/background/bg-07.png*_extensions/quarto-monash/presentation/_images/background/bg-08.png*_extensions/quarto-monash/presentation/_images/background/bg-09.png*_extensions/quarto-monash/presentation/_images/background/bg-10.png*_extensions/quarto-monash/presentation/_images/background/bg-11.png*_extensions/quarto-monash/presentation/_images/background/bg-12.png*_extensions/quarto-monash/presentation/_images/background/bg-13.png*_extensions/quarto-monash/presentation/_images/logo/monash-one-line-black-rgb.png*_extensions/quarto-monash/presentation/_images/logo/monash-shield.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-black-rgb.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-blue-rgb-transparent.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-blue-rgb.png*_extensions/quarto-monash/presentation/_images/logo/monash-stacked-reversed-white.png*_extensions/quarto-monash/presentation/beamer/beamerthemeMonash.sty*_extensions/quarto-monash/presentation/beamer/before-title.tex*_extensions/quarto-monash/presentation/beamer/toc.tex*_extensions/quarto-monash/wp/_extension.yml*_extensions/quarto-monash/wp/AACSB.png*_extensions/quarto-monash/wp/AMBA.png*_extensions/quarto-monash/wp/before-body.tex*_extensions/quarto-monash/wp/before-title.tex*_extensions/quarto-monash/wp/EQUIS.png*_extensions/quarto-monash/wp/MBSportrait.jpg*_extensions/quarto-monash/wp/monash2.png*_extensions/quarto-monash/wp/title.tex*preamble.tex*refs.bib|t20340.32113532s|s9368681b|9368681|file|local|vector|||50.01||

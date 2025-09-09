@@ -26,7 +26,9 @@ make_pop_future_fig_discipline <- function(
   data,
   no_other = TRUE,
   ymax,
-  color_data = FALSE
+  color_data = FALSE,
+  guides = TRUE,
+  list = FALSE
 ) {
   # Remove other group
   if (no_other) {
@@ -45,14 +47,50 @@ make_pop_future_fig_discipline <- function(
       working = mean(working),
       .groups = "drop"
     )
-  lapply(
-    yrs,
-    make_pop_future_fig_discipline_year,
-    object = object,
-    data = data,
-    ymax = ymax,
-    color_data = color_data
-  )
+  if(list) {
+    return(make_pop_future_fig_discipline_year(
+      yrs,
+      object,
+      data,
+      ymax,
+      color_data,
+      guides
+    ))
+  }
+  p <- ggplot(data) +
+    aes(x = age, y = working, group = factor(year)) +
+    facet_wrap(~discipline, scales = "free_y")
+  if (color_data) {
+      p <- p +
+        geom_line(aes(color = year)) +
+        scale_color_gradientn(colors = rainbow(10))
+    } else {
+      p <- p + geom_line(color = "gray")
+    }
+  if (NROW(object) > 0) {
+    p <- p +
+      geom_ribbon(
+        data = object,
+        aes(ymin = .lower, ymax = .upper, fill = factor(year)),
+        alpha = 0.3
+      ) +
+      geom_line(
+        data = object,
+        aes(color = factor(year)),
+        linewidth = 0.75
+      )
+  }
+  p <- p +
+    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
+    labs(
+      x = "Age",
+      y = "Number of active scientists",
+      title = "Forecast of working population by discipline"
+    )
+  if (!guides) {
+    p <- p + guides(color = "none", fill = "none")
+  }
+  p
 }
 
 make_pop_future_fig_discipline_year <- function(
@@ -60,7 +98,8 @@ make_pop_future_fig_discipline_year <- function(
   object,
   data,
   ymax,
-  color_data
+  color_data,
+  guides = TRUE
 ) {
   disciplines <- unique(data$discipline)
   object <- object |>
@@ -92,7 +131,7 @@ make_pop_future_fig_discipline_year <- function(
         ) +
         guides(color = "none")
     }
-    tmp +
+    tmp <- tmp +
       scale_x_continuous(breaks = seq(20, 100, by = 10)) +
       labs(
         x = "Age",
@@ -100,13 +139,23 @@ make_pop_future_fig_discipline_year <- function(
         fill = "Forecast year"
       ) +
       ylim(0, ymax |> filter(discipline == d) |> pull(ymax))
+    if (!guides) {
+      tmp <- tmp + guides(fill = "none")
+    }
+    tmp
   })
-  p[[length(p) + 1]] <- patchwork::guide_area()
-  patchwork::wrap_plots(p) +
+  if (guides) {
+    p[[length(p) + 1]] <- patchwork::guide_area()
+  }
+  out <- patchwork::wrap_plots(p) +
     patchwork::plot_annotation(
       title = "Forecast of working population by discipline",
     ) +
-    patchwork::plot_layout(guides = "collect", axis_titles = "collect")
+    patchwork::plot_layout(axis_titles = "collect")
+  if (guides) {
+    out <- out + patchwork::plot_layout(guides = "collect")
+  }
+  out
 }
 
 make_fig_future_grads_discipline <- function(

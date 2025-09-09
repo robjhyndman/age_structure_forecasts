@@ -68,7 +68,7 @@ options(
 
 # Introduction {#sec-intro}
 
-In planning for the future labour market, it is necessary to forecast the age structure of the workforce, in order to enable informed decision-making on policies, especially concerning universities and immigration. We propose a statistical modelling approach to this problem, illustrated using various scientific disciplines in Australia, forecasting future workforce age structures over the next decade. The forecasts described have been used by the Australian Academy of Science as part of _Australian Science, Australia's Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia's ambitions [@AAS2035].
+In planning for the future labour market, it is necessary to forecast the age structure of the workforce in order to enable informed decision-making on policies, especially concerning universities and immigration. We propose a statistical modelling approach to this problem, illustrated using various scientific disciplines in Australia, forecasting future workforce age structures over the next decade. The forecasts described have been used by the Australian Academy of Science as part of _Australian Science, Australia's Future: Science 2035_, an initiative assessing the capability of the national science system and its role in achieving Australia's ambitions [@AAS2035].
 
 The economic implications of workforce age structure shifts are well-documented [e.g., @Bloom2007], affecting productivity, pensions and superannuation, and skill shortages [@PC2013; @OECD2019a; @OECD2019b; @pension]. The social implications are also significant, with an aging workforce leading to changes in workplace dynamics, potential problems with intergenerational knowledge transfer, and the need for policies that support older workers. Yet this problem does not appear to have been previously addressed from a statistical modelling perspective.
 
@@ -93,7 +93,9 @@ where
 
 That is, the population each year is equal to the population from the previous year having aged 1 year, minus the deaths or retirements that occurred during the previous year, plus the new graduates, plus any other changes due to migration or career change (which may be negative). We assume that $E_{i,x,t} = G_{i,x,t} = 0$ above some age threshold (say $x=100$). Once $P_{i,x,t} = 0$ when $x$ is above that threshold, all future populations $P_{i,x+k,t+k} = 0$, for $k=1,2,\dots$. That is, when the cohort aged $x$ in year $t$ has all retired or died, and $x$ is above the threshold, they will not be replaced by new workers of the same age.
 
-As a first approximation, the components $q$, $r$, $E$ and $G$ can be assumed to behave independently for each combination of $i$, $x$ and $t$. In reality, there may be a negative correlation between $G$ and $E$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
+As a first approximation, the components $q$, $r$, $E$ and $G$ can be assumed to behave independently for each combination of $i$, $x$ and $t$. In reality, there may be some negative correlation between $G$ and $E$ as insufficient graduates would probably lead to employers finding people from overseas, while too many graduates would lead to scientists seeking work elsewhere.
+
+The choice of a Binomial rather than a Poisson distribution (in contrast to @Brillinger1986) for deaths and retirements is because the Binomial distribution ensures that the number of deaths and retirements cannot exceed the population at risk. In a simulation context, with very small populations, this is important to avoid nonsensical results.
 
 It is unlikely that we have available separate death and retirement counts for each group, and retirement data is not available in all years. So we will let $q_{i,x,t} = q_{x,t}$ and $r_{i,x,t} = r_{x}$, assuming that death rates and retirement rates are the same across all groups, and that retirement rates do not change over time. Similarly, graduation numbers are rarely available by discipline and age, so we will approximate $G_{i,x,t} = g_xG_{i,t}$ where $G_{i,t}$ is the total number of graduates in year $t$ and $g_x$ is the proportion of graduates by age across all disciplines.
 
@@ -106,9 +108,19 @@ where
 * $D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$; and
 * $R_{i,x,t} \sim \text{Binomial}((P_{i,x,t}-D_{i,x,t}), r_{x})$.
 
-We use functional time series models [@HU07] for $q_{x,t}$ and $E_{i,x,t}$, a global ARIMA models for $G_{i,t}$, and univariate ARIMA models for the principal component scores of the functional time series models.
+For the age-specific time-varying components $q_{x,t}$ and $E_{i,x,t}$, we will use functional data models [@HU07]. For $q_{x,t}$, this is of the form
+$$
+\log(q_{x,t}) = \mu(x) + \sum_{k=1}^K \beta_{k,t} \phi_k(x) + \varepsilon_{x,t},
+$$ {#eq-fdm}
+where $\mu(x)$ is the mean function, $\phi_k(x)$ are functional principal components, $\beta_{k,t}$ are the principal component scores, and $\varepsilon_{x,t}$ is an error term. Each $\beta_{k,t}$ is then modelled using a univariate time series model, such as an ARIMA model. A log-link function is used to ensure that the probabilities remain positive. An inverse logit link function could also be used, if the probabilities are close to 1 for some ages. A similar model is used for $E_{i,x,t}$, with separate mean functions and principal components for each group $i$. The number of components $K=6$, for the reasons outlined in @HB08.
+
+Functional data models have been widely used in demography and other fields, and have been shown to work particularly well for age-specific demographic processes [@HB08;@LCcomparison]. They enable the inherent smoothness over age to be captured, while modelling the autocorrelation over time using relatively simple univariate time series models applied to the principal component scores. In our application, we use univariate ARIMA models for the $q_{x,t}$ scores, and ARMA models for the $E_{i,x,t}$ scores. The assumption of stationarity for the $E_{i,x,t}$ scores is validated for the disciplines we consider.
+
+For the time-varying component, $G_{i,t}$, we use a global ARIMA model [@HM21] to capture the dynamics over time and across disciplines. The global model pools information across disciplines to improve forecast accuracy, especially for disciplines with limited historical data.
 
 To forecast future working population numbers, $P_{i,x,t}$, $t>T$, we simulate future sample paths of each of the components $G_{i,t}$, $q_{x,t}$, and $E_{i,x,t}$, simulate $D_{i,x,t}$ and $R_{i,x,t}$ from their respective Binomial distributions, and then use the demographic growth-balance equation @eq-dgb2 iteratively to obtain $P_{i,x,t}$ for $t=T+1,T+2,\dots$. This simulation-based approach allows us to capture the uncertainty in each of the components, leading to a distribution of possible future outcomes for $P_{i,x,t}$.
+
+This model is somewhat pragmatic given the data available in our specific application. If better data were available, other variations on @eq-dgb could be used. For example, if death rates were available by discipline, then we would replace $q_{x,t}$ by $q_{i,x,t}$ in the Binomial deaths distribution. If retirement rates were available by year, or by discipline, we could similarly replace $r_x$ by a more specific retirement rate in the Binomial retirements distribution. If we had data on graduations by age and discipline, we could replace $g_xG_{i,t}$ by $G_{i,x,t}$. If we had data on migration, we could split the remainder $E_{i,x,t}$ into several components, and model them separately. None of this changes the overall modelling framework we are proposing.
 
 # Data {#sec-data}
 
@@ -120,7 +132,7 @@ To illustrate the methodology, we consider the Natural and Physical Sciences as 
 tar_read(discipline_table)
 ```
 
-We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline.
+We define the population of workers in a discipline as those who are active in the labour market and hold a bachelor's degree or higher in that discipline. For the purposes of this analysis, we will omit "Other Natural and Physical Sciences" and "Natural and Physical Sciences n.f.d.".
 
 ## Working population
 
@@ -174,7 +186,7 @@ The Department of Education provides data on the number of graduates with a bach
 tar_read(fig21)
 ```
 
-The large increase in the working population observed in the 2021 Census for Mathematical Sciences (@fig-cohort-interpolation) can be partly attributed to the sharp rise in graduate numbers between 2016 and 2021.
+The large increase in the working population observed in the 2021 Census for Mathematical Sciences (@fig-cohort-interpolation) can be partly attributed to the sharp rise in graduate numbers between 2016 and 2021. This is probably due to the impact of data science, and the growing importance of statistics and machine learning in many areas of employment.
 
 ## Remainder
 
@@ -197,11 +209,11 @@ The inclusion of international students in the graduate data leads to large posi
 
 ## Graduate completions
 
-To forecast future graduate numbers, $G_{i,t}$, a global ARIMA model was employed, following the principles outlined by @HM21. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves robustness by incorporating information across disciplines. The forecast distributions are shown in @fig-grad-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
+To forecast future graduate numbers, $G_{i,t}$, a global ARIMA model was employed, following the principles outlined by @HM21. The global model captures overall trends across disciplines by scaling graduate data within each discipline, ensuring proportional contributions from all disciplines before fitting the global ARIMA model. This improves the numerical stability of the model by incorporating information across disciplines. The forecast distributions are shown in @fig-grad-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
 
 ```{r}
 #| label: fig-grad-forecasts
-#| fig-cap: "Forecast of $G_{i,t}$: the number of graduates by discipline, 2024-2035, based on historical data from 2006--2023. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates."
+#| fig-cap: "Forecast of $G_{i,t}$: the number of graduates by discipline, 2024--2035, based on historical data from 2006--2023. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates."
 tar_read(fig_grad_forecasts)
 ```
 
@@ -213,11 +225,11 @@ tar_read(fig_grad_forecasts)
 tar_read(fig_model_mxt3)
 ```
 
-The death probabilities, $q_{x,t}$, were forecast using a functional data model [@HU07], with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
+The death probabilities shown in @fig-death-probs where first smoothed using the partially monotonic penalized spline approach of @HU07. Then the functional data model @eq-fdm was estimated, with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
 
 ## Remainder
 
-The remainder, $E_{i,x,t}$, is also modelled using a functional data model [@HU07], with stationary ARMA models fitted to the coefficients. The forecasts for one year are shown in @fig-net-migration-disciplines, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
+The remainder, $E_{i,x,t}$, is also modelled using a functional data model [@HU07], with stationary ARMA models fitted to the principal component scores. The scores were found to be stationary using the KPSS test [@KPSS]. The forecasts for one year are shown in @fig-net-migration-disciplines, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area.
 
 ```{r}
 #| label: fig-net-migration-disciplines
@@ -227,48 +239,20 @@ tar_read(fig_model_Ext3)
 
 ## Simulating future populations
 
-We use the demographic growth-balance model @eq-dgb2 to simulate future populations, using the models described above for the components. The following steps outline the process:
+We use the demographic growth-balance model @eq-dgb2 to iteratively simulate future populations, using the models described above for the components. The following steps outline the process.
 
-A total of 1000 simulations are run to obtain a distribution of possible future population scenarios.
-The average of the 1000 simulations provides the mean age-specific forecast, while quantiles estimate forecast uncertainty. @fig-forecast-working-population presents the mean and 90% prediction intervals for 2035.
+A total of 1000 simulations are run to obtain a distribution of future age-specific population scenarios. The average of the 1000 simulations provides the mean age-specific forecast, while quantiles estimate forecast uncertainty. @fig-forecast-working-population presents the mean and 90% prediction intervals for 2035.
 
 ```{r}
 #| label: fig-forecast-working-population
 #| fig-cap: "Forecasts of $P_{i,x,t}$: the working population by discipline for 2035. The shaded regions represent the 90% prediction intervals, and the solid lines indicate the mean estimates."
 #| fig-height: 5.5
 # 2025 and 2035
-tar_load(fig_Pxt_future_discipline)
-i <- length(fig_Pxt_future_discipline)
-fig_Pxt_future_discipline[[i]] +
-  guides(fill = "none") +
-  labs(title = "Forecasts of working population by discipline: 2035")
+tar_read(fig_Pxt_future_discipline) +
+  ggplot2::labs(title = "Forecasts of working population by discipline: 2035")
 ```
 
-In 2035, forecast variability is highest at younger ages, starting from 15 and widening before gradually narrowing as the workforce ages. The prediction interval becomes especially narrow during the retirement phase, where the workforce dynamics become more predictable, indicating greater certainty in this portion of the forecast.
-
-Prediction intervals are also shown for 2025, as it represents a forecast rather than observed workforce data. This comparison helps illustrate how the age distribution is expected to evolve over the next decade.
-
-Between 2025 and 2035, the forecasts indicate an aging workforce, with increases in the number of scientists in their late 30s, and from ages 45 to 80. This trend is particularly evident in the wider gap at ages 45--60 between the forecasted distributions over the ten-year period.
-
-Additionally, patterns in the age distribution persist over time. A dip or trough observed at a given age in 2025 reappears 10 years later as the same cohort progresses through the workforce. While these shifts may be harder to distinguish due to the structure of single-year age cohort data, they reveal how workforce cohorts evolve and how observed patterns carry through in future projections.
-
-Summing over age groups allows for estimating the total number of working scientists in each future year, as shown in @fig-forecast-total-working-scientists. This highlights whether the workforce is growing, stabilising, or declining. On average, projections indicate continued growth, but at a gradually slower pace. The lower bound remains nearly flat, suggesting workforce stagnation in a conservative scenario. Even in an optimistic scenario, growth only slightly exceeds the current pace.
-
-After 500 simulations of the future population for each discipline, the projections ten years apart (2025 and 2035) shown in @fig-forecast-working-population provide a basis for comparing estimates of the current and future workforce.
-
-The projections indicate wider prediction intervals for younger age groups due to uncertainty in future graduate numbers, while mid-to-late career estimates primarily reflect the aging of existing cohorts. Across disciplines, the typical working population spans from the mid-to-late 20s (10th percentile) to the mid-50s and early 60s (90th percentile). Since retirements increase after the late 50s, workforce participation beyond 60 serves as a benchmark for identifying trends in delayed retirement and extended career duration.
-
-The key findings from @fig-forecast-working-population are summarised below:
-
--   **Physics and Astronomy** *(Aging Workforce):* The 35--45 age group shows a higher average than the previous 2025 cohort. There is a growing number of scientists aged 45 to 60, and more individuals aged 60+ are remaining in the workforce longer. These patterns indicate a gradual transition toward an older age structure, reflecting an aging workforce.
--   **Mathematical Sciences** *(Expansive Workforce):* Workforce growth is evident across a broad range of ages, particularly among individuals aged 25 to 70. The most significant increase occurs before 60, though there is also a clear rise in older workers (60+) remaining in the workforce rather than retiring. Overall, workforce growth is strong and evident across age groups.
--   **Chemical Sciences** *(Stationary Workforce):* The average workforce size remains stable, with a relatively narrow prediction interval, indicating a predictable pattern of stability over time. While there is a minor increase in the number of workers aged 70, this change is not substantial enough to suggest a broader shift in workforce dynamics.
--   **Earth Sciences** *(Aging Workforce):* Early-career workforce projections are more uncertain relative to its size. A decline in the working population is observed in the mid-thirties, followed by an increase throughout the forties, though both remain modest. While the overall workforce remains relatively stable, these patterns indicate a slow shift toward an older age distribution.
--   **Biological Sciences** *(Aging Workforce):* The number of workers aged 50 to 65 is increasing, indicating growth in later-career participation.
--   **Other Natural and Physical Sciences** *(Expansive Workforce):* Workforce growth is strong across ages 30 to 70, characteristic of an expanding workforce.
--   **Natural and Physical Sciences (n.f.d.)** *(Aging Workforce):* Growth is primarily concentrated in the 55--70 age range, indicating delayed retirement and an aging workforce.
-
-These trends are further validated by the total workforce projections shown in @fig-forecast-total-working-scientists. This figure presents the total number of working scientists by discipline at each point in time, illustrating changes in workforce size over the forecast period. While all disciplines exhibit widening prediction intervals resembling an open funnel, this primarily reflects increasing uncertainty over time as forecasts extend further into the future. The extent of this uncertainty varies by discipline, with some exhibiting more stable trends while others show greater variability in potential workforce outcomes.
+In 2035, forecast variability is highest in the age period 20--35 years, before gradually narrowing as the workforce ages. This is due to the relatively high uncertainty in the new graduates component compared to the other components. Mid-to-late career estimates primarily reflect the aging of existing cohorts. The prediction intervals becomes especially narrow during the retirement phase, where the workforce dynamics become more predictable. Since retirements increase after the late 50s, workforce participation beyond 60 serves as a benchmark for identifying trends in delayed retirement and extended career duration. Over the next ten years, we expect an aging workforce in all but the Mathematical Sciences, where a large increase in the population is forecast.
 
 ```{r}
 #| label: fig-forecast-total-working-scientists
@@ -276,23 +260,45 @@ These trends are further validated by the total workforce projections shown in @
 tar_read(fig24)
 ```
 
-From the plot, Mathematical Sciences, Other Natural and Physical Sciences, and Natural and Physical Sciences (n.f.d.) are projected to grow at an accelerating pace. Chemical Sciences, on the other hand, is more likely to decline, while the remaining disciplines are expected to experience more stable growth. However, it is important to consider the prediction intervals when interpreting these trends. These patterns are largely consistent with workforce structure classifications, with expansive disciplines experiencing faster growth, aging disciplines maintaining more stable trends, and constrictive disciplines showing signs of decline.
+Also visible in @fig-forecast-working-population are cohort effects, where fluctuations in earlier ages and years propagate through to later ages and years. This is particularly evident in the mid-career years because there are few deaths and retirements, few graduates older than 30, and the variation due to the remainder term is relatively small after age 30.
 
-# Conclusion {#sec-conclusion}
+Summing over ages allows for estimating the forecast distribution of the total number of working scientists in each future year, as shown in @fig-forecast-total-working-scientists. The forecasts indicate continued growth, but at a gradually slower pace for all disciplines other than the Mathematical Sciences. Where the lower bound is nearly flat, workforce stagnation is possible in a conservative scenario. Even in the optimistic scenario (corresponding to the upper bound), growth only slightly exceeds the current pace, except for the Mathematical Sciences. As noted earlier, the divergent behaviour of the Mathematical Sciences is likely driven by the growing importance of data science and related fields.
 
-This report provides data-driven forecasts of Australia's science workforce age structures, outlining expected changes across disciplines by 2035. The Natural and Physical Sciences, along with Engineering, are projected to experience workforce aging, with growth concentrated in older age groups. Information Technology is expected to expand, though some disciplines remain uncertain due to high graduate numbers not translating into workforce participation. Smaller disciplines within Agriculture and Environmental Studies are projected to decline.
+The wide prediction intervals reflect the uncertainty in the forecasts, and show that caution is needed when interpreting the results. The only discipline where there is clear evidence of growth or decline is the Mathematical Sciences. For all other disciplines, the prediction intervals include the current level, indicating that stagnation, increase, or decline is possible.
 
-When interpreting these projections, policymakers should consider data limitations, particularly in discipline classification and reporting. Variations in self-reporting and ASCED categorisation may not fully capture industry or education changes, impacting accuracy, especially in smaller or evolving disciplines.
+# Discussion {#sec-conclusion}
 
-Additionally, while these projections provide a solid foundation for workforce planning, it is important to note that they are entirely driven by historical trends and do not account for possible new developments, such as the impact of AI and other emerging technologies on the labour market in different scientific disciplines. Other factors, such as policy changes or global economic shifts, may also influence workforce trends and should be taken into account.
+While these forecasts provide a foundation for workforce planning, it is important to note that they are entirely driven by historical trends and do not account for possible new developments, such as the impact of AI and other emerging technologies on the labour market in different scientific disciplines. Other factors, such as policy changes or global economic shifts, may also influence workforce trends and should be taken into account.
 
-While alternative demographic methodologies, such as the Lee-Carter model, could be considered for estimating demographic components, the methods employed in this report, including the functional data model, ARIMA model, and demographic growth-balance equation, are better suited to the specific characteristics of the data and the goals of this analysis.
 
-Other quantitative studies, such as job market forecasting, may offer complementary insights into broader trends in the scientific workforce. Qualitative studies can also uncover latent factors that go beyond historical data. While this report focuses on forecasting based on past trends, these alternative approaches can provide additional perspectives on the scientific workforce in Australia.
+Things that could be improved:
 
-Future work could enhance the accessibility of these projections through interactive visualisations, improve accuracy with new Census data, and broaden the analysis to additional ASCED fields. Refining estimation methods would further strengthen projection reliability and robustness.
+- Include backtesting results by fitting the model to earlier periods and comparing forecasts to actual outcomes
+- Discuss forecast accuracy metrics and how they compare across disciplines
+- Address the challenge of validating long-term demographic forecasts with limited historical data
+- Examine how sensitive forecasts are to key assumptions (e.g., constant retirement rates across disciplines, independence of components)
+- Discuss the impact of the choice to use general population mortality rates rather than discipline-specific rates
+- Analyze how changes in the each component affect overall forecasts
+- Address potential interventions that could alter the forecasted trajectories (e.g., targeted recruitment, retention programs)
+- Discuss alternative methods.
 
-This analysis contributes to the Australian Academy of Science's initiative _Australian Science, Australia's Future: Science 2035_ by identifying shifts in the workforce, helping anticipate future demand for science capabilities, and highlighting potential workforce gaps as aging and retirement reshape workforce dynamics.
+- Provide more detailed discussion of the sources of uncertainty in your forecasts
+
+- Discuss whether the methodology could be applied to other countries or workforce sectors
+- Address unique aspects of the Australian context that might limit generalizability
+
+- Expand beyond AI to discuss other technological disruptions (automation, quantum computing, biotechnology)
+- Consider demographic shifts (changing education patterns, delayed career entry, career mobility)
+- Discuss potential "black swan" events that could dramatically alter workforce dynamics
+
+- Discuss the implications of using census data with 5-year gaps
+- Address the challenge of tracking career changes and international mobility
+- Suggest improvements to data collection that would enhance future forecasting efforts
+
+
+# Software and reproducibility
+
+All results presented here can be reproduced using the code available at <https://github.com/robjhyndman/age_structure_forecasts>. The analysis was conducted using R version 4.5.1 [@R], with the following R packages: vital [@Rvital], tsibble [@Rtsibble], fable [@Rfable], targets [@targets;@targetspaper], ggplot2 [@ggplot2;@ggplotbook], and other tidyverse [@tidyverse] packages.
 
 # Acknowledgements
 

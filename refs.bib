@@ -74,9 +74,18 @@
   volume  = {23},
   issue   = {4},
   pages   = {569--585},
-  doi     = {10.1016/j.ijforecast.2007.07.001},
-  url     = {http://dx.doi.org/10.1016/j.ijforecast.2007.07.001}
+  url     = {http://doi.org/10.1016/j.ijforecast.2007.07.001}
 }
+@article{Brillinger1986,
+  title        = {The natural variability of vital rates and associated
+                  statistics},
+  author       = {Brillinger, David R},
+  journaltitle = {Biometrics},
+  volume       = {42},
+  pages        = {693--734},
+  date         = {1986}
+}
+
 @misc{cepar,
   title     = {Tapping into Australia’s ageing workforce: Insights from recent research},
   author    = {Rafal Chomik and Fatima Jamal Khan},
@@ -112,6 +121,23 @@
   url       = {https://www.OTexts.org/fpp3},
   year      = 2021
 }
+@manual{ggplot2,
+  author = {Hadley Wickham and Winston Chang and Lionel Henry and Thomas Lin Pedersen and Kohske Takahashi and Claus Wilke and Kara Woo and Hiroaki Yutani and Dewey Dunnington and Teun van den Brand and {Posit, PBC}},
+  version   = {v3.5.2},
+  title  = {{ggplot2}: Create Elegant Data Visualisations Using the Grammar of Graphics},
+  url    = {https://cran.r-project.org/package=ggplot2},
+  year   = {2025}
+}
+@book{ggplotbook,
+  address   = {New York, USA},
+  author    = {Hadley Wickham},
+  isbn      = {978-3-319-24277-4},
+  publisher = {Springer-Verlag},
+  title     = {{ggplot2}:  Elegant Graphics for Data Analysis},
+  url       = {https://ggplot2-book.org/},
+  year      = {2016}
+}
+
 @article{HB08,
   author  = {Rob J Hyndman and Heather Booth},
   journal = {International J Forecasting},
@@ -121,6 +147,7 @@
   volume  = {24},
   year    = 2008
 }
+
 @article{HBY13,
   author      = {Rob J Hyndman and Heather Booth and Farah Yasmeen},
   institution = {Department of Econometrics \& Business Statistics, Monash University},
@@ -161,6 +188,28 @@
   year    = 2007
 }
 
+@article{KPSS,
+  title        = {Testing the null hypothesis of stationarity against the
+                  alternative of a unit root. How sure are we that economic time
+                  series have a unit root?},
+  author       = {Kwiatkowski, Denis and Phillips, Peter C B and Schmidt, Peter
+                  and Shin, Yongcheol},
+  journaltitle = {Journal of Econometrics},
+  volume       = {54},
+  pages        = {159--178},
+  date         = {1992},
+  issn         = {0304-4076}
+}
+@article{LCcomparison,
+  author  = {Heather Booth and Rob J Hyndman and Leonie Tickle and Piet {de Jong}},
+  journal = {Demographic Research},
+  number  = {9},
+  pages   = {289--310},
+  title   = {{Lee-Carter} mortality forecasting: a multi-country comparison of variants and extensions},
+  volume  = {15},
+  year    = 2006
+}
+
 @book{MRC18,
   address   = {Cambridge, UK},
   author    = {Angus S Macdonald and Stephen J Richards and Iain D Currie},
@@ -168,7 +217,6 @@
   title     = {Modelling Mortality with Actuarial Applications},
   year      = 2018
 }
-
 @misc{OECD2019a,
   title     = {{OECD} Employment Outlook 2019: The future of work},
   author    = {{OECD}},
@@ -188,6 +236,7 @@
   url       = {https://www.oecd.org/en/publications/working-better-with-age_c4d4f66a-en.html},
   urldate   = {2025-04-16}
 }
+
 @misc{PC2013,
   title   = {An ageing Australia: preparing for the future},
   author  = {{Productivity Commission}},
@@ -207,6 +256,39 @@
   volume  = 63,
   year    = 2021
 }
+@manual{R,
+  title        = {R: A Language and Environment for Statistical Computing},
+  author       = {{R Core Team}},
+  organization = {R Foundation for Statistical Computing},
+  address      = {Vienna, Austria},
+  year         = {2025},
+  url          = {https://www.R-project.org/}
+}
+
+@manual{Rfable,
+  title   = {{fable}: {Forecasting Models for Tidy Time Series}},
+  year    = {2024},
+  author  = {Mitchell O'Hara-Wild and Rob J Hyndman and Earo Wang and Gabriel Caceres and Christoph Bergmeir and Tim-Gunnar Hensel and Timothy Hyndman},
+  url     = {https://fable.tidyverts.org},
+  version = {0.4.1}
+}
+
+@manual{Rtsibble,
+  title   = {{tsibble}: {Tidy Temporal Data Frames and Tools}},
+  year    = {2025},
+  author  = {Earo Wang and Di Cook and Rob J Hyndman and Mitchell O'Hara-Wild and Tyler Smith and Wil Davis},
+  url     = {https://tsibble.tidyverts.org},
+  version = {1.1.6}
+}
+@manual{Rvital,
+  title   = {{vital}: {Tidy Analysis Tools for Mortality, Fertility, Migration and
+             Population Data}},
+  year    = {2025},
+  author  = {Rob J Hyndman and Sixian Tang and Miles McBain and Mitchell O'Hara-Wild},
+  url     = {https://pkg.robjhyndman.com/vital/},
+  version = {2.0.0}
+}
+
 @article{SHW04,
   author  = {Len Smith and Rob J Hyndman and Simon N Wood},
   journal = {J Population Research},
@@ -225,4 +307,34 @@
   title   = {Estimating intercensal age schedules by intracohort interpolation},
   volume  = {54},
   year    = 1988
+}
+
+
+@manual{targets,
+  author = {William Michael Landau},
+  version   = {v1.11.3},
+  title  = {{targets}: Dynamic Function-Oriented `Make'-Like Declarative Pipelines},
+  url    = {https://cran.r-project.org/package=targets},
+  year   = {2025}
+}
+
+@article{targetspaper,
+  title   = {The targets R package: a dynamic Make-like function-oriented pipeline toolkit for reproducibility and high-performance computing},
+  author  = {William Michael Landau},
+  journal = {Journal of Open Source Software},
+  year    = {2021},
+  volume  = {6},
+  number  = {57},
+  pages   = {2959},
+  url     = {https://doi.org/10.21105/joss.02959}
+}
+
+@article{tidyverse,
+  title   = {Welcome to the {tidyverse}},
+  author  = {Hadley Wickham and Mara Averick and Jennifer Bryan and Winston Chang and Lucy D'Agostino McGowan and Romain François and Garrett Grolemund and Alex Hayes and Lionel Henry and Jim Hester and Max Kuhn and Thomas Lin Pedersen and Evan Miller and Stephan Milton Bache and Kirill Müller and Jeroen Ooms and David Robinson and Dana Paige Seidel and Vitalie Spinu and Kohske Takahashi and Davis Vaughan and Claus Wilke and Kara Woo and Hiroaki Yutani},
+  year    = {2019},
+  journal = {Journal of Open Source Software},
+  volume  = {4},
+  number  = {43},
+  pages   = {1686},
 }

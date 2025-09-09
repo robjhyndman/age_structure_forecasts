@@ -283,10 +283,21 @@ list(
   tar_target(
     fig_Pxt_future_discipline,
     make_pop_future_fig_discipline(
+      2035,
+      future_pop_science,
+      census4_1,
+      ymax = ymax,
+      guides = FALSE
+    )
+  ),
+  tar_target(
+    fig_Pxt_future_discipline_talk,
+    make_pop_future_fig_discipline(
       2022:2035,
       future_pop_science,
       census4_1,
-      ymax = ymax
+      ymax = ymax,
+      list = TRUE
     )
   ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
