@@ -18,7 +18,7 @@ author:
       country: Australia
       postal-code: 3800
 abstract: |
-  Planning for a future workforce requires forecasts of age structure changes to inform policy decisions, particularly related to universities and immigration. We modify the traditional demographic growth-balance equation to account for workforce-specific dynamics, replacing births with graduate entry, modeling exits through death and retirement, and including a remainder term that captures migration and career changes. Functional data models are used to model age-specific components, while ARIMA models are used for time series components. Simulation is employed to generate forecast distributions, capturing uncertainty from all components. The approach is illustrated using data on Australia's scientific workforce, allowing us to forecast the age distribution of various scientific disciplines for the next ten years. This analysis was central to an Australian Academy of Science initiative, supporting strategic workforce planning and policy development for Australia's scientific community.
+  Planning for a future workforce requires forecasts of age structure changes to inform policy decisions, particularly related to universities and immigration. We modify the traditional demographic growth-balance equation to account for workforce-specific dynamics, replacing births with graduate entry, modelling exits through death and retirement, and including a remainder term that captures migration and career changes. Functional data models are used to model age-specific components, while ARIMA models are used for time series components. Simulation is employed to generate forecast distributions, capturing uncertainty from all components. The approach is illustrated using data on Australia's scientific workforce, allowing us to forecast the age distribution of various scientific disciplines for the next ten years. This analysis was central to an Australian Academy of Science initiative, supporting strategic workforce planning and policy development for Australia's scientific community.
 keywords:
   - cohort analysis
   - demographic modelling
@@ -225,7 +225,7 @@ tar_read(fig_grad_forecasts)
 tar_read(fig_model_mxt3)
 ```
 
-The death probabilities shown in @fig-death-probs where first smoothed using the partially monotonic penalized spline approach of @HU07. Then the functional data model @eq-fdm was estimated, with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
+The death probabilities shown in @fig-death-probs where first smoothed using the partially monotonic penalised spline approach of @HU07. Then the functional data model @eq-fdm was estimated, with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
 
 ## Remainder
 
@@ -252,7 +252,7 @@ tar_read(fig_Pxt_future_discipline) +
   ggplot2::labs(title = "Forecasts of working population by discipline: 2035")
 ```
 
-In 2035, forecast variability is highest in the age period 20--35 years, before gradually narrowing as the workforce ages. This is due to the relatively high uncertainty in the new graduates component compared to the other components. Mid-to-late career estimates primarily reflect the aging of existing cohorts. The prediction intervals becomes especially narrow during the retirement phase, where the workforce dynamics become more predictable. Since retirements increase after the late 50s, workforce participation beyond 60 serves as a benchmark for identifying trends in delayed retirement and extended career duration. Over the next ten years, we expect an aging workforce in all but the Mathematical Sciences, where a large increase in the population is forecast.
+In 2035, forecast variability is highest in the age period 20--35 years, before gradually narrowing as the workforce ages. This is due to the relatively high uncertainty in the new graduates component compared to the other components. Mid-to-late career estimates primarily reflect the aging of existing cohorts. The prediction intervals become especially narrow during the retirement phase, where the workforce dynamics become more predictable. Since retirements increase after the late 50s, workforce participation beyond 60 serves as a benchmark for identifying trends in delayed retirement and extended career duration. Over the next ten years, we expect an aging workforce in all but the Mathematical Sciences, where a large increase in the population is forecast.
 
 ```{r}
 #| label: fig-forecast-total-working-scientists
@@ -260,7 +260,7 @@ In 2035, forecast variability is highest in the age period 20--35 years, before 
 tar_read(fig24)
 ```
 
-Also visible in @fig-forecast-working-population are cohort effects, where fluctuations in earlier ages and years propagate through to later ages and years. This is particularly evident in the mid-career years because there are few deaths and retirements, few graduates older than 30, and the variation due to the remainder term is relatively small after age 30.
+Cohort effects are also visible in @fig-forecast-working-population, where fluctuations in earlier ages and years propagate through to later ages and years. This is particularly evident in the mid-career years because there are few deaths and retirements, few graduates older than 30, and the variation due to the remainder term is relatively small after age 30.
 
 Summing over ages allows for estimating the forecast distribution of the total number of working scientists in each future year, as shown in @fig-forecast-total-working-scientists. The forecasts indicate continued growth, but at a gradually slower pace for all disciplines other than the Mathematical Sciences. Where the lower bound is nearly flat, workforce stagnation is possible in a conservative scenario. Even in the optimistic scenario (corresponding to the upper bound), growth only slightly exceeds the current pace, except for the Mathematical Sciences. As noted earlier, the divergent behaviour of the Mathematical Sciences is likely driven by the growing importance of data science and related fields.
 
@@ -268,38 +268,22 @@ The wide prediction intervals reflect the uncertainty in the forecasts, and show
 
 # Discussion {#sec-conclusion}
 
-While these forecasts provide a foundation for workforce planning, it is important to note that they are entirely driven by historical trends and do not account for possible new developments, such as the impact of AI and other emerging technologies on the labour market in different scientific disciplines. Other factors, such as policy changes or global economic shifts, may also influence workforce trends and should be taken into account.
+While these forecasts provide a foundation for workforce planning, it is important to note that they are entirely driven by historical trends and do not account for possible new developments, such as the impact of AI and other emerging technologies on the labour market in different scientific disciplines. Other factors, such as policy changes or global economic shifts, may also influence workforce trends. These exogenous factors could be accounted for by adding covariates into the time series models used, provided relevant data are available.
 
+Evaluating and validating these forecasts is challenging due to the relatively long forecast horizon compared to the available historical data. While time series cross-validation [@fpp3] could be used to assess forecast accuracy for shorter horizons, the benefit of the forecasts is primarily for longer horizons, where such validation is not possible. The uncertainty in the forecasts, as reflected in the wide prediction intervals, highlights the need for caution when interpreting the results.
 
-Things that could be improved:
+If more detailed data were available, the model could be refined further by including, for example, discipline-specific death rates, retirement data by year and/or discipline, graduate data by age and discipline, and data on migration and career changes. It is not clear how much these refinements would improve forecast accuracy, but they would likely reduce uncertainty in the forecasts.
 
-- Include backtesting results by fitting the model to earlier periods and comparing forecasts to actual outcomes
-- Discuss forecast accuracy metrics and how they compare across disciplines
-- Address the challenge of validating long-term demographic forecasts with limited historical data
-- Examine how sensitive forecasts are to key assumptions (e.g., constant retirement rates across disciplines, independence of components)
-- Discuss the impact of the choice to use general population mortality rates rather than discipline-specific rates
-- Analyze how changes in the each component affect overall forecasts
-- Address potential interventions that could alter the forecasted trajectories (e.g., targeted recruitment, retention programs)
-- Discuss alternative methods.
+Forecasts are often designed not just to predict the future, but also to inform policy decisions, and so modify the future. In this context, these forecasts could be used to identify potential skill shortages or surpluses in specific disciplines, guiding decisions on university and immigration policy, and thus changing the future outcomes [@causality2022]. Consequently, forecast accuracy may be less important than understanding the range of possible outcomes and their implications for policy.
 
-- Provide more detailed discussion of the sources of uncertainty in your forecasts
+While this analysis has focused on the scientific workforce in Australia, the methodology could be applied to other countries or workforce sectors, provided similar data are available. The specific components of the demographic growth-balance equation may need to be adapted to reflect the available data in other applications.
 
-- Discuss whether the methodology could be applied to other countries or workforce sectors
-- Address unique aspects of the Australian context that might limit generalizability
-
-- Expand beyond AI to discuss other technological disruptions (automation, quantum computing, biotechnology)
-- Consider demographic shifts (changing education patterns, delayed career entry, career mobility)
-- Discuss potential "black swan" events that could dramatically alter workforce dynamics
-
-- Discuss the implications of using census data with 5-year gaps
-- Address the challenge of tracking career changes and international mobility
-- Suggest improvements to data collection that would enhance future forecasting efforts
 
 
 # Software and reproducibility
 
 All results presented here can be reproduced using the code available at <https://github.com/robjhyndman/age_structure_forecasts>. The analysis was conducted using R version 4.5.1 [@R], with the following R packages: vital [@Rvital], tsibble [@Rtsibble], fable [@Rfable], targets [@targets;@targetspaper], ggplot2 [@ggplot2;@ggplotbook], and other tidyverse [@tidyverse] packages.
 
-# Acknowledgements
+# Acknowledgements {-}
 
 We thank Alexandra Lucchetti from the Australian Academy of Science for sourcing the data required for this project, and for helpful feedback on earlier versions of this report.
