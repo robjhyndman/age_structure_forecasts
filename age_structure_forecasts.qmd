@@ -10,7 +10,7 @@ author:
       postal-code: 3800
   email: Rob.Hyndman@monash.edu
   corresponding: true
-- name: Kelly Vanh Nguyen
+- name: Khuyen Vanh Nguyen
   affiliations:
     - name: Monash University
       department: Department of Econometrics & Business Statistics
