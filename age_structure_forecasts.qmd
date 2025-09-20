@@ -152,7 +152,7 @@ Retirement data was sourced from the *Retirement and Retirement Intentions* data
 
 ```{r}
 #| label: fig-retirements
-#| fig-cap: "$r_x$: Age distribution of retirement intentions, based on data from the 2022--2023 Australian financial year. The blue line shows the smoothed probabilities."
+#| fig-cap: "$r_x$: Age distribution of retirement intentions, based on data from the 2022--2023 Australian financial year. The grey line shows the age-group probabilities; the black line shows the smoothed probabilities."
 tar_read(fig_rx2)
 ```
 
@@ -225,7 +225,7 @@ tar_read(fig_grad_forecasts)
 tar_read(fig_model_mxt3)
 ```
 
-The death probabilities shown in @fig-death-probs where first smoothed using the partially monotonic penalised spline approach of @HU07. Then the functional data model @eq-fdm was estimated, with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
+The death probabilities shown in @fig-death-probs were first smoothed using the partially monotonic penalised spline approach of @HU07. Then the functional data model @eq-fdm was estimated, with ARIMA models fitted to the coefficients. The forecasts for one year are shown in @fig-death-probs-forecasts, with the mean forecast represented by the solid line and 90% prediction intervals indicated by the shaded area. Note that the historical data (shown in gray) represent unsmoothed values, while the forecasts are based on the smoothed functional data model. The additional variation seen in the historical data is captured in the model through the Binomial death process.
 
 ## Remainder
 
