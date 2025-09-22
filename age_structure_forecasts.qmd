@@ -18,7 +18,7 @@ author:
       country: Australia
       postal-code: 3800
 abstract: |
-  Planning for a future workforce requires forecasts of age structure changes to inform policy decisions, particularly related to universities and immigration. We modify the traditional demographic growth-balance equation to account for workforce-specific dynamics, replacing births with graduate entry, modelling exits through death and retirement, and including a remainder term that captures migration and career changes. Functional data models are used to model age-specific components, while ARIMA models are used for time series components. Simulation is employed to generate forecast distributions, capturing uncertainty from all components. The approach is illustrated using data on Australia's scientific workforce, allowing us to forecast the age distribution of various scientific disciplines for the next ten years. This analysis was central to an Australian Academy of Science initiative, supporting strategic workforce planning and policy development for Australia's scientific community.
+  Planning for a future workforce requires forecasts of age structure changes to inform policy decisions, particularly related to universities and immigration. We modify the traditional demographic growth-balance equation to account for workforce-specific dynamics, replacing births with graduate entry, modelling exits through death and retirement, and including a remainder term that captures migration and career changes. Functional data models are used to model age-specific components, while ARIMA models are used for time series components. Simulation is employed to generate forecast distributions, capturing uncertainty from all components. The approach is illustrated using data on Australia's scientific workforce, allowing us to forecast the age distribution of various scientific disciplines for the next ten years. This analysis was central to an Australian Academy of Science initiative examining the capability of Australia's science system and identifying workforce gaps.
 keywords:
   - cohort analysis
   - demographic modelling
@@ -277,8 +277,6 @@ If more detailed data were available, the model could be refined further by incl
 Forecasts are often designed not just to predict the future, but also to inform policy decisions, and so modify the future. In this context, these forecasts could be used to identify potential skill shortages or surpluses in specific disciplines, guiding decisions on university and immigration policy, and thus changing the future outcomes [@causality2022]. Consequently, forecast accuracy may be less important than understanding the range of possible outcomes and their implications for policy.
 
 While this analysis has focused on the scientific workforce in Australia, the methodology could be applied to other countries or workforce sectors, provided similar data are available. The specific components of the demographic growth-balance equation may need to be adapted to reflect the available data in other applications.
-
-
 
 # Software and reproducibility
 
