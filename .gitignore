@@ -19,3 +19,6 @@ age_structure*.tex
 /beamerthemeMonash.sty
 .history
 .vscode
+
+anzsauth.cls
+anzsj.bst
