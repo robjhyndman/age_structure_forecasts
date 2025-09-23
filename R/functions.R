@@ -493,5 +493,6 @@ make_discipline_table <- function() {
       linesep = ""
     ) |>
     kableExtra::row_spec(0, bold = TRUE) |>
-    kableExtra::column_spec(2, width = "9cm")
+    kableExtra::column_spec(2, width = "9cm") |>
+    kableExtra::kable_styling(latex_options = "scale_down")
 }
