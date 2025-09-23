@@ -44,7 +44,9 @@ format:
     keep-tex: true
     fig-height: 5
     fig-width: 8
-    output-file: "asf_anzjs.pdf"
+    knitr:
+      opts_chunk:
+        fig.path: figures/
     include-in-header:
       - text: |
           \usepackage[section]{placeins}
