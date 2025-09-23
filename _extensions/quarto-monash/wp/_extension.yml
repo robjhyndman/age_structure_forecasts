@@ -38,6 +38,7 @@ contributes:
         - "before-title.tex"
         - "before-body.tex"
         - "title.tex"
+        - "after-body.tex"
       format-resources:
         - monash2.png
         - MBSportrait.jpg
