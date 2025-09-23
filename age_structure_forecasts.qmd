@@ -34,11 +34,15 @@ jelcodes: J11, J21, C15, C22
 blind: false
 cover: true
 linestretch: 1.5
-include-in-header: preamble.tex
 format:
-  wp-pdf+wp: default
+  wp-pdf+wp:
+    include-in-header: preamble.tex
   quarto-anzjs-pdf:
     keep-tex: true
+    include-in-header:
+      - text: |
+        \usepackage[section]{placeins}
+        \usepackage{colortbl,todonotes}
 execute:
   echo: false
   warning: false
