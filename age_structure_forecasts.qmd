@@ -8,7 +8,9 @@ author:
   email: Rob.Hyndman@monash.edu
   corresponding: true
   orcid: 0000-0002-2140-5352
-- name: Khuyen Vanh&nbsp;Nguyen
+- name:
+    given: Khuyen
+    family: Vanh Nguyen
   affiliation:
     - ref: ebs
 affiliations:
@@ -27,7 +29,7 @@ keywords:
   - labour market
   - workforce planning
 acknowledgement: |
-  We thank Alexandra Lucchetti from the Australian Academy of Science for sourcing the data required for this project, and for helpful feedback on earlier versions of this report. Rob Hyndman is a member of the Australian Research Council Industrial Transformation Training Centre in Optimisation Technologies, Integrated Methodologies, and Applications (OPTIMA), Project ID IC200100009. He also receives funding from the Australian Research Council through Discovery Project DP250100702.
+  We thank Alexandra Lucchetti from the Australian Academy of Science for sourcing the data required for this project, and for helpful feedback on earlier versions of this paper. Rob Hyndman is a member of the Australian Research Council Industrial Transformation Training Centre in Optimisation Technologies, Integrated Methodologies, and Applications (OPTIMA), Project ID IC200100009. He also receives funding from the Australian Research Council through Discovery Project DP250100702.
 bibliography: refs.bib
 wpnumber: no/yr
 jelcodes: J11, J21, C15, C22
@@ -37,12 +39,17 @@ linestretch: 1.5
 format:
   wp-pdf+wp:
     include-in-header: preamble.tex
+    output-file: "asf_wp.pdf"
   quarto-anzjs-pdf:
     keep-tex: true
+    fig-height: 5
+    fig-width: 8
+    output-file: "asf_anzjs.pdf"
     include-in-header:
       - text: |
-        \usepackage[section]{placeins}
-        \usepackage{colortbl,todonotes}
+          \usepackage[section]{placeins}
+          \usepackage{colortbl,todonotes}
+          \usepackage{orcidlink}
 execute:
   echo: false
   warning: false

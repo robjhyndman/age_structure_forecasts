@@ -350,9 +350,8 @@ list(
   # Document
   tar_target(discipline_table, make_discipline_table()),
   tar_quarto(
-    report,
+    paper,
     "age_structure_forecasts.qmd",
-    output_file = "age_structure_forecasts.pdf",
     extra_files = c("refs.bib", "preamble.tex"),
     quiet = FALSE
   )

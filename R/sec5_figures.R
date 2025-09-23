@@ -160,7 +160,7 @@ make_fig24 <- function(
     labs(
       y = "Total number of working scientists (thousands)",
       title = "Forecast of total working population by discipline",
-      subtitle = "Natural and Physical Sciences\nForecasted years: 2022 - 2041"
+      #subtitle = "Natural and Physical Sciences\nForecasted years: 2022 - 2041"
     ) +
     scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
     scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
