@@ -9,8 +9,8 @@ author:
   corresponding: true
   orcid: 0000-0002-2140-5352
 - name:
-    given: Khuyen
-    family: Vanh Nguyen
+    given: Khuyen Vanh
+    family: Nguyen
   affiliation:
     - ref: ebs
 affiliations:
