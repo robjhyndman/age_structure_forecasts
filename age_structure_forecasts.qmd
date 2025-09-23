@@ -1,20 +1,21 @@
 ---
 title: "Forecasting the age structure of the scientific workforce in Australia"
+shorttitle: "Forecasting the workforce age structure"
 author:
 - name: Rob J Hyndman
-  affiliations:
-    - name: Monash University
-      department: Department of Econometrics & Business Statistics
-      city: Clayton
-      country: Australia
-      postal-code: 3800
+  affiliation:
+    - ref: ebs
   email: Rob.Hyndman@monash.edu
   corresponding: true
-- name: Khuyen Vanh Nguyen
-  affiliations:
-    - name: Monash University
+  orcid: 0000-0002-2140-5352
+- name: Khuyen Vanh&nbsp;Nguyen
+  affiliation:
+    - ref: ebs
+affiliations:
+    - id: ebs
+      name: Monash University
       department: Department of Econometrics & Business Statistics
-      city: Clayton VIC
+      city: Clayton
       country: Australia
       postal-code: 3800
 abstract: |
@@ -25,6 +26,8 @@ keywords:
   - functional data models
   - labour market
   - workforce planning
+acknowledgement: |
+  We thank Alexandra Lucchetti from the Australian Academy of Science for sourcing the data required for this project, and for helpful feedback on earlier versions of this report. Rob Hyndman is a member of the Australian Research Council Industrial Transformation Training Centre in Optimisation Technologies, Integrated Methodologies, and Applications (OPTIMA), Project ID IC200100009. He also receives funding from the Australian Research Council through Discovery Project DP250100702.
 bibliography: refs.bib
 wpnumber: no/yr
 jelcodes: J11, J21, C15, C22
@@ -33,8 +36,13 @@ cover: true
 linestretch: 1.5
 include-in-header: preamble.tex
 format:
-  wp-pdf:
+  wp-pdf+wp: default
+  quarto-anzjs-pdf:
     keep-tex: true
+execute:
+  echo: false
+  warning: false
+  message: false
 filters:
   - blindable-div
 ---
@@ -281,7 +289,3 @@ While this analysis has focused on the scientific workforce in Australia, the me
 # Software and reproducibility
 
 All results presented here can be reproduced using the code available at <https://github.com/robjhyndman/age_structure_forecasts>. The analysis was conducted using R version 4.5.1 [@R], with the following R packages: vital [@Rvital], tsibble [@Rtsibble], fable [@Rfable], targets [@targets;@targetspaper], ggplot2 [@ggplot2;@ggplotbook], and other tidyverse [@tidyverse] packages.
-
-# Acknowledgements {-}
-
-We thank Alexandra Lucchetti from the Australian Academy of Science for sourcing the data required for this project, and for helpful feedback on earlier versions of this report.
