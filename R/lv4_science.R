@@ -53,7 +53,9 @@ make_census_single_year <- function(
           death_prob
         ) |>
         as_tibble()
-      if (by_discipline) out$discipline <- unique(census_filtered$discipline)
+      if (by_discipline) {
+        out$discipline <- unique(census_filtered$discipline)
+      }
       return(out)
     },
     c2,

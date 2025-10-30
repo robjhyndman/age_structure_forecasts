@@ -6,7 +6,11 @@ library(tidyr)
 
 tar_load(model_Ext_discipline)
 pv <- time_components(model_Ext_discipline) |>
-  pivot_longer(cols = starts_with("beta"), names_to = "component", values_to = "value") |>
+  pivot_longer(
+    cols = starts_with("beta"),
+    names_to = "component",
+    values_to = "value"
+  ) |>
   features(value, unitroot_kpss) |>
   arrange(kpss_pvalue)
 
@@ -15,4 +19,4 @@ pv <- time_components(model_Ext_discipline) |>
 # to not reject the null hypothesis of stationary.
 
 pv |>
-  filter(kpss_pvalue < 0.05/36)
+  filter(kpss_pvalue < 0.05 / 36)
