@@ -1,16 +1,7 @@
 \def\showmodel{%
-  \begin{textblock}{7.9}(7.9,-.12)\fontsize{13}{13}\sf
+  \begin{textblock}{7.9}(7.9,-.12)\fontsize{12.5}{12.5}\sf
     \begin{alertblock}{}
-      \centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x}
-      G_{t} + E_{x,t}$}
-    \end{alertblock}
-  \end{textblock}
-}
-\def\showmodeli{%
-  \begin{textblock}{7.9}(7.9,-.12)\fontsize{13}{13}\sf
-    \begin{alertblock}{}
-      \centerline{$P_{x+1,t+1,i} = P_{x,t,i}(1 - q_{x,t} - r_{x}) +
-      g_{x} G_{t,i} + E_{x,t,i}$}
+      \centerline{$P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + g_xG_{i,t} + E_{i,x,t}$}
     \end{alertblock}
   \end{textblock}
 }

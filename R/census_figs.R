@@ -36,7 +36,7 @@ make_pop_fig <- function(
     aes(x = age, y = working, color = Year, group = Year) +
     geom_line(
       data = census |> filter(Year %in% censuses),
-      linewidth = 0.4 + 0.6 * highlight_census
+      linewidth = 0.4 + 0.2 * highlight_census
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     labs(
@@ -48,10 +48,13 @@ make_pop_fig <- function(
     p <- p +
       facet_wrap(~discipline, scales = "free_y") +
       theme(
-        legend.direction = "horizontal",
+        legend.direction = if_else(!interpolation, "vertical", "horizontal"),
         legend.position = "inside",
         legend.position.inside = c(2 / 3, 1 / 2),
-        legend.justification = c(-0.4, 3)
+        legend.justification = c(
+          0.6 * interpolation - 1.0,
+          1.6 * interpolation + 1.4
+        )
       )
   }
   if (interpolation) {

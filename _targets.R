@@ -75,6 +75,7 @@ list(
     single_age_retirements(retirement_data, aus_death_prob)
   ),
   tar_target(fig_r, make_fig_r(retirement_data)),
+  tar_target(fig_rx1, make_fig_rx(retirements, retirement_data, FALSE)),
   tar_target(fig_rx2, make_fig_rx(retirements, retirement_data)),
 
   # Graduates
@@ -142,8 +143,9 @@ list(
       census4_1,
       no_other = TRUE,
       color_data = TRUE,
-      ymax = ymax
-    )
+      ymax = ymax,
+      list = TRUE
+    )[[1]]
   ),
 
   tar_target(fig_error, make_component_fig(census2_1, remainder)),
@@ -262,7 +264,10 @@ list(
   tar_target(fig16, make_fig16(physics, future_physics)),
 
   # Disciplines combined
-  tar_target(fig19, make_fig19(census4_1)),
+  tar_target(
+    fig19,
+    make_pop_fig(census4_1, "Natural and Physical Sciences", FALSE, TRUE)
+  ),
   tar_target(
     fig20,
     make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
@@ -277,8 +282,9 @@ list(
       2050,
       future_pop_science,
       census4_1,
-      ymax = ymax
-    )
+      ymax = ymax,
+      list = TRUE
+    )[[1]]
   ),
   tar_target(
     fig_Pxt_future_discipline,
@@ -305,10 +311,24 @@ list(
     fig_grad_forecasts,
     make_fig_grad_forecasts(course_leavers, future_course_leavers_science)
   ),
+  tar_target(
+    fig_grad_sim,
+    make_fig_grad_forecasts(
+      course_leavers,
+      future_course_leavers_science,
+      PI = FALSE
+    )
+  ),
 
   # Graduate forecasts
   tar_target(sci_grads, total_sci_grads(course_leavers)),
   tar_target(arima, sci_grads |> model(ARIMA(graduates))),
+  tar_target(
+    check_arima,
+    if (fabletools::model_sum(arima[[1]][[1]]) != "ARIMA(0,1,1) w/ drift") {
+      stop("Wrong model")
+    }
+  ),
   tar_target(
     future_grads,
     generate(arima, h = h, times = nsim) |>
@@ -349,16 +369,17 @@ list(
 
   # Document
   tar_target(discipline_table, make_discipline_table()),
+  # tar_quarto(
+  #   paper,
+  #   "age_structure_forecasts.qmd",
+  #   extra_files = c("refs.bib", "preamble.tex"),
+  #   quiet = FALSE
+  # ),
   tar_quarto(
-    paper,
-    "age_structure_forecasts.qmd",
-    extra_files = c("refs.bib", "preamble.tex"),
+    talk,
+    "age_structure_talk.qmd",
+    output_file = "age_structure_talk.pdf",
+    extra_files = c("setup.R", "header.tex", "before-title.tex"),
     quiet = FALSE
   )
-  # tar_quarto(
-  #   talk,
-  #   "age_structure_talk.qmd",
-  #   output_file = "age_structure_talk.pdf",
-  #   extra_files = c("setup.R", "header.tex", "before-title.tex")
-  # )
 )

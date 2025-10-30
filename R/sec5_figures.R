@@ -1,6 +1,6 @@
 make_fig19 <- function(disciplines_combined) {
   years <- seq(2006, 2021, by = 5)
-  cols <- c("#FF6F00", "#009E73", "#009DFF", "#FF00BF")
+  cols <- c("#ff0000", "#67ff00", "#00ceff", "#ca00ff")
   names(cols) <- years
 
   disciplines_combined |>
@@ -10,16 +10,15 @@ make_fig19 <- function(disciplines_combined) {
     ggplot() +
     aes(x = age, y = working, color = Year, group = Year) +
     geom_line() +
-    scale_color_manual(values = cols, name = "Census Year") +
+    scale_color_manual(values = cols) +
     labs(
       y = "Number of active scientists",
       title = "Working population by discipline",
-      subtitle = "Natural and Physical Sciences"
     ) +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
     facet_wrap(~discipline, scales = "free_y") +
     theme(
-      legend.position = "top"
+      legend.position = "right"
     )
 }
 
@@ -167,32 +166,27 @@ make_fig24 <- function(
     facet_wrap(~discipline, scales = "free_y")
 }
 
-make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
+make_fig_grad_forecasts <- function(
+  grads,
+  future_grads,
+  no_other = TRUE,
+  PI = TRUE
+) {
+  future_grads <- future_grads |>
+    as_tibble() |>
+    filter(year <= 2035)
+  grads <- grads |>
+    as_tibble()
   if (no_other) {
     grads <- grads |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
     future_grads <- future_grads |>
       dplyr::filter(discipline != "Other Natural and Physical Sciences")
   }
-  future_grads <- future_grads |>
-    filter(year <= 2035) |>
-    group_by(discipline) |>
-    summarise(
-      mean = mean(graduates),
-      lo = quantile(graduates, prob = 0.05),
-      hi = quantile(graduates, prob = 0.95)
-    )
-  grads <- grads |>
-    as_tibble() |>
-    group_by(discipline, year) |>
-    summarise(graduates = sum(graduates))
-  future_grads |>
-    as_tibble() |>
+  p <- grads |>
     ggplot() +
     aes(x = year, group = discipline) +
-    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
-    geom_line(aes(y = mean), color = "#c14b14") +
-    geom_line(data = grads, aes(y = graduates)) +
+    geom_line(aes(y = graduates)) +
     labs(
       x = "Year",
       y = "Number of graduates",
@@ -200,4 +194,29 @@ make_fig_grad_forecasts <- function(grads, future_grads, no_other = TRUE) {
     ) +
     scale_x_continuous(breaks = seq(2010, 2035, by = 5)) +
     facet_wrap(~discipline, scales = "free_y")
+  if (PI) {
+    future_grads <- future_grads |>
+      group_by(discipline, year) |>
+      summarise(
+        mean = mean(graduates),
+        lo = quantile(graduates, prob = 0.05),
+        hi = quantile(graduates, prob = 0.95),
+        .groups = "drop"
+      )
+    p <- p +
+      geom_ribbon(
+        data = future_grads,
+        aes(ymin = lo, ymax = hi),
+        fill = "#c14b1444"
+      ) +
+      geom_line(data = future_grads, aes(y = mean), color = "#c14b14")
+  } else {
+    p <- p +
+      geom_line(
+        data = future_grads |> filter(.rep %in% as.character(1:10)),
+        aes(y = graduates, group = .rep, colour = .rep)
+      ) +
+      guides(colour = "none")
+  }
+  p
 }

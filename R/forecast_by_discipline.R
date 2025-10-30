@@ -47,26 +47,29 @@ make_pop_future_fig_discipline <- function(
       working = mean(working),
       .groups = "drop"
     )
-  if(list) {
-    return(make_pop_future_fig_discipline_year(
-      yrs,
-      object,
-      data,
-      ymax,
-      color_data,
-      guides
-    ))
+  if (list) {
+    return(
+      lapply(
+        yrs,
+        make_pop_future_fig_discipline_year,
+        object = object,
+        data = data,
+        ymax = ymax,
+        color_data = color_data,
+        guides = guides
+      )
+    )
   }
   p <- ggplot(data) +
     aes(x = age, y = working, group = factor(year)) +
     facet_wrap(~discipline, scales = "free_y")
   if (color_data) {
-      p <- p +
-        geom_line(aes(color = year)) +
-        scale_color_gradientn(colors = rainbow(10))
-    } else {
-      p <- p + geom_line(color = "gray")
-    }
+    p <- p +
+      geom_line(aes(color = year)) +
+      scale_color_gradientn(colors = rainbow(10))
+  } else {
+    p <- p + geom_line(color = "gray")
+  }
   if (NROW(object) > 0) {
     p <- p +
       geom_ribbon(

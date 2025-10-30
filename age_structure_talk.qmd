@@ -34,78 +34,203 @@ library(targets)
 source("setup.R")
 ```
 
-# Ideal labour force model
-
+# Labour force model
+\vspace*{-0.2cm}
 \begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t} - D_{x,t} - R_{x,t} + G_{x,t} - C_{x,t} + N_{x,t}$}
-\end{alertblock}
-\begin{textblock}{1.7}(13.3,2.1)
+\centerline{$P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t}$}
+\end{alertblock}\vspace*{-0.2cm}
 \begin{block}{}
-$x = $ Age \\
-$t = $ Year
-\end{block}
-\end{textblock}
-
+\centerline{
+  $i = $ Discipline \quad
+  $x = $ Age        \quad
+  $t = $ Year
+}
+\end{block}\vspace*{-1.05cm}
 \begin{align*}
-P_{x,t} &= \text{number of equivalent full-time workers} \\
-D_{x,t} &= \text{number of deaths} \\
-R_{x,t} &= \text{number of retirements} \\
-G_{x,t} &= \text{number of graduates who work in science} \\
-C_{x,t} &= \text{net number of people who have a career change} \\
-N_{x,t} &= \text{net number of migrants} \\
-\end{align*}
+P_{i,x,t} &= \text{number of equivalent full-time workers} \\
+D_{i,x,t} &= \text{number of deaths} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})\\
+R_{i,x,t} &= \text{number of retirements}  \sim \text{Binomial}(P_{i,x,t} - D_{i,x,t}, r_{x})\\
+G_{i,x,t} &= g_xG_{i,t} = \text{number of graduates who work in discipline $i$} \\
+E_{i,x,t} &= \text{other changes (career changes, migration, etc.)} 
+\end{align*}\pause\vspace*{-0.65cm}
 
+\begin{block}{}
+Simulate future sample paths of $P_{i,x,t}$ by simulating future\\
+$q_{x,t}$, $D_{i,x,t}$, $R_{i,x,t}$, $G_{i,t}$ and $E_{i,x,t}$
+\end{block}
 \vspace*{10cm}
 
-# Pragmatic labour force model
-
-\begin{alertblock}{}
-\centerline{$P_{x+1,t+1} = P_{x,t}(1 - q_{x,t} - r_{x}) + g_{x} G_{t} + E_{x,t}$}
-\end{alertblock}
-\begin{textblock}{1.7}(13.3,2.1)
-\begin{block}{}
-$x = $ Age \\
-$t = $ Year
-\end{block}
-\end{textblock}
-
-\begin{align*}
-P_{x,t} &= \text{number of equivalent full-time workers} \\
-q_{x,t} &= \text{probability of death} \\
-r_{x} &= \text{probability of retirement} \\
-g_{x} &= \text{proportion of graduates by age} \\
-G_{t} &= \text{total number of graduates in science} \\
-E_{x,t} &= \text{remainder} \\
-\end{align*}
-
-\vspace*{10cm}
-
-# Working population: $P_{x,t}$
+# Working population: $P_{i,x,t}$
 \showmodel
 
 ```{r}
 #| label: labour-force2
-tar_read(fig_Pxt_census)
+tar_read(fig19)
 ```
 
-# Working population: $P_{x,t}$
+# Working population: $P_{i,x,t}$
 \showmodel
 
 ```{r}
 #| label: labour-force3
-tar_read(fig_Pxt)
+tar_read(fig20)
 ```
 
 # Death probability: $q_{x,t}$
 \showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: death_prob
 tar_read(fig_mxt)
 ```
 
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+\vspace*{0.8cm}
+
+```{r}
+#| label: fdm_model1
+#| fig-height: 4.2
+tar_read(fig_model_fdm1)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,2.0)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,2.0)\fontsize{11}{13}\sf$\phi_1(x)$\end{textblock}
+\begin{textblock}{1}(10.3,2.0)\fontsize{11}{13}\sf$\phi_2(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.6)\fontsize{11}{13}\sf$\beta_{1,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.6)\fontsize{11}{13}\sf$\beta_{2,t}$\end{textblock}
+
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+\vspace*{0.8cm}
+
+```{r}
+#| label: fdm_model2
+#| fig-height: 4.2
+tar_read(fig_model_fdm2)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,2.0)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,2.0)\fontsize{11}{13}\sf$\phi_3(x)$\end{textblock}
+\begin{textblock}{1}(10.3,2.0)\fontsize{11}{13}\sf$\phi_4(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.6)\fontsize{11}{13}\sf$\beta_{3,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.6)\fontsize{11}{13}\sf$\beta_{4,t}$\end{textblock}
+
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+\vspace*{0.8cm}
+
+```{r}
+#| label: fdm_model3
+#| fig-height: 4.2
+tar_read(fig_model_fdm3)
+```
+
+\begin{textblock}{5.2}(0.3,6.2)
+\begin{block}{}\fontsize{12}{13}\sf
+\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
+$\beta_{k,t} \sim$ ARIMA
+\end{block}
+\end{textblock}
+\begin{textblock}{1}(0.4,2.0)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
+\begin{textblock}{1}(5.45,2.0)\fontsize{11}{13}\sf$\phi_5(x)$\end{textblock}
+\begin{textblock}{1}(10.3,2.0)\fontsize{11}{13}\sf$\phi_6(x)$\end{textblock}
+\begin{textblock}{1}(5.45,5.6)\fontsize{11}{13}\sf$\beta_{5,t}$\end{textblock}
+\begin{textblock}{1}(10.3,5.6)\fontsize{11}{13}\sf$\beta_{6,t}$\end{textblock}
+
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+
+```{r}
+#| label: death_prob3
+tar_read(fig_mxt) +
+  ggplot2::guides(color = "none") +
+  ggplot2::labs(title = "Probability of death for Australians")
+```
+
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+
+```{r}
+#| label: future_mxt0
+tar_read(fig_model_mxt0)
+```
+
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+
+```{r}
+#| label: future_mxt1
+tar_read(fig_model_mxt1)
+```
+
+# Death probability: $q_{x,t}$
+\showmodel
+\begin{textblock}{5.1}(10.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})$
+\end{alertblock}
+\end{textblock}
+
+```{r}
+#| label: future_mxt2
+tar_read(fig_model_mxt2)
+```
+
 # Retirement rates: $r_{x}$
 \showmodel
+\begin{textblock}{6.1}(9.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$R_{i,x,t} \sim \text{Binomial}(P_{i,x,t} - D_{i,x,t}, r_{x})$
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: retirement
@@ -114,18 +239,28 @@ tar_read(fig_r)
 
 # Retirement rates: $r_{x}$
 \showmodel
+\begin{textblock}{6.1}(9.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$R_{i,x,t} \sim \text{Binomial}(P_{i,x,t} - D_{i,x,t}, r_{x})$
+\end{alertblock}
+\end{textblock}
+
+```{r}
+#| label: retirementx1
+tar_read(fig_rx1)
+```
+
+# Retirement rates: $r_{x}$
+\showmodel
+\begin{textblock}{6.1}(9.7,.7)\fontsize{12.5}{12.5}\sf
+\begin{alertblock}{}
+$R_{i,x,t} \sim \text{Binomial}(P_{i,x,t} - D_{i,x,t}, r_{x})$
+\end{alertblock}
+\end{textblock}
 
 ```{r}
 #| label: retirementx
 tar_read(fig_rx2)
-```
-
-# Graduate completions: $G_{t}$
-\showmodel
-
-```{r}
-#| label: course_leavers
-tar_read(fig21b)
 ```
 
 # Graduate completions: $g_{x}$
@@ -144,370 +279,98 @@ tar_read(fig_completions)
 tar_read(fig_ave_completions)
 ```
 
+# Graduate completions: $G_{i,t}$
+\showmodel
+
+```{r}
+#| label: course_leavers
+tar_read(fig21)
+```
+
+\only<2>{\begin{textblock}{4}(11,6.5)
+\begin{block}{}
+Global Model:\\ ARIMA(0,1,1) + drift
+\end{block}
+\end{textblock}}
+
+# Graduate completions: $G_{i,t}$
+\showmodel
+
+```{r}
+#| label: graduates_forecast
+tar_read(fig_grad_sim)
+```
+
+\begin{textblock}{4}(11,6.5)
+\begin{block}{}
+Global Model:\\
+ARIMA(0,1,1) + drift
+\end{block}
+\end{textblock}
+
 # Remainder: $E_{x,t}$
 \showmodel
 \begin{alertblock}{}
-\centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - q_{x,t} - r_{x}) - g_{x}G_{t}$}
+\centerline{$E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} + D_{i,x,t} + R_{i,x,t} - g_{x}G_{i,t}$}
 \end{alertblock}
 \vspace*{10cm}
 
 # Remainder: $E_{x,t}$
 \showmodel
 \begin{alertblock}{}
-\centerline{$E_{x,t} = P_{x+1,t+1} - P_{x,t}(1 - q_{x,t} - r_{x}) - g_{x}G_{t}$}
+\centerline{$E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} + D_{i,x,t} + R_{i,x,t} - g_{x}G_{i,t}$}
 \end{alertblock}
 
 ```{r}
 #| label: error_component
 #| fig-height: 4.1
-tar_read(fig_error)
+tar_read(fig22)
 ```
 
-# Forecasting models
-\showmodel
-
-\begin{center}
-\begin{tabular}{rp{11cm}}
-$G_{t}$   & ARIMA model of total graduates by year \\
-$q_{x,t}$ & functional time series model \\
-$E_{x,t}$ & functional time series model
-\end{tabular}
-\end{center}\pause\vspace*{1cm}
-
-* Future sample paths of all components simulated to obtain probabilistic forecasts of $P_{x,t}$
-
-# Forecasting models: $G_{t}$
-\showmodel
-
-```{r}
-#| label: graduates_forecast
-tar_read(fig_future_grads)
-if (
-  fabletools::model_sum(tar_read(arima)[[1]][[1]]) != "ARIMA(0,1,1) w/ drift"
-) {
-  stop("Wrong model")
-}
-```
-
-\begin{textblock}{4}(11,7.2)
+\begin{textblock}{4.3}(11,6.5)\fontsize{12}{12}\sf
 \begin{block}{}
-Model: ARIMA(0,1,1) + drift
+Simulate using functional time series models, as for $q_{x,t}$.
 \end{block}
 \end{textblock}
 
-# Forecasting models: $q_{x,t}$
+# Population: $P_{i,x,t}$
 \showmodel
-
-```{r}
-#| label: death_prob2
-tar_read(fig_mxt)
-```
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-\vspace*{0.3cm}
-
-```{r}
-#| label: fdm_model1
-tar_read(fig_model_fdm1)
-```
-
-\begin{textblock}{5.2}(0.3,6.2)
-\begin{block}{}\fontsize{12}{13}\sf
-\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
-$\beta_{k,t} \sim$ ARIMA
-\end{block}
-\end{textblock}
-\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
-\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_1(x)$\end{textblock}
-\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_2(x)$\end{textblock}
-\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{1,t}$\end{textblock}
-\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{2,t}$\end{textblock}
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-\vspace*{0.3cm}
-
-```{r}
-#| label: fdm_model2
-tar_read(fig_model_fdm2)
-```
-
-\begin{textblock}{5.2}(0.3,6.2)
-\begin{block}{}\fontsize{12}{13}\sf
-\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
-$\beta_{k,t} \sim$ ARIMA
-\end{block}
-\end{textblock}
-\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
-\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_3(x)$\end{textblock}
-\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_4(x)$\end{textblock}
-\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{3,t}$\end{textblock}
-\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{4,t}$\end{textblock}
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-\vspace*{0.3cm}
-
-```{r}
-#| label: fdm_model3
-tar_read(fig_model_fdm3)
-```
-
-\begin{textblock}{5.2}(0.3,6.2)
-\begin{block}{}\fontsize{12}{13}\sf
-\centerline{$q_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
-$\beta_{k,t} \sim$ ARIMA
-\end{block}
-\end{textblock}
-\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
-\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_5(x)$\end{textblock}
-\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_6(x)$\end{textblock}
-\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{5,t}$\end{textblock}
-\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{6,t}$\end{textblock}
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-
-```{r}
-#| label: death_prob3
-tar_read(fig_mxt) +
-  ggplot2::guides(color = "none") +
-  ggplot2::labs(title = "Probability of death for Australians")
-```
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-
-```{r}
-#| label: future_mxt0
-tar_read(fig_model_mxt0)
-```
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-
-```{r}
-#| label: future_mxt1
-tar_read(fig_model_mxt1)
-```
-
-# Forecasting models: $q_{x,t}$
-\showmodel
-
-```{r}
-#| label: future_mxt2
-tar_read(fig_model_mxt2)
-```
-
-# Remainder: $E_{x,t}$
-\showmodel
-
-```{r}
-#| label: error_component2
-tar_read(fig_error)
-```
-# Forecasting models: $E_{x,t}$
-\showmodel
-\vspace*{0.3cm}
-
-```{r}
-#| label: fdm_Emodel1
-tar_read(fig_Emodel_fdm1)
-```
-
-\begin{textblock}{5.2}(0.3,6.2)
-\begin{block}{}\fontsize{12}{13}\sf
-\centerline{$E_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
-$\beta_{k,t} \sim$ ARIMA
-\end{block}
-\end{textblock}
-\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
-\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_1(x)$\end{textblock}
-\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_2(x)$\end{textblock}
-\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{1,t}$\end{textblock}
-\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{2,t}$\end{textblock}
-
-# Forecasting models: $E_{x,t}$
-\showmodel
-\vspace*{0.3cm}
-
-```{r}
-#| label: fdm_Emodel2
-tar_read(fig_Emodel_fdm2)
-```
-
-\begin{textblock}{5.2}(0.3,6.2)
-\begin{block}{}\fontsize{12}{13}\sf
-\centerline{$E_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
-$\beta_{k,t} \sim$ ARIMA
-\end{block}
-\end{textblock}
-\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
-\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_3(x)$\end{textblock}
-\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_4(x)$\end{textblock}
-\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{3,t}$\end{textblock}
-\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{4,t}$\end{textblock}
-
-# Forecasting models: $E_{x,t}$
-\showmodel
-\vspace*{0.3cm}
-
-```{r}
-#| label: fdm_Emodel3
-tar_read(fig_Emodel_fdm3)
-```
-
-\begin{textblock}{5.2}(0.3,6.2)
-\begin{block}{}\fontsize{12}{13}\sf
-\centerline{$E_{x,t} = \mu(x) + \displaystyle\sum_{k=1}^6 \beta_{k,t}\phi_k(x) + \varepsilon_t(x)$}
-$\beta_{k,t} \sim$ ARIMA
-\end{block}
-\end{textblock}
-\begin{textblock}{1}(0.4,1.5)\fontsize{11}{13}\sf$\mu(x)$\end{textblock}
-\begin{textblock}{1}(5.45,1.5)\fontsize{11}{13}\sf$\phi_5(x)$\end{textblock}
-\begin{textblock}{1}(10.3,1.5)\fontsize{11}{13}\sf$\phi_6(x)$\end{textblock}
-\begin{textblock}{1}(5.45,5.2)\fontsize{11}{13}\sf$\beta_{5,t}$\end{textblock}
-\begin{textblock}{1}(10.3,5.2)\fontsize{11}{13}\sf$\beta_{6,t}$\end{textblock}
-
-# Forecasting models: $E_{x,t}$
-\showmodel
-
-```{r}
-#| label: remainder2
-tar_read(fig_error) +
-  ggplot2::guides(color = "none") +
-  ggplot2::labs(y = "Number of people", title = "Remainder")
-```
-
-# Forecasting models: $E_{x,t}$
-\showmodel
-
-```{r}
-#| label: future_Ext0
-tar_read(fig_model_Ext0)
-```
-
-# Forecasting models: $E_{x,t}$
-\showmodel
-
-```{r}
-#| label: future_Ext1
-tar_read(fig_model_Ext1)
-```
-
-# Forecasting models: $E_{x,t}$
-\showmodel
-
-```{r}
-#| label: future_Ext2
-tar_read(fig_model_Ext2)
-```
-
-# Final forecasts: $P_{x,t}$
-\showmodel
-
-```{r}
-#| label: labour-force4
-tar_read(fig_Pxt) +
-  ggplot2::ylim(-1, 13500) +
-  ggplot2::guides(color = "none") +
-  ggplot2::labs(title = "Working population")
-```
-
-
-# Final forecasts: $P_{x,t}$
-\showmodel
-
-```{r}
-#| label: labour-force-gray
-tar_load(fig_Pxt0)
-fig_Pxt0[[1]] + ggplot2::ylim(-1, 13500)
-```
-
-```{r}
-#| label: labour-force-future
-#| output: asis
-tar_load(fig_Pxt_future)
-for (i in seq_along(fig_Pxt_future)) {
-  cat("\n\n# Forecasts: $P_{x,t}$")
-  cat("\n\\showmodel\n\n")
-  print(fig_Pxt_future[[i]] + ggplot2::ylim(-1, 13500))
-  cat("\n")
-}
-```
-
-# Population by discipline
-\showmodeli
-
-```{r}
-#| label: labour-force-disciplines
-tar_load(fig_Pxt_discipline)
-fig_Pxt_discipline[[1]] +
-  patchwork::plot_annotation(title = "Working population by discipline")
-```
-
-# Graduates by discipline
-\showmodeli
-
-```{r}
-#| label: graduates-disciplines
-tar_read(fig21)
-```
-
-# Graduate forecasts
-\showmodeli
-
-```{r}
-#| label: graduates-disciplines-forecasts
-tar_read(fig_future_grads_discipline)
-```
-
-# Population by discipline
-\showmodeli
 
 ```{r}
 #| label: labour-force-disciplines2
 tar_load(fig_Pxt_discipline)
-fig_Pxt_discipline[[1]] +
+fig_Pxt_discipline +
   patchwork::plot_annotation(title = "Working population by discipline")
 ```
 
-# Population by discipline
-\showmodeli
+# Population: $P_{i,x,t}$
+\showmodel
 
 ```{r}
 #| label: labour-force-disciplines0
 tar_load(fig_Pxt_discipline0)
-fig_Pxt_discipline0[[1]] +
+fig_Pxt_discipline0 +
   patchwork::plot_annotation(title = "Working population by discipline")
 ```
 
 ```{r}
 #| label: labour-force-future-disciplines
 #| output: asis
-tar_load(fig_Pxt_future_discipline)
-for (i in seq_along(fig_Pxt_future_discipline)) {
+tar_load(fig_Pxt_future_discipline_talk)
+for (i in seq_along(fig_Pxt_future_discipline_talk)) {
   cat("\n\n# Forecasts by discipline")
-  cat("\n\\showmodeli\n\n")
-  print(fig_Pxt_future_discipline[[i]] + ggplot2::ylim(-1, 13500))
+  cat("\n\\showmodel\n\n")
+  print(fig_Pxt_future_discipline_talk[[i]])
   cat("\n")
 }
 ```
 
-
 # More information
 
-\begin{textblock}{8}(4,3.6)
+\begin{textblock}{10.2}(2.9,3.6)
 \begin{alertblock}{}
-\fontsize{18}{22}\sf\bfseries\centering
-\href{https://robjhyndman.com/isf2025}{robjhyndman.com/isf2025}
+\fontsize{24}{28}\sf\bfseries\centering
+\href{https://robjhyndman.com/asc2025}{robjhyndman.com/asc2025}
 \end{alertblock}
 \end{textblock}
 
-\begin{textblock}{8}(4,5.6)
-\begin{block}{}
-\fontsize{18}{22}\sf\bfseries\centering
-\href{https://robjhyndman.com/postdoc}{robjhyndman.com/postdoc}
-\end{block}
-\end{textblock}
