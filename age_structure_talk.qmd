@@ -333,6 +333,32 @@ Simulate using functional time series models, as for $q_{x,t}$.
 \end{block}
 \end{textblock}
 
+# Labour force model
+\vspace*{-0.2cm}
+\begin{alertblock}{}
+\centerline{$P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t}$}
+\end{alertblock}\vspace*{-0.2cm}
+\begin{block}{}
+\centerline{
+  $i = $ Discipline \quad
+  $x = $ Age        \quad
+  $t = $ Year
+}
+\end{block}\vspace*{-1.05cm}
+\begin{align*}
+P_{i,x,t} &= \text{number of equivalent full-time workers} \\
+D_{i,x,t} &= \text{number of deaths} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})\\
+R_{i,x,t} &= \text{number of retirements}  \sim \text{Binomial}(P_{i,x,t} - D_{i,x,t}, r_{x})\\
+G_{i,x,t} &= g_xG_{i,t} = \text{number of graduates who work in discipline $i$} \\
+E_{i,x,t} &= \text{other changes (career changes, migration, etc.)} 
+\end{align*}\vspace*{-0.65cm}
+
+\begin{block}{}
+Simulate future sample paths of $P_{i,x,t}$ by simulating future\\
+$q_{x,t}$, $D_{i,x,t}$, $R_{i,x,t}$, $G_{i,t}$ and $E_{i,x,t}$
+\end{block}
+\vspace*{10cm}
+
 # Population: $P_{i,x,t}$
 \showmodel
 
@@ -367,7 +393,9 @@ for (i in seq_along(fig_Pxt_future_discipline_talk)) {
 
 # More information
 
-\begin{textblock}{10.2}(2.9,3.6)
+\centerline{\includegraphics[width=6cm]{figs/qr.png}}
+
+\begin{textblock}{10.2}(2.9,7.2)
 \begin{alertblock}{}
 \fontsize{24}{28}\sf\bfseries\centering
 \href{https://robjhyndman.com/asc2025}{robjhyndman.com/asc2025}
