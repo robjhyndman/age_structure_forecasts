@@ -1,0 +1,1081 @@
+% Options for packages loaded elsewhere
+%DIF LATEXDIFF DIFFERENCE FILE
+%DIF DEL asf1.tex   Sun Nov 23 16:24:12 2025
+%DIF ADD asf2.tex   Sun Nov 23 16:24:12 2025
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+doublespace,
+  times]{anzsauth}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{setspace}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+\usepackage[]{natbib}
+\bibliographystyle{anzsj}
+
+
+\usepackage[section]{placeins}
+\usepackage{colortbl,todonotes}
+\usepackage{orcidlink}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Forecasting the age structure of the scientific workforce in Australia},
+  pdfauthor={Rob J Hyndman; Khuyen Vanh Nguyen},
+  pdfkeywords={cohort analysis, demographic modelling, functional data
+models, labour market, workforce planning},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\usepackage{moreverb}
+\usepackage{url}
+\usepackage{grffile}
+\usepackage[UKenglish]{isodate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The year in the following may need to be updated!
+\def\volumeyear{}
+
+% The following command ("obviously") effects line numbering
+% of the document.
+
+\usepackage{lineno}
+\linenumbers
+
+
+\def\firstletters{\bgroup \catcode`-=10 \catcode`(=10 \filA}
+\def\filA#1{\filB#1 {\end} }
+\def\filB#1#2 {\ifx\end#1\egroup \else#1 \expandafter\filB\fi} 
+
+\runningheads{
+Forecasting the workforce age structure
+}{
+\firstletters{ROB J}HYNDMAN, AND  \firstletters{KHUYEN VANH}NGUYEN 
+}
+
+\title{Forecasting the age structure of the scientific workforce in
+Australia}
+
+\author{
+Rob J Hyndman\addressnum{1} and 
+Khuyen Vanh Nguyen
+\addressnum{1}
+}
+\affiliation{
+Monash University
+}
+
+\address{
+\addressnum{1} Department of Econometrics \& Business Statistics, Monash
+University\\
+\hspace*{1ex} Email: \texttt{Rob.Hyndman@monash.edu} 
+}
+
+
+\date{}
+%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF
+%DIF UNDERLINE PREAMBLE %DIF PREAMBLE
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}} %DIF PREAMBLE
+%DIF SAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{} %DIF PREAMBLE
+\providecommand{\DIFaddend}{} %DIF PREAMBLE
+\providecommand{\DIFdelbegin}{} %DIF PREAMBLE
+\providecommand{\DIFdelend}{} %DIF PREAMBLE
+\providecommand{\DIFmodbegin}{} %DIF PREAMBLE
+\providecommand{\DIFmodend}{} %DIF PREAMBLE
+%DIF FLOATSAFE PREAMBLE %DIF PREAMBLE
+\providecommand{\DIFaddFL}[1]{\DIFadd{#1}} %DIF PREAMBLE
+\providecommand{\DIFdelFL}[1]{\DIFdel{#1}} %DIF PREAMBLE
+\providecommand{\DIFaddbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFaddendFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelbeginFL}{} %DIF PREAMBLE
+\providecommand{\DIFdelendFL}{} %DIF PREAMBLE
+\newcommand{\DIFscaledelfig}{0.5}
+%DIF HIGHLIGHTGRAPHICS PREAMBLE %DIF PREAMBLE
+\RequirePackage{settobox} %DIF PREAMBLE
+\RequirePackage{letltxmacro} %DIF PREAMBLE
+\newsavebox{\DIFdelgraphicsbox} %DIF PREAMBLE
+\newlength{\DIFdelgraphicswidth} %DIF PREAMBLE
+\newlength{\DIFdelgraphicsheight} %DIF PREAMBLE
+% store original definition of \includegraphics %DIF PREAMBLE
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics} %DIF PREAMBLE
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}} %DIF PREAMBLE
+\newcommand{\DIFdelincludegraphics}[2][]{% %DIF PREAMBLE
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}% %DIF PREAMBLE
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox} %DIF PREAMBLE
+\scalebox{\DIFscaledelfig}{% %DIF PREAMBLE
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{% %DIF PREAMBLE
+\setlength{\unitlength}{\DIFdelgraphicswidth}% %DIF PREAMBLE
+\begin{picture}(1,1)% %DIF PREAMBLE
+\thicklines\linethickness{2pt} %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}% %DIF PREAMBLE
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}% %DIF PREAMBLE
+\end{picture}% %DIF PREAMBLE
+}\hspace*{3pt}}} %DIF PREAMBLE
+} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddend}{\DIFaddend} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelend}{\DIFdelend} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL} %DIF PREAMBLE
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics} %DIF PREAMBLE
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics} %DIF PREAMBLE
+%DIF AMSMATHULEM PREAMBLE %DIF PREAMBLE
+\makeatletter %DIF PREAMBLE
+\let\sout@orig\sout %DIF PREAMBLE
+\renewcommand{\sout}[1]{\ifmmode\text{\sout@orig{\ensuremath{#1}}}\else\sout@orig{#1}\fi} %DIF PREAMBLE
+\makeatother %DIF PREAMBLE
+%DIF COLORLISTINGS PREAMBLE %DIF PREAMBLE
+\RequirePackage{listings} %DIF PREAMBLE
+\RequirePackage{color} %DIF PREAMBLE
+\lstdefinelanguage{DIFcode}{ %DIF PREAMBLE
+%DIF DIFCODE_UNDERLINE %DIF PREAMBLE
+  moredelim=[il][\color{red}\sout]{\%DIF\ <\ }, %DIF PREAMBLE
+  moredelim=[il][\color{blue}\uwave]{\%DIF\ >\ } %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstdefinestyle{DIFverbatimstyle}{ %DIF PREAMBLE
+	language=DIFcode, %DIF PREAMBLE
+	basicstyle=\ttfamily, %DIF PREAMBLE
+	columns=fullflexible, %DIF PREAMBLE
+	keepspaces=true %DIF PREAMBLE
+} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{} %DIF PREAMBLE
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{} %DIF PREAMBLE
+\lstset{extendedchars=\true,inputencoding=utf8}
+
+%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF
+
+\begin{document}
+
+\begin{abstract}
+Planning for a future workforce requires forecasts of age structure
+changes to inform policy decisions, particularly related to universities
+and immigration. We \DIFdelbegin \DIFdel{modify the traditional demographic growth-balance
+equation to account for
+workforce-specific dynamics}\DIFdelend \DIFaddbegin \DIFadd{propose a new dynamic statistical model for
+forecasting the age structure of a workforce. Our approach is inspired
+by a stochastic model used in population forecasting}\DIFaddend , replacing births
+with graduate entry, modelling exits through death and retirement, and
+including a remainder term that captures migration and career changes.
+Functional data models are used to model age-specific components, while
+ARIMA models are used for time series components. Simulation is employed
+to generate forecast distributions, capturing uncertainty from all
+components. The approach is illustrated using data on Australia's
+scientific workforce, allowing us to forecast the age distribution of
+various scientific disciplines for the next ten years. This analysis was
+central to an Australian Academy of Science initiative examining the
+capability of Australia's science system and identifying workforce gaps.
+\end{abstract}
+
+\keywords{cohort analysis; demographic modelling; functional data
+models; labour market; workforce planning}
+
+\ack{We thank Alexandra Lucchetti from the Australian Academy of Science
+for sourcing the data required for this project, and for helpful
+feedback on earlier versions of this paper. Rob Hyndman is a member of
+the Australian Research Council Industrial Transformation Training
+Centre in Optimisation Technologies, Integrated Methodologies, and
+Applications (OPTIMA), Project ID IC200100009. He also receives funding
+from the Australian Research Council through Discovery Project
+DP250100702.}
+
+\maketitle
+
+\DIFaddbegin \urlstyle{tt}
+
+\DIFaddend \setstretch{1.5}
+\section{Introduction}\label{sec-intro}
+
+In planning for the future labour market, it is necessary to forecast
+the age structure of the workforce in order to enable informed
+decision-making on policies, especially concerning universities and
+immigration. We propose a statistical modelling approach to this
+problem, illustrated using various scientific disciplines in Australia,
+forecasting future workforce age structures over the next decade. The
+forecasts described have been used by the Australian Academy of Science
+as part of \emph{Australian Science, Australia's Future: Science 2035},
+an initiative assessing the capability of the national science system
+and its role in achieving Australia's ambitions \citep{AAS2035}.
+
+The economic implications of workforce age structure shifts are
+well-documented \citep[e.g.,][]{Bloom2007}, affecting productivity,
+pensions and superannuation, and skill shortages
+\citep{PC2013, OECD2019a, OECD2019b, pension}. The social implications
+are also significant, with an aging workforce leading to changes in
+workplace dynamics, potential problems with intergenerational knowledge
+transfer, and the need for policies that support older workers. Yet this
+problem does not appear to have been previously addressed from a
+statistical modelling perspective.
+
+Our approach builds on functional data models, introduced to demographic
+modelling by \citet{HU07}. They combined nonparametric smoothing and
+functional principal components for age-specific demographic rates.
+These models were then used by \citet{HB08} for mortality, fertility,
+and migration rates, providing stochastic data generating processes for
+the components of demographic balance equations. These separate
+component models were then simulated to form future sample paths,
+leading to age- and sex-specific stochastic population forecasts. The
+modelling framework was later extended by \citet{HBY13} to ensure
+coherence of forecasts between sexes or other demographic groups.
+
+We propose \DIFdelbegin \DIFdel{to adapt this framework to }\DIFdelend \DIFaddbegin \DIFadd{a related approach for modelling }\DIFaddend workforce dynamics by
+redefining the demographic components in two ways. First, we replace
+fertility with workforce entry, which functions more like a migration
+process than a birth process because graduates can enter the workforce
+at any age. Second, we \DIFdelbegin \DIFdel{allow workers to leave }\DIFdelend \DIFaddbegin \emph{\DIFadd{explicitly}} \DIFadd{model workers leaving }\DIFaddend the
+workforce through two processes: retirement and death. Of course, people
+may also leave the workforce for other reasons, such as a career change
+or family commitments, but since we do not have data on these processes,
+we model them \DIFdelbegin \DIFdel{implicitly }\DIFdelend \DIFaddbegin \emph{\DIFadd{implicitly}} \DIFaddend via a remainder term.
+
+We describe the methodology in Section~\ref{sec-methodology}. By way of
+illustration, we apply the methodology to major scientific disciplines
+in Australia, focusing on the Natural and Physical Sciences. We describe
+the data sources in Section~\ref{sec-data}, with the results provided in
+Section~\ref{sec-results}. The aim of this analysis is to inform future
+workforce planning and policy decisions to support the growth of
+Australia's scientific community. Finally, we provide some discussion
+and conclusions in Section~\ref{sec-conclusion}.
+
+\section{Methodology}\label{sec-methodology}
+
+Suppose our workforce is divided into \(I\) groups, indexed by
+\(i=1,\dots,I\). In our application, these are scientific disciplines,
+but in principle they could refer to any subdivision of workers. Let
+\(P_{i,x,t}\) denote the number of equivalent full-time workers in group
+\(i\) who are aged \(x\) at the start of year \(t\), where
+\(x=15,16,\dots\). The starting age of 15 is chosen because it is the
+minimum age at which individuals are counted as part of the labour force
+in the Australian Census \citep{ABSLFSP}. We assume that data are
+available for years \(t=1,\dots,T\), and that forecasts are required for
+\(P_{i,x,T+h}\) across all ages and groups, for some forecast horizon
+\(h>0\).
+
+People can leave the workforce of a group through death, retirement,
+emigration, \DIFaddbegin \DIFadd{family responsibilities, }\DIFaddend or career change; they can enter
+the workforce through graduation, immigration, \DIFaddbegin \DIFadd{changes in family
+responsibilities, }\DIFaddend or career change. Unfortunately, we typically do not
+have data on many of these processes, so we will combine \DIFdelbegin \DIFdel{career
+change}\DIFdelend \DIFaddbegin \DIFadd{changes due to
+family responsibilities, career changes}\DIFaddend , emigration and immigration into
+a remainder term, which we denote as \(E_{i,x,t}\). Let \(D_{i,x,t}\)
+denote the number of deaths of workers in group \(i\) of age \(x\) in
+year \(t\), \(R_{i,x,t}\) denote the number of retirements from the same
+group of workers, and \(G_{i,x,t}\) denote the number of new graduates
+of age \(x\) in year \(t\) who take up work in group \(i\). The numbers
+in each case are for people aged \(x\) at the \emph{start} of year
+\(t\). Then population changes can be described using \DIFdelbegin \DIFdel{a model similar to the stochastic
+population modelof \mbox{%DIFAUXCMD
+\citet{HB08}}\hskip0pt%DIFAUXCMD
+, excluding the birth process}\DIFdelend \DIFaddbegin \DIFadd{the following
+model}\DIFaddend : \begin{equation}\phantomsection\label{eq-dgb}{
+P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + G_{i,x,t} + E_{i,x,t},
+}\end{equation} where
+
+\begin{itemize}
+\tightlist
+\item
+  \(D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{i,x,t})\), with
+  \(q_{i,x,t}\) being the probability of death for group \(i\) at age
+  \(x\) in year \(t\); and
+\item
+  \(R_{i,x,t} \sim \text{Binomial}((P_{i,x,t}-D_{i,x,t}), r_{i,x,t})\),
+  with \(r_{i,x,t}\) being the probability of retirement from group
+  \(i\) at age \(x\) in year \(t\).
+\end{itemize}
+
+That is, the population each year is equal to the population from the
+previous year having aged 1 year, minus the deaths or retirements that
+occurred during the previous year, plus the new graduates, plus any
+other changes due to migration or career change (which may be negative).
+We assume that \(E_{i,x,t} = G_{i,x,t} = 0\) above some age threshold
+(say \(x=100\)). Once \(P_{i,x,t} = 0\) when \(x\) is above that
+threshold, all future populations \(P_{i,x+k,t+k} = 0\), for
+\(k=1,2,\dots\). That is, when the cohort aged \(x\) in year \(t\) has
+all retired or died, and \(x\) is above the threshold, they will not be
+replaced by new workers of the same age.
+
+\DIFaddbegin \DIFadd{While our model was inspired by the stochastic population model of
+\mbox{%DIFAUXCMD
+\citet{HB08}}\hskip0pt%DIFAUXCMD
+, that model has different inputs (births and immigration)
+and fewer outputs (deaths and emigration). Labour market forecasting is
+more complicated with no birth process, several more inputs (graduates,
+immigration, career changes, career renewal), and several more outputs
+(deaths, retirements, emigration, career disruption and career changes).
+}
+
+\DIFaddend As a first approximation, the components \(q\), \(r\), \(E\) and \(G\)
+can be assumed to behave independently for each combination of \(i\),
+\(x\) and \(t\). In reality, there may be some negative correlation
+between \(G\) and \(E\) as insufficient graduates would probably lead to
+employers finding people from overseas, while too many graduates would
+lead to scientists seeking work elsewhere.
+
+The choice of a Binomial rather than a Poisson distribution (in contrast
+to \citet{Brillinger1986}) for deaths and retirements is because the
+Binomial distribution ensures that the number of deaths and retirements
+cannot exceed the population at risk. In a simulation context, with very
+small populations, this is important to avoid nonsensical results.
+
+It is unlikely that we have available separate death and retirement
+counts for each group, and retirement data is not available in all
+years. So we will let \(q_{i,x,t} = q_{x,t}\) and \(r_{i,x,t} = r_{x}\),
+assuming that death rates and retirement rates are the same across all
+groups, and that retirement rates do not change over time. Similarly,
+graduation numbers are rarely available by discipline and age, so we
+will approximate \(G_{i,x,t} = g_xG_{i,t}\) where \(G_{i,t}\) is the
+total number of graduates in year \(t\) and \(g_x\) is the proportion of
+graduates by age across all disciplines.
+
+This leads to the simpler model
+\begin{equation}\phantomsection\label{eq-dgb2}{
+P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + g_xG_{i,t} + E_{i,x,t},
+}\end{equation} where
+
+\begin{itemize}
+\tightlist
+\item
+  \(D_{i,x,t} \sim \text{Binomial}(P_{i,x,t}, q_{x,t})\); and
+\item
+  \(R_{i,x,t} \sim \text{Binomial}((P_{i,x,t}-D_{i,x,t}), r_{x})\).
+\end{itemize}
+
+For the age-specific time-varying components \(q_{x,t}\) and
+\(E_{i,x,t}\), we will use functional data models \citep{HU07}. For
+\(q_{x,t}\), this is of the form
+\begin{equation}\phantomsection\label{eq-fdm}{
+\log(q_{x,t}) = \mu(x) + \sum_{k=1}^K \beta_{k,t} \phi_k(x) + \varepsilon_{x,t},
+}\end{equation} where \(\mu(x)\) is the mean function, \(\phi_k(x)\) are
+functional principal components, \(\beta_{k,t}\) are the principal
+component scores, and \(\varepsilon_{x,t}\) is an error term. Each
+\(\beta_{k,t}\) is then modelled using a univariate time series model,
+such as an ARIMA model. A log-link function is used to ensure that the
+probabilities remain positive. An inverse logit link function could also
+be used, if the probabilities are close to 1 for some ages. A similar
+model is used for \(E_{i,x,t}\), with separate mean functions and
+principal components for each group \(i\). The number of components
+\(K=6\), for the reasons outlined in \citet{HB08}.
+
+\DIFaddbegin \DIFadd{Because the \(\beta_{k,t}\) values are principal component scores, they
+are uncorrelated by construction. While it is possible for there to be
+some cross-correlations between the series at lags other than zero,
+these are usually not large enough for a multivariate model to give more
+accurate forecasts \mbox{%DIFAUXCMD
+\citep[see,][]{HU07} }\hskip0pt%DIFAUXCMD
+except in contrived simulated
+examples. On the other hand, \mbox{%DIFAUXCMD
+\citet{Aue2015} }\hskip0pt%DIFAUXCMD
+did use multivariate models
+to capture these cross-correlations, although they did not compare them
+on real data.
+}
+
+\DIFaddend Functional data models have been widely used in demography and other
+fields, and have been shown to work particularly well for age-specific
+demographic processes \citep{HB08, LCcomparison}. They enable the
+inherent smoothness over age to be captured, while modelling the
+autocorrelation over time using relatively simple univariate time series
+models applied to the principal component scores. In our application, we
+use univariate ARIMA models for the \(q_{x,t}\) scores, and ARMA models
+for the \(E_{i,x,t}\) scores\DIFaddbegin \DIFadd{, each estimated using maximum likelihood
+estimation}\DIFaddend . The assumption of stationarity for the \(E_{i,x,t}\) scores
+is validated for the disciplines we consider\DIFaddbegin \DIFadd{, but is not a requirement
+in general}\DIFaddend .
+
+For the time-varying component, \(G_{i,t}\), we use a global ARIMA model
+\citep{HM21} to capture the dynamics over time and across disciplines.
+\DIFaddbegin \DIFadd{This is estimated using least squares estimation. }\DIFaddend The global model pools
+information across disciplines to improve forecast accuracy, especially
+for disciplines with limited historical data.
+
+To forecast future working population numbers, \(P_{i,x,t}\), \(t>T\),
+we simulate future sample paths of each of the components \(G_{i,t}\),
+\(q_{x,t}\), and \(E_{i,x,t}\), simulate \(D_{i,x,t}\) and \(R_{i,x,t}\)
+from their respective Binomial distributions, and then use the
+demographic growth-balance equation Equation~\ref{eq-dgb2} iteratively
+to obtain \(P_{i,x,t}\) for \(t=T+1,T+2,\dots\). This simulation-based
+approach allows us to capture the uncertainty in each of the components,
+leading to a distribution of possible future outcomes for \(P_{i,x,t}\).
+
+This model is somewhat pragmatic given the data available in our
+specific application. If better data were available, other variations on
+Equation~\ref{eq-dgb} could be used. For example, if death rates were
+available by discipline, then we would replace \(q_{x,t}\) by
+\(q_{i,x,t}\) in the Binomial deaths distribution. If retirement rates
+were available by year, or by discipline, we could similarly replace
+\(r_x\) by a more specific retirement rate in the Binomial retirements
+distribution. If we had data on graduations by age and discipline, we
+could replace \(g_xG_{i,t}\) by \(G_{i,x,t}\). If we had data on
+migration, we could split the remainder \(E_{i,x,t}\) into several
+components, and model them separately. None of this changes the overall
+modelling framework we are proposing.
+
+\DIFaddbegin \DIFadd{Fortunately, there is no reason to think scientists of different
+disciplines would have different mortality experiences. A century ago,
+the dangers of radiation did increase mortality rates amongst chemists
+and physicists compared to other sciences, but modern science is
+conducted in extremely safe environments, so it seems reasonable to
+assume that all science disciplines share similar mortality profiles.
+}
+
+\DIFadd{There has been a small increase in average retirement age over the last
+ten years due to an increase in the age at which the old age pension can
+be accessed \mbox{%DIFAUXCMD
+\citep{pension}}\hskip0pt%DIFAUXCMD
+, and a steady increase in the preservation
+age at which superannuation can be accessed
+\mbox{%DIFAUXCMD
+\citep{kingston2019superannuation}}\hskip0pt%DIFAUXCMD
+. However, there is no existing policy
+proposal to change either of these in the future, so it is reasonable to
+take the retirement age distribution in recent years as valid for the
+foreseeable future. Further, we know of no evidence that the
+socio-economic status of scientists varies with discipline, so there is
+no reason to think retirement intentions would change with discipline
+either.
+}
+
+\DIFadd{We assume the age distribution of graduates is a product of
+age-dependent and time-dependent variables, \(g_x\) and \(G_{i,t}\).
+Primarily, this is a pragmatic choice because we do not have more
+detailed data available. We can get age distributions of graduates
+across all disciplines in Australia, but not for each discipline; and we
+can get the numbers of graduates by discipline and year in Australia,
+but with no age breakdown. The most likely consequence of this
+simplifying assumption is that the variability in graduate numbers by
+age and time could be underestimated. It is conceivable that older
+graduates are drawn to different disciplines than younger graduates, or
+that fashionable disciplines change over time, resulting in different
+age distributions of the graduates over time. But without specific data
+related to this issue, we can only speculate.
+}
+
+\DIFadd{It is also worth pointing out that the remainder term \(E_{i,x,t}\) will
+absorb any inaccuracies that result from simplifying model assumptions
+in the other components, and we forecast the remainder allowing for
+changes over time, age and discipline. In fact, we could ignore all the
+model components and just forecast \(P_{i,x,t}\) directly using a
+functional time series model, but that would fail to separate out the
+competing dynamics at play, and lead to much wider prediction intervals.
+By trying to model the individual components where we have available
+data, even if imperfectly, we capture more of the inherent uncertainty
+and obtain narrower prediction intervals.
+}
+
+\DIFaddend \section{Data}\label{sec-data}
+
+To illustrate the methodology, we consider the Natural and Physical
+Sciences as defined in the Australian Standard Classification of
+Education (ASCED) by the \citet{ABSASCED}. We refer to ASCED's Narrow
+Fields as ``disciplines''; these comprise Physics and Astronomy,
+Mathematical Sciences, Chemical Sciences, Earth Sciences, Biological
+Sciences, Other Natural and Physical Sciences, and Natural and Physical
+Sciences not further defined (n.f.d.). Table~\ref{tbl-disciplines} lists
+the detailed fields within each scientific discipline.
+
+\DIFdelbegin %DIFDELCMD < \begin{table}
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \begin{table}[!hb]
+\DIFaddendFL 
+
+\caption{\label{tbl-disciplines}Classification of scientific
+disciplines, based on the ASCED Narrow Fields of Education within the
+Broad Field of Natural and Physical Sciences. The table lists their
+corresponding Detailed Fields. ``n.e.c.'' stands for ``Not Elsewhere
+Classified.''}
+
+\centering{
+
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{tabular}[t]{l>{\raggedright\arraybackslash}p{9cm}}
+\toprule
+\textbf{Narrow Fields} & \textbf{Detailed Fields}\\
+\midrule
+Physics and Astronomy & Physics, Astronomy.\\
+Mathematical Sciences & Mathematics, Statistics, Mathematical Sciences, n.e.c.\\
+Chemical Sciences & Organic Chemistry, Inorganic Chemistry, Chemical Sciences, n.e.c.\\
+Earth Sciences & Atmospheric Sciences, Geology, Geophysics, Geochemistry, Soil Science, Hydrology, Oceanography, Earth Sciences, n.e.c.\\
+Biological Sciences & Biochemistry and Cell Biology, Botany, Ecology and Evolution, Marine Science, Genetics, Microbiology, Human Biology, Zoology, Biological Sciences, n.e.c.\\
+Other Natural and Physical Sciences & Medical Science, Forensic Science, Food Science and Biotechnology, Pharmacology, Laboratory Technology, Natural and Physical Sciences, n.e.c.\\
+\bottomrule
+\end{tabular}}
+
+}
+
+\end{table}%
+
+We define the population of workers in a discipline as those who are
+active in the labour market and hold a bachelor's degree or higher in
+that discipline. For the purposes of this analysis, we will omit ``Other
+Natural and Physical Sciences'' and ``Natural and Physical Sciences
+n.f.d.''.
+
+\subsection{Working population}\label{working-population}
+
+Data on the working population were sourced from the \emph{Census of
+Population and Housing} \citep{ABSCensus} for census years 2006, 2011,
+2016, and 2021. This dataset encompasses one-year age groups, the
+highest level of completed non-school qualification level (QALLP), the
+corresponding field of study \citep[QALFP,][]{ABSQALFP}, and the
+industries in which individuals work. However, labour force
+participation status \citep{ABSLFFP} is available only for 2016 and
+2021. To estimate worker numbers for 2006 and 2011, the average
+participation rates from 2016 and 2021 were applied, assuming overall
+age distributions remain consistent.
+
+The resulting estimates of the number of scientists who are active in
+the Australian labour market is shown in
+Figure~\ref{fig-cohort-interpolation} as the thick lines. Cohort
+interpolation \citep{STUPP88}, applying linear interpolation within each
+age cohort between census years, is used to estimate values for the
+intercensal years (shown as thin lines), giving \(P_{i,x,t}\) for each
+discipline \(i\), age \(x\), and year \(t\).
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-cohort-interpolation-1.pdf}}
+
+}
+
+\caption{\label{fig-cohort-interpolation}\(P_{i,x,t}\): Estimated number
+of working scientists in Australia by discipline and age, 2006--2021.
+Thicker lines are used to denote census years.}
+
+\end{figure}%
+
+\subsection{Retirements}\label{retirements}
+
+Retirement data was sourced from the \emph{Retirement and Retirement
+Intentions} dataset (Catalogue 6238) for the 2022--2023 financial year
+\citep{ABS6238}. The data are categorised by the industry of an
+individual's main job, and are provided in four broad age groups
+(45--59, 60--64, 65--69 and 70+). There are 19 industry categories, with
+the largest numbers of scientists working in Education and Training
+(15.8\%), Professional, Scientific and Technical Services (15.5\%), and
+Health Care and Social Assistance (14.6\%). The proportions in other
+industries are much smaller. We take a weighted average of retirement
+intentions using these top three industries, with proportions rescaled
+to sum to 1. The resulting values are shown in
+Figure~\ref{fig-retirements} as the gray line. To obtain a
+single-year-of-age retirement distribution, we disaggregate the data
+using a monotonic cubic spline applied to the cumulative values of these
+age groups \citep{SHW04}. The resulting smoothed distribution (\(r_x\))
+is shown as the black line in Figure~\ref{fig-retirements}.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-retirements-1.pdf}}
+
+}
+
+\caption{\label{fig-retirements}\(r_x\): Age distribution of retirement
+intentions, based on data from the 2022--2023 Australian financial year.
+The grey line shows the age-group probabilities; the black line shows
+the smoothed probabilities.}
+
+\end{figure}%
+
+\subsection{Deaths}\label{deaths}
+
+Age-specific mortality rates from 1971 to 2021 were obtained from the
+\citet{HMD}. Using standard life table methods, these rates are
+converted into age-specific probabilities of death, as shown in
+Figure~\ref{fig-death-probs}. Over time, mortality probabilities have
+generally declined across all age groups, reflecting improvements in
+Australian life expectancy.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-death-probs-1.pdf}}
+
+}
+
+\caption{\label{fig-death-probs}\(q_{x,t}\): Age-specific probabilities
+of death (on a logarithmic scale) for each year from 1971 to 2021.}
+
+\end{figure}%
+
+No data are available for specific industry groups, so we assume that
+all scientists have the same mortality probabilities as the general
+population. These probabilities serve as estimates of \(q_{x,t}\).
+
+\subsection{Graduate completions}\label{graduate-completions}
+
+Graduate completion statistics were obtained from the \emph{Award Course
+Completions} dataset \citep{DeptEdu}. Figure~\ref{fig-completions} shows
+the distribution of graduate completions with a bachelor's degree or
+higher, by age for each year from 2006 to 2023. Some missing values
+result in gaps in certain lines, but the overall pattern remains highly
+consistent across years. Given this consistency, the data is averaged
+across all available years, and then smoothed by applying monotonic
+cubic splines to the cumulative values \citep{SHW04}. The resulting
+averaged distribution, shown as the black line in
+Figure~\ref{fig-completions}, smooths out year-to-year fluctuations and
+provides an estimate of \(g_x\).
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-completions-1.pdf}}
+
+}
+
+\caption{\label{fig-completions}\(g_x\): Estimated distribution of
+graduate completions by age (black). This is estimated by averaging and
+smoothing the data for the years 2006 to 2023 (coloured).}
+
+\end{figure}%
+
+The Department of Education provides data on the number of graduates
+with a bachelor's degree or higher, categorised by discipline and year
+\citep{DeptEdu_Private}. This dataset includes both domestic and
+international students. The total number of graduates, \(G_{i,t}\), in
+each discipline \(i\) and year \(t\), are shown in
+Figure~\ref{fig-graduates}.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-graduates-1.pdf}}
+
+}
+
+\caption{\label{fig-graduates}\(G_{i,t}\): Total number of graduates
+with a bachelor's degree or higher by discipline from 2006 to 2023.}
+
+\end{figure}%
+
+The large increase in the working population observed in the 2021 Census
+for Mathematical Sciences (Figure~\ref{fig-cohort-interpolation}) can be
+partly attributed to the sharp rise in graduate numbers between 2016 and
+2021. This is probably due to the impact of data science, and the
+growing importance of statistics and machine learning in many areas of
+employment.
+
+\subsection{Remainder}\label{remainder}
+
+The demographic growth-balance equation (Equation~\ref{eq-dgb2}), when
+rearranged, provides an expression for the remainder including net
+migration and career changes:
+\begin{equation}\phantomsection\label{eq-remainder}{
+E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} - D_{i,x,t} - R_{i,x,t} - g_xG_{i,t},
+}\end{equation} However, we do not have data on \(D_{i,x,t}\) and
+\(R_{i,x,t}\), so we replace these by their expected values,
+\(P_{i,x,t} q_{x,t}\) and \(P_{i,x,t}(1-q_{x,t}) r_x\), respectively. We
+can only estimate remainders up to 2020 because we need data for both
+year \(t\) and year \(t+1\) in Equation~\ref{eq-remainder}, and our
+working population data only extends to 2021. The estimated remainders
+are shown in Figure~\ref{fig-remainder}.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-remainder-1.pdf}}
+
+}
+
+\caption{\label{fig-remainder}Estimated remainder \(E_{i,x,t}\) by
+discipline, age and year (2006--2020).}
+
+\end{figure}%
+
+The inclusion of international students in the graduate data leads to
+large positive values of the remainder for the teenage years, followed
+by large negative values when these students return to their home
+countries after graduation.
+
+\section{Results}\label{sec-results}
+
+\subsection{Graduate completions}\label{graduate-completions-1}
+
+To forecast future graduate numbers, \(G_{i,t}\), a global ARIMA model
+was employed, following the principles outlined by \citet{HM21}. The
+global model captures overall trends across disciplines by scaling
+graduate data within each discipline, ensuring proportional
+contributions from all disciplines before fitting the global ARIMA
+model. This improves the numerical stability of the model by
+incorporating information across disciplines. The forecast distributions
+are shown in Figure~\ref{fig-grad-forecasts}, with the mean forecast
+represented by the solid line and 90\% prediction intervals indicated by
+the shaded area.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-grad-forecasts-1.pdf}}
+
+}
+
+\caption{\label{fig-grad-forecasts}Forecast of \(G_{i,t}\): the number
+of graduates by discipline, 2024--2035, based on historical data from
+2006--2023. The shaded regions represent the 90\% prediction intervals,
+and the solid lines indicate the mean estimates.}
+
+\end{figure}%
+
+\subsection{Death probabilities}\label{death-probabilities}
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-death-probs-forecasts-1.pdf}}
+
+}
+
+\caption{\label{fig-death-probs-forecasts}Forecasts of \(q_{x,t}\):
+age-specific probabilities of death (on a logarithmic scale) for 2035,
+based on historical data from 1971--2021. The shaded regions represent
+the 90\% prediction intervals, and the solid lines indicate the mean
+estimate.}
+
+\end{figure}%
+
+The death probabilities shown in Figure~\ref{fig-death-probs} were first
+smoothed using the partially monotonic penalised spline approach of
+\citet{HU07}. Then the functional data model Equation~\ref{eq-fdm} was
+estimated, with ARIMA models fitted to the coefficients. The forecasts
+for one year are shown in Figure~\ref{fig-death-probs-forecasts}, with
+the mean forecast represented by the solid line and 90\% prediction
+intervals indicated by the shaded area. Note that the historical data
+(shown in gray) represent unsmoothed values, while the forecasts are
+based on the smoothed functional data model. The additional variation
+seen in the historical data is captured in the model through the
+Binomial death process.
+
+\subsection{Remainder}\label{remainder-1}
+
+The remainder, \(E_{i,x,t}\), is also modelled using a functional data
+model \citep{HU07}, with \DIFdelbegin \DIFdel{stationary ARMA }\DIFdelend \DIFaddbegin \DIFadd{ARIMA }\DIFaddend models fitted to the principal component
+scores. \DIFdelbegin \DIFdel{The }\DIFdelend \DIFaddbegin \DIFadd{In this case, all }\DIFaddend scores were found to be stationary using the
+KPSS test \citep{KPSS}\DIFaddbegin \DIFadd{, so ARMA models are used}\DIFaddend . The forecasts for one
+year are shown in Figure~\ref{fig-net-migration-disciplines}, with the
+mean forecast represented by the solid line and 90\% prediction
+intervals indicated by the shaded area.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-net-migration-disciplines-1.pdf}}
+
+}
+
+\caption{\label{fig-net-migration-disciplines}Forecasts of
+\(E_{i,x,t}\): the remainder by discipline for 2035, based on historical
+data from 2006--2020. The shaded regions represent the 90\% prediction
+intervals, and the solid lines indicate the mean estimates.}
+
+\end{figure}%
+
+\subsection{Simulating future
+populations}\label{simulating-future-populations}
+
+We use the demographic growth-balance model Equation~\ref{eq-dgb2} to
+iteratively simulate future populations, using the models described
+above for the components. The following steps outline the process.
+
+A total of 1000 simulations are run to obtain a distribution of future
+age-specific population scenarios. The average of the 1000 simulations
+provides the mean age-specific forecast, while quantiles estimate
+forecast uncertainty. Figure~\ref{fig-forecast-working-population}
+presents the mean and 90\% prediction intervals for 2035.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-forecast-working-population-1.pdf}}
+
+}
+
+\caption{\label{fig-forecast-working-population}Forecasts of
+\(P_{i,x,t}\): the working population by discipline for 2035. The shaded
+regions represent the 90\% prediction intervals, and the solid lines
+indicate the mean estimates.}
+
+\end{figure}%
+
+In 2035, forecast variability is highest in the age period 20--35 years,
+before gradually narrowing as the workforce ages. This is due to the
+relatively high uncertainty in the new graduates component compared to
+the other components. Mid-to-late career estimates primarily reflect the
+aging of existing cohorts. The prediction intervals become especially
+narrow during the retirement phase, where the workforce dynamics become
+more predictable. Since retirements increase after the late 50s,
+workforce participation beyond 60 serves as a benchmark for identifying
+trends in delayed retirement and extended career duration. Over the next
+ten years, we expect an aging workforce in all but the Mathematical
+Sciences, where a large increase in the population is forecast.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/fig-forecast-total-working-scientists-1.pdf}}
+
+}
+
+\caption{\label{fig-forecast-total-working-scientists}Forecasted total
+number of working scientists across scientific disciplines from 2022 to
+2041. The shaded region represents the 90\% prediction interval, the
+coloured line indicates the mean estimate, and the black line represents
+historical data.}
+
+\end{figure}%
+
+Cohort effects are also visible in
+Figure~\ref{fig-forecast-working-population}, where fluctuations in
+earlier ages and years propagate through to later ages and years. This
+is particularly evident in the mid-career years because there are few
+deaths and retirements, few graduates older than 30, and the variation
+due to the remainder term is relatively small after age 30.
+
+Summing over ages allows for estimating the forecast distribution of the
+total number of working scientists in each future year, as shown in
+Figure~\ref{fig-forecast-total-working-scientists}. The forecasts
+indicate continued growth, but at a gradually slower pace for all
+disciplines other than the Mathematical Sciences. Where the lower bound
+is nearly flat, workforce stagnation is possible in a conservative
+scenario. Even in the optimistic scenario (corresponding to the upper
+bound), growth only slightly exceeds the current pace, except for the
+Mathematical Sciences. As noted earlier, the divergent behaviour of the
+Mathematical Sciences is likely driven by the growing importance of data
+science and related fields.
+
+The wide prediction intervals reflect the uncertainty in the forecasts,
+and show that caution is needed when interpreting the results. The only
+discipline where there is clear evidence of growth or decline is the
+Mathematical Sciences. For all other disciplines, the prediction
+intervals include the current level, indicating that stagnation,
+increase, or decline is possible.
+
+\section{Discussion}\label{sec-conclusion}
+
+While these forecasts provide a foundation for workforce planning, it is
+important to note that they are entirely driven by historical trends and
+do not account for possible new developments, such as the impact of AI
+and other emerging technologies on the labour market in different
+scientific disciplines. Other factors, such as policy changes or global
+economic shifts, may also influence workforce trends. These exogenous
+factors could be accounted for by adding covariates into the time series
+models used, provided relevant data are available.
+
+Evaluating and validating these forecasts is challenging due to the
+relatively long forecast horizon compared to the available historical
+data. While time series cross-validation \citep{fpp3} could be used to
+assess forecast accuracy for shorter horizons, the benefit of the
+forecasts is primarily for longer horizons, where such validation is not
+possible. The uncertainty in the forecasts, as reflected in the wide
+prediction intervals, highlights the need for caution when interpreting
+the results.
+
+If more detailed data were available, the model could be refined further
+by including, for example, discipline-specific death rates, retirement
+data by year and/or discipline, graduate data by age and discipline, and
+data on migration and career changes. It is not clear how much these
+refinements would improve forecast accuracy, but they would likely
+reduce uncertainty in the forecasts.
+
+Forecasts are often designed not just to predict the future, but also to
+inform policy decisions, and so modify the future. In this context,
+these forecasts could be used to identify potential skill shortages or
+surpluses in specific disciplines, guiding decisions on university and
+immigration policy, and thus changing the future outcomes
+\citep{causality2022}. Consequently, forecast accuracy may be less
+important than understanding the range of possible outcomes and their
+implications for policy.
+
+While this analysis has focused on the scientific workforce in
+Australia, the methodology could be applied to other countries or
+workforce sectors, provided similar data are available. The specific
+components of the demographic growth-balance equation may need to be
+adapted to reflect the available data in other applications.
+
+\section{Software and
+reproducibility}\label{software-and-reproducibility}
+
+All results presented here can be reproduced using the code available at
+\url{https://github.com/robjhyndman/age_structure_forecasts}. The
+analysis was conducted using R version 4.5.1 \citep{R}, with the
+following R packages: vital \citep{Rvital}, tsibble \citep{Rtsibble},
+fable \citep{Rfable}, targets \citep{targets, targetspaper}, ggplot2
+\citep{ggplot2, ggplotbook}, and other tidyverse \citep{tidyverse}
+packages.
+
+
+\bibliography{refs.bib}
+
+
+
+\end{document}
