@@ -4,6 +4,7 @@ author: Response to reviewers
 branding: false
 linestretch: 1.2
 bibliography: refs.bib
+csl: apa-single-spaced.csl
 format: 
   memo-typst: default # Use memo-pdf to use latex
 filters:
@@ -63,8 +64,7 @@ In this paper, the authors studied the forecasting of the workforce of different
 ### Other comments:
 
 ::: {.reviewer}
-1. On page 2, it seems restrictive to have only two reasons, retirement and death, for people
-to leave the workforce.
+1. On page 2, it seems restrictive to have only two reasons, retirement and death, for people to leave the workforce.
 :::
 
 We do not have only these two reasons for people to leave the workforce. We also mention career changes, migration, and career disruption. These are handled implicitly in the remainder term, as we do not have data available for these processes. Deaths and retirement can be handled explicitly as we have suitable data available.
@@ -78,8 +78,7 @@ We have added clarifying statements in Section 2 to address this misunderstandin
 See the response to Reviewer 1, comment 1.
 
 ::: {.reviewer}
-1. The main model setup is stated on pages 6 and 7. It is not clear which parts of the model
-are new in the literature.
+1. The main model setup is stated on pages 6 and 7. It is not clear which parts of the model are new in the literature.
 :::
 
 To the best of our knowledge, there has been no previous attempt to forecast the age-structure of a workforce using a stochastic model. So the model is entirely new. We apologize if we gave a different impression in discussing the connection between our proposed model and the population forecasting model of Hyndman and Booth (IJF, 2008). Both involve age-structure forecasting, but with very different processes. We are proposing a new model for workforce age structure forecasting, that is somewhat inspired by the statistical model proposed by Hyndman and Booth (IJF, 2008) for population forecasting. The latter involves different inputs (births and immigration) and fewer outputs (deaths and emigration). Labour market forecasting is more complicated with no birth process, but several more inputs (graduates, immigration, career changes, career renewal) and several more outputs (deaths, retirements, emigration, career disruption and career changes). 
@@ -95,26 +94,21 @@ The $\beta_{k,t}$ values are principal component scores, so they are uncorrelate
 We have added a new paragraph along these lines in Section 2.
 
 ::: {.reviewer}
-5. There is no mention of the statistical inference of the unknown parameters. For example,
-how were the unknown parameters in the model on pages 6 and 7 estimated?
+5. There is no mention of the statistical inference of the unknown parameters. For example, how were the unknown parameters in the model on pages 6 and 7 estimated?
 :::
 
-Functional principal components [@HU07] was used to compute the principal component scores. 
-All univariate ARIMA models were estimated using maximum likelihood estimation.  The global ARIMA model was estimated using least squares estimation (as a full likelihood is somewhat  difficult to compute across multiple series).
+Functional principal component analysis [@HU07] was used to compute the principal component scores. All univariate ARIMA models were estimated using maximum likelihood estimation. The global ARIMA model was estimated using least squares estimation (as a full likelihood is somewhat difficult to compute across multiple series).
 
 This has now been noted in Section 2.
 
 ::: {.reviewer}
-6. There is no simulation experiment to investigate the performance of the inference proce-
-dure.
+6. There is no simulation experiment to investigate the performance of the inference procedure.
 :::
 
 Statistical inference is not the point of this paper. We estimate model parameters in order to produce forecasts. The values of the parameters themselves are of little interest. In any case, the functional time series models used for each component have been well-studied previously [@HU07;@HS09;@Horvath2012;@Aue2015;@Haghbin2023]. 
 
 ::: {.reviewer}
-7. In Section 4, the forecasting was done using simulation methods. There is no validation
-of the forecasting accuracy. It is important to demonstrate how good the forecasts are
-compared with existing models.
+7. In Section 4, the forecasting was done using simulation methods. There is no validation of the forecasting accuracy. It is important to demonstrate how good the forecasts are compared with existing models.
 :::
 
 Which existing models? There are no existing statistical models for forecasting labour market age-structure as far as we know, so we can't compare against them. 
@@ -122,9 +116,7 @@ Which existing models? There are no existing statistical models for forecasting 
 However, we have added a new appendix validating the coverage of the one-step prediction intervals for the last year of census data, using data up to the previous census. Given the use of interpolation between censuses, it would be invalid to test the accuracy of our forecasts between censuses, and there is insufficient data to properly evaluate forecasts earlier than the last census.
 
 ::: {.reviewer}
-In short, the contributions of the current version of the paper do not seem to be adequate for
-publication in the journal. Much more work is required to illustrate the value of the proposed
-changes in the workforce modeling.
+In short, the contributions of the current version of the paper do not seem to be adequate for publication in the journal. Much more work is required to illustrate the value of the proposed changes in the workforce modeling.
 :::
 
 It is not clear what is meant by "proposed changes in the workforce modeling". We are not proposing changes, we are proposing an entirely new model --- the first statistical model of any kind to allow age structure forecasting for a labour market. Hopefully the comments above, and the new material in the paper, will have made this clearer.

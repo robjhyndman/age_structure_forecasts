@@ -161,6 +161,7 @@ To illustrate the methodology, we consider the Natural and Physical Sciences as 
 
 ```{r}
 #| label: tbl-disciplines
+#| tbl-pos: "!hb"
 #| tbl-cap: Classification of scientific disciplines, based on the ASCED Narrow Fields of Education within the Broad Field of Natural and Physical Sciences. The table lists their corresponding Detailed Fields.  "n.e.c." stands for "Not Elsewhere Classified."
 tar_read(discipline_table)
 ```
