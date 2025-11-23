@@ -367,6 +367,38 @@ list(
     make_fig_future_grads_discipline(course_leavers, future_grads_discipline)
   ),
 
+  # Appendix
+  tar_target(
+    future_pop_science_2016,
+    forecast_pop(
+      census4_1 |> filter(year <= 2016),
+      course_leavers |> filter(year <= 2016),
+      ave_completions,
+      retirements,
+      aus_death_prob |> filter(year <= 2016),
+      arma_coef_science,
+      h = 5,
+      nsim = nsim
+    )
+  ),
+  tar_target(
+    coverage,
+    future_pop_science_2016 |>
+      filter(year == 2021) |>
+      group_by(age, discipline) |>
+      reframe(quantile_df(working)) |>
+      left_join(
+        census4_1 |>
+          filter(year == 2021) |>
+          select(age, discipline, working),
+        by = c("age", "discipline")
+      ) |>
+      group_by(discipline, interval) |>
+      summarise(
+        inside = mean(working >= lo & working <= hi)
+      )
+  ),
+
   # Document
   tar_target(discipline_table, make_discipline_table()),
   tar_quarto(

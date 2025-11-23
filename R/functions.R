@@ -496,3 +496,12 @@ make_discipline_table <- function() {
     kableExtra::column_spec(2, width = "9cm") |>
     kableExtra::kable_styling(latex_options = "scale_down")
 }
+
+
+quantile_df <- function(x, interval = c(95,90,80)) {
+  tibble(
+    lo = quantile(x, (1-interval/100)/2, na.rm = TRUE),
+    hi = quantile(x, 1-(1-interval/100)/2, na.rm = TRUE),
+    interval = interval
+  )
+}
