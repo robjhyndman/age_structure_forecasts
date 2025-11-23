@@ -369,12 +369,18 @@ list(
 
   # Document
   tar_target(discipline_table, make_discipline_table()),
-  # tar_quarto(
-  #   paper,
-  #   "age_structure_forecasts.qmd",
-  #   extra_files = c("refs.bib", "preamble.tex"),
-  #   quiet = FALSE
-  # ),
+  tar_quarto(
+    paper,
+    "age_structure_forecasts.qmd",
+    extra_files = c("refs.bib", "preamble.tex"),
+    quiet = FALSE
+  ),
+  tar_quarto(
+    response,
+    "response.qmd",
+    extra_files = "refs.bib",
+    quiet = FALSE
+  ),
   tar_quarto(
     talk,
     "age_structure_talk.qmd",
