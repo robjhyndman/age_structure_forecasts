@@ -224,21 +224,18 @@ forecast_pop_discipline <- function(
     filter(year < last_yr, !is.na(graduates)) |>
     model(fdm = FDM(remainder, coherent = TRUE))
   last_yr_migrants <- fit_migrants |>
-    forecast(h = 1) |>
+    generate(h = 1, times = nsim) |>
     as_tibble() |>
-    select(-remainder, -.model) |>
-    rename(remainder = .mean)
+    select(-.model, remainder = .sim)
   # Add migrants into last year
-  population <- bind_rows(
-    df |> filter(year < last_yr),
-    df |>
+  population <- df |>
       filter(year == last_yr) |>
       select(-remainder) |>
+      as_tibble() |>
       left_join(
         last_yr_migrants,
-        by = c("age", "year")
+        by = c("age", "year", "discipline")
       )
-  )
 
   # Forecast mortality rates
   future_death_prob <- mortality |>
@@ -291,8 +288,8 @@ forecast_pop_discipline <- function(
 
   # Get first year working population of simulation
   tmp <- population |>
-    filter(year == last_yr) |>
     transmute(
+      .rep = .rep,
       age = age + 1,
       year = year + 1,
       working = pmax(0, working - deaths - retirees + graduates + remainder),
@@ -304,7 +301,7 @@ forecast_pop_discipline <- function(
     )
 
   N <- N |>
-    left_join(tmp, by = c("age", "year")) |>
+    left_join(tmp, by = c("age", "year", ".rep")) |>
     mutate(working = if_else(is.na(working), 0, working))
 
   # Now iterate to generate population each year
@@ -498,10 +495,10 @@ make_discipline_table <- function() {
 }
 
 
-quantile_df <- function(x, interval = c(95,90,80)) {
+quantile_df <- function(x, interval = c(95, 90, 80)) {
   tibble(
-    lo = quantile(x, (1-interval/100)/2, na.rm = TRUE),
-    hi = quantile(x, 1-(1-interval/100)/2, na.rm = TRUE),
+    lo = quantile(x, (1 - interval / 100) / 2, na.rm = TRUE),
+    hi = quantile(x, 1 - (1 - interval / 100) / 2, na.rm = TRUE),
     interval = interval
   )
 }
