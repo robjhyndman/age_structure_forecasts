@@ -228,14 +228,16 @@ forecast_pop_discipline <- function(
     as_tibble() |>
     select(-.model, remainder = .sim)
   # Add migrants into last year
+  if("discipline" %in% colnames(df)) {
+    joinby <- c("age", "year", "discipline")
+  } else {
+    joinby <- c("age", "year")
+  }
   population <- df |>
     filter(year == last_yr) |>
     select(-remainder) |>
     as_tibble() |>
-    left_join(
-      last_yr_migrants,
-      by = c("age", "year", "discipline")
-    )
+    left_join(last_yr_migrants, by = joinby)
 
   # Forecast mortality rates
   future_death_prob <- mortality |>
