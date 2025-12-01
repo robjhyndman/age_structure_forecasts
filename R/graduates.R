@@ -116,16 +116,23 @@ make_completions_step <- function(completions) {
     make_single_age(pc, smooth = FALSE)
 }
 
-make_completions_ave <- function(completions) {
+make_completions_ave <- function(completions, calc_sd = TRUE) {
+  if (calc_sd) {
+    FUN <- sd
+  } else {
+    FUN <- mean
+  }
   # Average over years
   ave_completions <- completions |>
     group_by(age_group) |>
-    summarise(pc = mean(pc, na.rm = TRUE)) |>
+    summarise(pc = FUN(pc, na.rm = TRUE)) |>
     make_single_age(pc)
 
   # Weird behaviour above age 70. Replace with linear interpolation
-  ave_completions <- ave_completions |>
-    mutate(pc = if_else(age >= 69, 0.013 - 0.0000681 * (age - 69), pc))
+  if (!calc_sd) {
+    ave_completions <- ave_completions |>
+      mutate(pc = if_else(age >= 69, 0.013 - 0.0000681 * (age - 69), pc))
+  }
 
   return(ave_completions)
 }

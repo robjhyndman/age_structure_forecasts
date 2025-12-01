@@ -208,7 +208,8 @@ add_migrants <- function(df, graduates, completions, retirements, mortality) {
 forecast_pop_discipline <- function(
   df,
   graduates,
-  completions,
+  ave_completions,
+  sd_completions,
   retirements,
   mortality,
   arma_coef,
@@ -266,15 +267,35 @@ forecast_pop_discipline <- function(
         filter(year >= last_yr) |>
         expand_grid(.rep = unique(future_graduates$.rep))
     )
-
+  # Simulated completions
+  sim_completions <- expand_grid(
+    .rep = as.character(seq(nsim)),
+    age = ave_completions$age,
+  ) |>
+    left_join(ave_completions, by = "age") |>
+    rename(mean = pc) |>
+    left_join(sd_completions, by = "age") |>
+      rename(sd = pc) 
+  sim_completions <- sim_completions |>
+    mutate(
+      pc = rnorm(NROW(sim_completions), mean = mean, sd = sd),
+      pc = pmax(0, pmin(100, pc))
+    ) |>
+    select(.rep, age, pc) |>
+    group_by(.rep) |>
+    mutate(
+      pc = pc / sum(pc) * sum(ave_completions$pc)
+    ) |>
+    ungroup()
+  
   # Disaggregate by age
   N <- expand_grid(
     year = last_yr + seq(h),
-    age = completions$age,
+    age = unique(sim_completions$age),
     .rep = unique(future_graduates$.rep)
   ) |>
     left_join(future_graduates, by = c(".rep", "year")) |>
-    left_join(completions, by = "age") |>
+    left_join(sim_completions, by = c(".rep","age")) |>
     mutate(
       pc = if_else(is.na(pc), 0, pc),
       graduates = pc * graduates / 100

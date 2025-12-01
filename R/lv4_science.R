@@ -75,7 +75,8 @@ make_census_single_year <- function(
 forecast_pop <- function(
   census1,
   course_leavers,
-  completions,
+  ave_completions,
+  sd_completions,
   retirements,
   death_prob,
   arma_coef_science,
@@ -89,7 +90,8 @@ forecast_pop <- function(
       forecast_pop_discipline(
         census_filtered,
         course_leavers_filtered,
-        completions,
+        ave_completions,
+        sd_completions,
         retirements,
         death_prob,
         arma_coef_science,

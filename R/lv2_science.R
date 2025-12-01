@@ -152,7 +152,8 @@ find_var <- function(data, possible_names) {
 forecast_pop2 <- function(
   census1,
   course_leavers,
-  completions,
+  ave_completions,
+  sd_completions,
   retirements,
   death_prob,
   arma_coef_science,
@@ -162,7 +163,8 @@ forecast_pop2 <- function(
   forecast_pop_discipline(
     census1,
     course_leavers,
-    completions,
+    ave_completions,
+    sd_completions,
     retirements,
     death_prob,
     arma_coef_science,
