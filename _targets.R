@@ -107,8 +107,20 @@ list(
     make_fig_completions(
       completions_step,
       ave_completions,
+      sd_completions,
       average = TRUE,
       by_year = TRUE
+    )
+  ),
+tar_target(
+    fig_ave_completions2,
+    make_fig_completions(
+      completions_step,
+      ave_completions,
+      sd_completions,
+      average = TRUE,
+      by_year = TRUE,
+      pi = TRUE
     )
   ),
   tar_target(tab2, make_table2(ave_completions)),

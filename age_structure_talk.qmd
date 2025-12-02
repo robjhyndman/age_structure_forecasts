@@ -279,6 +279,14 @@ tar_read(fig_completions)
 tar_read(fig_ave_completions)
 ```
 
+# Graduate completions: $g_{x}$
+\showmodel
+
+```{r}
+#| label: graduates_ave2
+tar_read(fig_ave_completions2)
+```
+
 # Graduate completions: $G_{i,t}$
 \showmodel
 
@@ -332,6 +340,8 @@ tar_read(fig22)
 Simulate using functional time series models, as for $q_{x,t}$.
 \end{block}
 \end{textblock}
+
+
 
 # Labour force model
 \vspace*{-0.2cm}
@@ -390,6 +400,24 @@ for (i in seq_along(fig_Pxt_future_discipline_talk)) {
   cat("\n")
 }
 ```
+
+# Population: $\displaystyle\sum_x P_{i,x,t}$
+\showmodel
+
+```{r}
+#| label: forecast-total-working-scientists
+tar_read(fig24)
+```
+
+# Comments
+\fontsize{14}{16}\sf
+
+* Ignoring impact of AI, other emerging technologies, etc.
+* Ignoring policy changes or exogenous global economic shifts.
+* Forecasts designed to inform policy decisions, not just predict future, and so may render themselves invalid.
+* Evaluation challenging due to long forecast horizon vs historical data.
+* Better model possible with more detailed data
+* Model applicable to other countries/sectors with similar data.
 
 # More information
 

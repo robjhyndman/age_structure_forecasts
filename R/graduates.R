@@ -116,7 +116,7 @@ make_completions_step <- function(completions) {
     make_single_age(pc, smooth = FALSE)
 }
 
-make_completions_ave <- function(completions, calc_sd = TRUE) {
+make_completions_ave <- function(completions, calc_sd = FALSE) {
   if (calc_sd) {
     FUN <- sd
   } else {
@@ -140,11 +140,13 @@ make_completions_ave <- function(completions, calc_sd = TRUE) {
 make_fig_completions <- function(
   completions,
   ave_completions = NULL,
+  sd_completions = NULL,
   by_year = TRUE,
-  average = FALSE
+  average = FALSE,
+  pi = FALSE
 ) {
-  if (average & is.null(ave_completions)) {
-    stop("Please provide ave_completions if average = TRUE")
+  if (average & (is.null(ave_completions) | is.null(sd_completions))) {
+    stop("Please provide ave_completions and sd_completions if average = TRUE")
   }
   if (average & !by_year) {
     title <- "Average graduate completions"
@@ -160,7 +162,7 @@ make_fig_completions <- function(
       y = "Percentage of graduates",
       title = title
     )
-  if (by_year) {
+  if (by_year & !pi) {
     p <- p +
       geom_step(
         aes(colour = year, group = year),
@@ -169,8 +171,24 @@ make_fig_completions <- function(
       scale_color_gradientn(colours = rainbow(10), name = "Year")
   }
   if (average) {
-    p <- p +
-      geom_line(data = ave_completions)
+    if (pi) {
+      df <- ave_completions |>
+        rename(mean = pc) |>
+        left_join(sd_completions, by = "age") |>
+        rename(sd = pc) |>
+        mutate(
+          lower = pmax(0, mean - 2 * sd),
+          upper = mean + 2 * sd
+        )
+      p <- p +
+        geom_ribbon(
+          data = df,
+          aes(x = age, y = mean, ymin = lower, ymax = upper),
+          fill = "gray",
+          alpha = 0.9
+        )
+    }
+    p <- p + geom_line(data = ave_completions)
   }
   p +
     scale_x_continuous(breaks = seq(20, 100, by = 10)) +
