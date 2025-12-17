@@ -1,4 +1,3 @@
-
 make_pop_future_fig_discipline <- function(
   yrs,
   object,
@@ -224,5 +223,42 @@ make_fig24 <- function(
     ) +
     scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
     scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
+    facet_wrap(~discipline, scales = "free_y")
+}
+
+
+show_component_forecast <- function(
+  data,
+  forecasts,
+  component = working,
+  age_x = 30
+) {
+  # Accept either a bare column name (working) or a string ("working")
+  comp_expr <- substitute(component)
+  comp_name <- if (is.character(comp_expr)) comp_expr else deparse(comp_expr)
+
+  fc <- forecasts |>
+    filter(age == age_x) |>
+    as_tibble() |>
+    group_by(year, age, discipline) |>
+    summarise(
+      lower = quantile(.data[[comp_name]], probs = 0.1),
+      upper = quantile(.data[[comp_name]], probs = 0.9),
+      ave = mean(.data[[comp_name]]),
+      .groups = "drop"
+    )
+
+  data |>
+    filter(age == age_x) |>
+    select(age, discipline, all_of(comp_name)) |>
+    ggplot(aes(x = year, y = .data[[comp_name]])) +
+    geom_line() +
+    geom_ribbon(
+      data = fc,
+      aes(ymin = lower, ymax = upper, y = ave),
+      alpha = 0.2,
+      fill = 'blue'
+    ) +
+    geom_line(data = fc, aes(y = ave), color = 'blue') +
     facet_wrap(~discipline, scales = "free_y")
 }
