@@ -26,11 +26,6 @@ list(
   tar_target(aus_death_prob, compute_death_prob(mortality)),
   tar_target(fig_mxt, life_table(mortality) |> make_fig_mxt()),
   tar_target(
-    fig_smooth_mxt,
-    make_fig_mxt(aus_death_prob) +
-      labs(y = "Smoothed probability of death")
-  ),
-  tar_target(
     model_mxt,
     aus_death_prob |>
       model(fdm = FDM(log(qx)))
@@ -123,30 +118,6 @@ tar_target(
       pi = TRUE
     )
   ),
-  tar_target(tab2, make_table2(ave_completions)),
-
-  # Census 2 digit
-  tar_target(science_file2, here::here("data/2-digit - Single year.xlsx")),
-  tar_target(census2, read_census2(science_file2)),
-  tar_target(
-    census2_1,
-    make_census_single_year(
-      census2,
-      course_leavers,
-      ave_completions,
-      retirements,
-      aus_death_prob
-    )
-  ),
-  tar_target(fig1, make_fig1(census2)),
-  tar_target(
-    fig_Pxt_census,
-    make_pop_fig(census2_1, "Natural and Physical Sciences", FALSE, TRUE)
-  ),
-  tar_target(
-    fig_Pxt,
-    make_pop_fig(census2_1, "Natural and Physical Sciences", TRUE, TRUE)
-  ),
   tar_target(
     fig_Pxt_discipline,
     #make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
@@ -160,8 +131,6 @@ tar_target(
       list = TRUE
     )[[1]]
   ),
-
-  tar_target(fig_error, make_component_fig(census2_1, remainder)),
 
   # Census 4 digit
   tar_target(census4, read_census(science_file4)),
@@ -178,37 +147,6 @@ tar_target(
 
   # Remainders
   tar_target(
-    model_Ext,
-    census2_1 |>
-      filter(year <= 2020) |>
-      model(fdm = FDM(remainder, coherent = TRUE))
-  ),
-  tar_target(
-    fig_Emodel_fdm1,
-    make_future_fdm_fig(model_Ext, 1:2)
-  ),
-  tar_target(
-    fig_Emodel_fdm2,
-    make_future_fdm_fig(model_Ext, 3:4)
-  ),
-  tar_target(
-    fig_Emodel_fdm3,
-    make_future_fdm_fig(model_Ext, 5:6)
-  ),
-  tar_target(
-    fig_model_Ext0,
-    make_future_Ext_fig(model_Ext, census2_1, h, 10, 2050)
-  ),
-  tar_target(
-    fig_model_Ext1,
-    make_future_Ext_fig(model_Ext, census2_1, h, 10, 2030)
-  ),
-  tar_target(
-    fig_model_Ext2,
-    make_future_Ext_fig(model_Ext, census2_1, h, 10, 2040)
-  ),
-  # By discipline
-  tar_target(
     model_Ext_discipline,
     census4_1 |>
       filter(year <= 2020) |>
@@ -222,20 +160,6 @@ tar_target(
   # Forecasts
   tar_target(h, 20),
   tar_target(nsim, 1000),
-  tar_target(
-    future_pop_science2,
-    forecast_pop2(
-      census2_1,
-      sci_grads,
-      ave_completions,
-      sd_completions,
-      retirements,
-      aus_death_prob,
-      arma_coef_science,
-      h = h,
-      nsim = nsim
-    )
-  ),
   tar_target(
     future_pop_science,
     forecast_pop(
@@ -251,35 +175,6 @@ tar_target(
     )
   ),
   tar_target(
-    fig_Pxt0,
-    make_pop_future_fig(future_pop_science2, census2_1, 2050)
-  ),
-  tar_target(
-    fig_Pxt_future,
-    make_pop_future_fig(
-      future_pop_science2,
-      census2_1,
-      2022:2035,
-      ribbon = TRUE
-    )
-  ),
-  # Physics
-  tar_target(
-    physics,
-    census4_1 |>
-      filter(discipline == "Physics and Astronomy") |>
-      select(-discipline)
-  ),
-  tar_target(
-    future_physics,
-    future_pop_science |>
-      filter(discipline == "Physics and Astronomy") |>
-      select(-discipline)
-  ),
-  tar_target(fig16, make_fig16(physics, future_physics)),
-
-  # Disciplines combined
-  tar_target(
     fig19,
     make_pop_fig(census4_1, "Natural and Physical Sciences", FALSE, TRUE)
   ),
@@ -288,7 +183,6 @@ tar_target(
     make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
   ),
   tar_target(fig21, make_fig21(course_leavers)),
-  tar_target(fig21b, make_fig21(course_leavers, combine = TRUE)),
   tar_target(fig22, make_fig22(census4_1)),
   tar_target(ymax, get_ymax(2022:2035, future_pop_science)),
   tar_target(
@@ -333,39 +227,6 @@ tar_target(
       future_course_leavers_science,
       PI = FALSE
     )
-  ),
-
-  # Graduate forecasts
-  tar_target(sci_grads, total_sci_grads(course_leavers)),
-  tar_target(arima, sci_grads |> model(ARIMA(graduates))),
-  tar_target(
-    check_arima,
-    if (fabletools::model_sum(arima[[1]][[1]]) != "ARIMA(0,1,1) w/ drift") {
-      stop("Wrong model")
-    }
-  ),
-  tar_target(
-    future_grads,
-    generate(arima, h = h, times = nsim) |>
-      rename(graduates = .sim) |>
-      select(-.model)
-  ),
-  tar_target(
-    fig_future_grads,
-    sci_grads |>
-      ggplot(aes(x = year, y = graduates)) +
-      geom_line() +
-      geom_line(
-        # Only show first 9 sample paths
-        data = future_grads |> filter(stringr::str_length(.rep) < 2),
-        aes(color = .rep)
-      ) +
-      labs(
-        x = "Year",
-        y = "Number of graduates",
-        title = "Total Science Graduates: Australia"
-      ) +
-      guides(color = "none")
   ),
 
   # Graduate forecasts by discipline
