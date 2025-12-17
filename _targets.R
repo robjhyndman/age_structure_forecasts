@@ -107,7 +107,7 @@ list(
       by_year = TRUE
     )
   ),
-tar_target(
+  tar_target(
     fig_ave_completions2,
     make_fig_completions(
       completions_step,
@@ -117,19 +117,6 @@ tar_target(
       by_year = TRUE,
       pi = TRUE
     )
-  ),
-  tar_target(
-    fig_Pxt_discipline,
-    #make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
-    make_pop_future_fig_discipline(
-      2050,
-      future_pop_science,
-      census4_1,
-      no_other = TRUE,
-      color_data = TRUE,
-      ymax = ymax,
-      list = TRUE
-    )[[1]]
   ),
 
   # Census 4 digit
@@ -185,6 +172,19 @@ tar_target(
   tar_target(fig21, make_fig21(course_leavers)),
   tar_target(fig22, make_fig22(census4_1)),
   tar_target(ymax, get_ymax(2022:2035, future_pop_science)),
+  tar_target(
+    fig_Pxt_discipline,
+    #make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
+    make_pop_future_fig_discipline(
+      2050,
+      future_pop_science,
+      census4_1,
+      no_other = TRUE,
+      color_data = TRUE,
+      ymax = ymax,
+      list = TRUE
+    )[[1]]
+  ),
   tar_target(
     fig_Pxt_discipline0,
     make_pop_future_fig_discipline(

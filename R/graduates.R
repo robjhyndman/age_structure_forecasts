@@ -195,19 +195,6 @@ make_fig_completions <- function(
     scale_y_continuous(labels = scales::percent_format(scale = 1))
 }
 
-make_table2 <- function(ave_completions) {
-  ave_completions |>
-    filter(age >= 20 & age <= 25) |>
-    mutate(pc = paste0(round(pc, 2), "%")) |>
-    select(age, pc) |>
-    kable(col.names = c("Age", "Percentage of Graduates"), align = "c") |>
-    add_header_above(
-      c("Percentage of Graduates Ages 20-25" = 2),
-      bold = TRUE
-    ) |>
-    kable_styling(latex_options = c("striped"))
-}
-
 # Level 4
 read_course_leavers <- function(file) {
   out <- readxl::read_excel(file, sheet = "4-digit") |>
