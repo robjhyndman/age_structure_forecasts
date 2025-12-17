@@ -140,49 +140,6 @@ make_pop_future_fig_discipline_year <- function(
   out
 }
 
-make_fig_future_grads_discipline <- function(
-  course_leavers,
-  future_grads_discipline,
-  no_other = TRUE
-) {
-  if (no_other) {
-    course_leavers <- course_leavers |>
-      dplyr::filter(discipline != "Other Natural and Physical Sciences")
-    future_grads_discipline <- future_grads_discipline |>
-      dplyr::filter(discipline != "Other Natural and Physical Sciences")
-  }
-  future_grads_discipline_pi <- future_grads_discipline |>
-    as_tibble() |>
-    group_by(discipline, year) |>
-    summarise(
-      lo = quantile(graduates, prob = 0.05),
-      mean = mean(graduates),
-      hi = quantile(graduates, prob = 0.95),
-      .groups = "drop"
-    )
-  course_leavers |>
-    ggplot(aes(x = year)) +
-    facet_wrap(~discipline, scales = "free_y") +
-    geom_line(aes(y = graduates)) +
-    geom_ribbon(
-      data = future_grads_discipline_pi,
-      aes(x = year, ymin = lo, ymax = hi),
-      alpha = 0.3,
-      fill = "#c14b14"
-    ) +
-    geom_line(
-      data = future_grads_discipline_pi,
-      aes(x = year, y = mean),
-      color = "#c14b14"
-    ) +
-    labs(
-      x = "Year",
-      y = "Number of graduates",
-      title = "Graduates by discipline"
-    ) +
-    guides(color = "none")
-}
-
 make_future_Ext_fig2 <- function(object, data, h, times, yr, no_other = TRUE) {
   object <- object |>
     forecast(h = h) |>
