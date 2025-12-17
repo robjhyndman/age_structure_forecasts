@@ -19,17 +19,19 @@ tar_option_set(
 tar_source()
 
 list(
-  # Mortality data from HMD
+  # Mortality data 
   tar_target(mx_file, here::here("data/Mx_1x1.txt"), format = "file"),
   tar_target(ex_file, here::here("data/Exposures_1x1.txt"), format = "file"),
   tar_target(mortality, read_mortality(mx_file, ex_file)),
   tar_target(aus_death_prob, compute_death_prob(mortality)),
-  tar_target(fig_mxt, life_table(mortality) |> make_fig_mxt()),
   tar_target(
     model_mxt,
     aus_death_prob |>
       model(fdm = FDM(log(qx)))
   ),
+  
+  # Mortality figures
+  tar_target(fig_mxt, life_table(mortality) |> make_fig_mxt()),
   tar_target(
     fig_model_fdm1,
     make_future_fdm_fig(model_mxt, 1:2)
@@ -69,23 +71,41 @@ list(
     retirements,
     single_age_retirements(retirement_data, aus_death_prob)
   ),
+  
+  # Retirement figures
   tar_target(fig_r, make_fig_r(retirement_data)),
   tar_target(fig_rx1, make_fig_rx(retirements, retirement_data, FALSE)),
   tar_target(fig_rx2, make_fig_rx(retirements, retirement_data)),
 
-  # Graduates
+  # Total graduates by discipline
   tar_target(
     leavers_file,
     here::here("data/Course completions - 2006 to 2023 - Totals.xlsx")
   ),
   tar_target(course_leavers, read_course_leavers(leavers_file)),
+
+  # Graduate model and forecasts
   tar_target(arma_coef_science, global_arma(course_leavers)),
   tar_target(
     future_course_leavers_science,
     simulate_future_graduates(course_leavers, arma_coef_science)
   ),
 
-  # Graduates by age
+  # Graduate figures  
+  tar_target(
+    fig_grad_forecasts,
+    make_fig_grad_forecasts(course_leavers, future_course_leavers_science)
+  ),
+  tar_target(
+    fig_grad_sim,
+    make_fig_grad_forecasts(
+      course_leavers,
+      future_course_leavers_science,
+      PI = FALSE
+    )
+  ),
+
+  # Total graduates by age
   tar_target(
     grad_file,
     here::here(
@@ -96,6 +116,8 @@ list(
   tar_target(completions_step, make_completions_step(completions)),
   tar_target(ave_completions, make_completions_ave(completions)),
   tar_target(sd_completions, make_completions_ave(completions, calc_sd = TRUE)),
+
+  # Graduate by age figures
   tar_target(fig_completions, make_fig_completions(completions_step)),
   tar_target(
     fig_ave_completions,
@@ -119,7 +141,7 @@ list(
     )
   ),
 
-  # Census 4 digit
+  # Census data (4 digit level for disciplines)
   tar_target(census4, read_census(science_file4)),
   tar_target(
     census4_1,
@@ -132,19 +154,33 @@ list(
     )
   ),
 
-  # Remainders
+  # Census figures
+  tar_target(
+    fig19,
+    make_pop_fig(census4_1, "Natural and Physical Sciences", FALSE, TRUE)
+  ),
+  tar_target(
+    fig20,
+    make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
+  ),
+  tar_target(fig21, make_fig21(course_leavers)),
+  tar_target(fig22, make_fig22(census4_1)),
+  
+  # Remainder model
   tar_target(
     model_Ext_discipline,
     census4_1 |>
       filter(year <= 2020) |>
       model(fdm = FDM(remainder, coherent = TRUE))
   ),
+
+  # Remainder figures
   tar_target(
     fig_model_Ext3,
     make_future_Ext_fig2(model_Ext_discipline, census4_1, h, 10, 2035)
   ),
 
-  # Forecasts
+  # Population forecasts
   tar_target(h, 20),
   tar_target(nsim, 1000),
   tar_target(
@@ -161,17 +197,9 @@ list(
       nsim = nsim
     )
   ),
-  tar_target(
-    fig19,
-    make_pop_fig(census4_1, "Natural and Physical Sciences", FALSE, TRUE)
-  ),
-  tar_target(
-    fig20,
-    make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
-  ),
-  tar_target(fig21, make_fig21(course_leavers)),
-  tar_target(fig22, make_fig22(census4_1)),
   tar_target(ymax, get_ymax(2022:2035, future_pop_science)),
+
+  # Forecast figures
   tar_target(
     fig_Pxt_discipline,
     #make_pop_fig(census4_1, "Natural and Physical Sciences", TRUE, TRUE)
@@ -216,32 +244,7 @@ list(
     )
   ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
-  tar_target(
-    fig_grad_forecasts,
-    make_fig_grad_forecasts(course_leavers, future_course_leavers_science)
-  ),
-  tar_target(
-    fig_grad_sim,
-    make_fig_grad_forecasts(
-      course_leavers,
-      future_course_leavers_science,
-      PI = FALSE
-    )
-  ),
-
-  # Graduate forecasts by discipline
-  tar_target(
-    future_grads_discipline,
-    course_leavers |>
-      fit_global_model(arma_coef_science) |>
-      generate(h = h, times = nsim) |>
-      rename(graduates = .sim) |>
-      select(-.model)
-  ),
-  tar_target(
-    fig_future_grads_discipline,
-    make_fig_future_grads_discipline(course_leavers, future_grads_discipline)
-  ),
+  
 
   # Appendix
   tar_target(
