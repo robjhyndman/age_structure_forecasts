@@ -174,6 +174,5 @@ forecast_pop <- function(
     N <- bind_rows(N1, N2)
   }
   N |>
-    select(year, age, .rep, discipline, working) |>
     as_vital(index = year, key = c(discipline, age, .rep), .age = "age")
 }
