@@ -1,24 +1,3 @@
-get_ymax <- function(
-  yrs,
-  object,
-  no_other = TRUE
-) {
-  # Remove other group
-  if (no_other) {
-    object <- object |>
-      dplyr::filter(discipline != "Other Natural and Physical Sciences")
-  }
-  object <- object |>
-    as_tibble() |>
-    dplyr::filter(year %in% yrs) |>
-    group_by(age, discipline, year) |>
-    summarise(
-      .upper = quantile(working, probs = 0.9),
-      .groups = "drop"
-    ) |>
-    group_by(discipline) |>
-    summarise(ymax = max(.upper))
-}
 
 make_pop_future_fig_discipline <- function(
   yrs,
@@ -202,4 +181,91 @@ make_fig_future_grads_discipline <- function(
       title = "Graduates by discipline"
     ) +
     guides(color = "none")
+}
+
+make_future_Ext_fig2 <- function(object, data, h, times, yr, no_other = TRUE) {
+  object <- object |>
+    forecast(h = h) |>
+    filter(year == yr, age <= 100) |>
+    mutate(
+      pi = hilo(remainder),
+      lo = pi$lower,
+      hi = pi$upper
+    )
+  if (no_other) {
+    object <- object |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+    data <- data |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
+  if (NROW(object) == 0) {
+    title <- "Remainder"
+  } else {
+    title <- paste("Forecasts of remainder by discipline:", yr)
+  }
+
+  data |>
+    filter(age <= 100, !is.na(remainder)) |>
+    ggplot(aes(x = age)) +
+    facet_wrap(~discipline, scales = "free_y") +
+    geom_line(
+      aes(y = remainder, group = year),
+      color = "grey"
+    ) +
+    geom_ribbon(
+      data = object,
+      aes(ymin = lo, ymax = hi),
+      alpha = 0.3,
+      fill = "#c14b14"
+    ) +
+    geom_line(data = object, aes(y = .mean), color = "#c14b14") +
+    labs(
+      x = "Age",
+      y = latex2exp::TeX("Number of people"), # ($m_{x,t}$)"),
+      title = title
+    ) +
+    scale_x_continuous(breaks = seq(0, 100, by = 10))
+}
+
+make_fig24 <- function(
+  disciplines_combined,
+  future_disciplines_combined,
+  no_other = TRUE
+) {
+  if (no_other) {
+    disciplines_combined <- disciplines_combined |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+    future_disciplines_combined <- future_disciplines_combined |>
+      dplyr::filter(discipline != "Other Natural and Physical Sciences")
+  }
+  sum_disciplines_combined <- disciplines_combined |>
+    as_tibble() |>
+    group_by(discipline, year) |>
+    summarise(working = sum(working), .groups = "drop")
+
+  sum_future_disciplines_combined <- future_disciplines_combined |>
+    as_tibble() |>
+    group_by(discipline, year, .rep) |>
+    summarise(working = sum(working), .groups = "drop") |>
+    group_by(discipline, year) |>
+    summarise(
+      mean = mean(working),
+      lo = quantile(working, prob = 0.05),
+      hi = quantile(working, prob = 0.95),
+      .groups = "drop"
+    )
+
+  ggplot(sum_future_disciplines_combined) +
+    aes(x = year) +
+    geom_ribbon(aes(ymin = lo, ymax = hi), fill = "#c14b1444") +
+    geom_line(aes(y = mean), color = "#c14b14") +
+    geom_line(data = sum_disciplines_combined, aes(y = working)) +
+    labs(
+      y = "Total number of working scientists (thousands)",
+      title = "Forecast of total working population by discipline",
+      #subtitle = "Natural and Physical Sciences\nForecasted years: 2022 - 2041"
+    ) +
+    scale_x_continuous(breaks = seq(2010, 2040, by = 10)) +
+    scale_y_continuous(labels = scales::label_number(scale = 1e-3)) +
+    facet_wrap(~discipline, scales = "free_y")
 }

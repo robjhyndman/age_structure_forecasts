@@ -137,64 +137,6 @@ make_completions_ave <- function(completions, calc_sd = FALSE) {
   return(ave_completions)
 }
 
-make_fig_completions <- function(
-  completions,
-  ave_completions = NULL,
-  sd_completions = NULL,
-  by_year = TRUE,
-  average = FALSE,
-  pi = FALSE
-) {
-  if (average & (is.null(ave_completions) | is.null(sd_completions))) {
-    stop("Please provide ave_completions and sd_completions if average = TRUE")
-  }
-  if (average & !by_year) {
-    title <- "Average graduate completions"
-  } else if (by_year) {
-    title <- "Graduate completions"
-  } else {
-    stop("Please select either by_year or average")
-  }
-  p <- ggplot(completions) +
-    aes(x = age, y = pc) +
-    labs(
-      x = "Age",
-      y = "Percentage of graduates",
-      title = title
-    )
-  if (by_year & !pi) {
-    p <- p +
-      geom_step(
-        aes(colour = year, group = year),
-        alpha = 0.2 + 0.8 * (!average)
-      ) +
-      scale_color_gradientn(colours = rainbow(10), name = "Year")
-  }
-  if (average) {
-    if (pi) {
-      df <- ave_completions |>
-        rename(mean = pc) |>
-        left_join(sd_completions, by = "age") |>
-        rename(sd = pc) |>
-        mutate(
-          lower = pmax(0, mean - 2 * sd),
-          upper = mean + 2 * sd
-        )
-      p <- p +
-        geom_ribbon(
-          data = df,
-          aes(x = age, y = mean, ymin = lower, ymax = upper),
-          fill = "gray",
-          alpha = 0.9
-        )
-    }
-    p <- p + geom_line(data = ave_completions)
-  }
-  p +
-    scale_x_continuous(breaks = seq(20, 100, by = 10)) +
-    scale_y_continuous(labels = scales::percent_format(scale = 1))
-}
-
 # Level 4
 read_course_leavers <- function(file) {
   out <- readxl::read_excel(file, sheet = "4-digit") |>
@@ -217,4 +159,71 @@ read_course_leavers <- function(file) {
   out |>
     group_by(year, discipline) |>
     summarise(graduates = sum(graduates), .groups = "drop")
+}
+
+
+# Fit Global ARIMA model to course leavers data
+global_arma <- function(course_leavers) {
+  # Find mean per discipline
+  mean_grads <- course_leavers |>
+    group_by(discipline) |>
+    summarise(
+      mean_grads = mean(graduates),
+      mean_diff = mean(tsibble::difference(graduates), na.rm = TRUE)
+    )
+
+  # Scale course leavers by means and take differences, removing any drift
+  scaled_course_leavers <- course_leavers |>
+    left_join(mean_grads, by = "discipline") |>
+    group_by(discipline) |>
+    mutate(
+      graduates = (tsibble::difference(graduates) - mean_diff) / mean_grads
+    )
+
+  # Construct single series of all graduates with large missing sections to wash out memory
+  y <- scaled_course_leavers |>
+    bind_rows(
+      expand_grid(
+        year = 1960:(min(course_leavers$year) - 1),
+        discipline = unique(course_leavers$discipline)
+      )
+    ) |>
+    arrange(discipline, year) |>
+    pull(graduates)
+
+  # Fit ARIMA model with d = 0 to differenced data
+  global_fit <- tibble(y = y) |>
+    mutate(t = row_number()) |>
+    as_tsibble(index = t) |>
+    model(arima = ARIMA(y ~ 0 + pdq(p = 1, d = 0)))
+
+  # Grab ARMA coefficients
+  tidy(global_fit) |>
+    filter(stringr::str_detect(term, "ar") | stringr::str_detect(term, "ma")) |>
+    select(term, estimate)
+}
+
+
+# Function to simulate future graduates only
+simulate_future_graduates <- function(
+  graduates,
+  arma_coef,
+  h = 18,
+  nsim = 500
+) {
+  future_graduates <- graduates |>
+    fit_global_model(arma_coef) |>
+    generate(h = h, times = nsim) |>
+    rename(graduates = .sim) |>
+    select(-.model)
+
+  last_yr <- max(graduates$year)
+  future_graduates <- future_graduates |>
+    bind_rows(
+      graduates |>
+        filter(year >= last_yr) |>
+        expand_grid(.rep = unique(future_graduates$.rep))
+    )
+
+  return(future_graduates)
 }
