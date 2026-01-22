@@ -17,7 +17,7 @@
   abstract: none,
   abstract-title: none,
   cols: 1,
-  margin: (x: 2cm, y: 2cm, top: 1.5cm, bottom: 2cm),
+  margin: (left: 2cm, right: 2cm, top: 1.5cm, bottom: 2cm),
   paper: "a4",
   lang: "en",
   region: "AU",
@@ -43,7 +43,7 @@
 ) = {
   // Define authornames string from authors list
   let authornames = if authors != none {
-    authors.map(author => author.name).join(", ")
+    authors.map(author => author.name.replace("~", sym.space.nobreak)).join(", ")
   } else {
     ""
   }
@@ -100,6 +100,8 @@
   show link: set text(fill: rgb(0, 0, 255))
   // Math font
   show math.equation: set text(font: "Libertinus math")
+  // Figure and table captions in italics
+  show figure.caption: set text(style: "italic")
   // Optional branding logo at top
   if branding {
     // Bottom right logos on first page only
@@ -145,14 +147,13 @@
         }
       ]
 
-      #v(4pt)
-
       // Author on left, date on right using grid
       #grid(
-        columns: (1fr, 1fr),
+        columns: (0.6fr, 0.4fr),
         align: (left, right),
         [
           #if authornames != "" {
+            set par(justify: false)
             text(font: heading-family, size: 12pt)[#authornames]
           }
         ],
@@ -164,7 +165,7 @@
       )
     ]
 
-    v(20pt)
+    v(10pt)
   }
 
   if toc {

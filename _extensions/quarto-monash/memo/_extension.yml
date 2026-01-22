@@ -1,6 +1,6 @@
 title: Monash Memo
 author: Rob J Hyndman
-version: 3.1.0
+version: 3.1.1
 quarto-required: ">=1.4.0"
 contributes:
   formats:
@@ -42,8 +42,8 @@ contributes:
       margin:
         top: 2.7cm
         bottom: 2cm
-        x: 2cm
-        y: 2cm
+        left: 2cm
+        right: 2cm
       font-paths:
         - fonts
       format-resources:
