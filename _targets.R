@@ -19,7 +19,7 @@ tar_option_set(
 tar_source()
 
 list(
-  # Mortality data 
+  # Mortality data
   tar_target(mx_file, here::here("data/Mx_1x1.txt"), format = "file"),
   tar_target(ex_file, here::here("data/Exposures_1x1.txt"), format = "file"),
   tar_target(mortality, read_mortality(mx_file, ex_file)),
@@ -29,7 +29,7 @@ list(
     aus_death_prob |>
       model(fdm = FDM(log(qx)))
   ),
-  
+
   # Mortality figures
   tar_target(fig_mxt, life_table(mortality) |> make_fig_mxt()),
   tar_target(
@@ -71,7 +71,7 @@ list(
     retirements,
     single_age_retirements(retirement_data, aus_death_prob)
   ),
-  
+
   # Retirement figures
   tar_target(fig_r, make_fig_r(retirement_data)),
   tar_target(fig_rx1, make_fig_rx(retirements, retirement_data, FALSE)),
@@ -91,7 +91,7 @@ list(
     simulate_future_graduates(course_leavers, arma_coef_science)
   ),
 
-  # Graduate figures  
+  # Graduate figures
   tar_target(
     fig_grad_forecasts,
     make_fig_grad_forecasts(course_leavers, future_course_leavers_science)
@@ -165,12 +165,13 @@ list(
   ),
   tar_target(fig21, make_fig21(course_leavers)),
   tar_target(fig22, make_fig22(census4_1)),
-  
+
   # Remainder model
   tar_target(
     model_Ext_discipline,
     census4_1 |>
       filter(year <= 2020) |>
+      make_sd(remainder, key = discipline) |>
       model(fdm = FDM(remainder, coherent = TRUE))
   ),
 
@@ -244,7 +245,7 @@ list(
     )
   ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
-  
+
 
   # Appendix
   tar_target(

@@ -142,7 +142,7 @@ make_pop_future_fig_discipline_year <- function(
 make_future_Ext_fig2 <- function(object, data, h, times, yr, no_other = TRUE) {
   object <- object |>
     forecast(h = h) |>
-    filter(year == yr, age <= 100) |>
+    filter(year == yr, age <= 100, discipline != "mean") |>
     mutate(
       pi = hilo(remainder),
       lo = pi$lower,
