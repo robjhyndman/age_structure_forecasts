@@ -303,25 +303,7 @@ list(
   ),
   tar_target(
     fc_2021_plot,
-    forecast_error |>
-      rename(Actual = working, Forecast = forecast) |>
-      tidyr::pivot_longer(
-        c(Forecast, Actual),
-        names_to = "type",
-        values_to = "value"
-      ) |>
-      ggplot() +
-      aes(x = age, y = value, color = discipline, linetype = type) +
-      geom_line() +
-      guides(
-        color = guide_legend(title = "Discipline"),
-        linetype = guide_legend(title = "")
-      ) +
-      labs(
-        title = "Forecast vs actual population of Australian scientists in 2021",
-        x = "Age",
-        y = "Number of active scientists"
-      )
+    plot_forecast_2021(forecast_error)
   ),
   tar_target(
     coverage,
