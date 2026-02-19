@@ -124,7 +124,7 @@ It is unlikely that we have available separate death and retirement counts for e
 
 This leads to the simpler model
 $$
-P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + g_xG_{i,t} + E_{i,x,t},
+P_{i,x+1,t+1} = P_{i,x,t} - D_{i,x,t} - R_{i,x,t} + g_x G_{i,t} + E_{i,x,t},
 $$ {#eq-dgb2}
 where
 
@@ -226,7 +226,7 @@ The large increase in the working population observed in the 2021 Census for Mat
 
 The demographic growth-balance equation (@eq-dgb2), when rearranged, provides an expression for the remainder including net migration and career changes:
 $$
-E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} - D_{i,x,t} - R_{i,x,t} - g_xG_{i,t},
+E_{i,x,t} = P_{i,x+1,t+1} - P_{i,x,t} - D_{i,x,t} - R_{i,x,t} - g_x G_{i,t},
 $$ {#eq-remainder}
 However, we do not have data on $D_{i,x,t}$ and $R_{i,x,t}$, so we replace these by their expected values, $P_{i,x,t} q_{x,t}$ and $P_{i,x,t}(1-q_{x,t}) r_x$, respectively. We can only estimate remainders up to 2020 because we need data for both year $t$ and year $t+1$ in @eq-remainder, and our working population data only extends to 2021. The estimated remainders are shown in @fig-remainder.
 
@@ -299,6 +299,24 @@ Cohort effects are also visible in @fig-forecast-working-population, where fluct
 Summing over ages allows for estimating the forecast distribution of the total number of working scientists in each future year, as shown in @fig-forecast-total-working-scientists. The forecasts indicate continued growth, but at a gradually slower pace for all disciplines other than the Mathematical Sciences. Where the lower bound is nearly flat, workforce stagnation is possible in a conservative scenario. Even in the optimistic scenario (corresponding to the upper bound), growth only slightly exceeds the current pace, except for the Mathematical Sciences. As noted earlier, the divergent behaviour of the Mathematical Sciences is likely driven by the growing importance of data science and related fields.
 
 The wide prediction intervals reflect the uncertainty in the forecasts, and show that caution is needed when interpreting the results. The only discipline where there is clear evidence of growth or decline is the Mathematical Sciences. For all other disciplines, the prediction intervals include the current level, indicating that stagnation, increase, or decline is possible.
+
+```{r}
+#| label: mdape
+#| include: false
+tar_load(mdape)
+min_mdape <- min(mdape$mdape)
+min_discipline <- mdape$discipline[which.min(mdape$mdape)]
+max_mdape <- max(mdape$mdape)
+max_discipline <- mdape$discipline[which.max(mdape$mdape)]
+```
+
+Finally, in @fig-forecast-age-distribution, we compare the age distribution of the working population of each distribution in 2021 with forecasts obtained using only data to 2016. For ages 20--70, the median percentage error ranges from `r sprintf("%.1f", min_mdape)`% for `r min_discipline` to `r sprintf("%.1f", max_mdape)`% for `r max_discipline`, with an overall median percentage error of `r sprintf("%.1f", tail(mdape$mdape,1))`% across all disciplines. The forecasts capture the overall shape of the age distribution, but there are some discrepancies in the younger age groups, particularly for the Mathematical Sciences. This is likely due to the sharp increase in graduate numbers in this discipline between 2016 and 2021, which was not captured in the data available up to 2016. The forecasts for older age groups are more accurate, reflecting the more predictable dynamics of aging and retirement.
+
+```{r}
+#| label: fig-forecast-age-distribution
+#| fig-cap: "Age distribution of the working population in 2021, compared to forecasts obtained using only data to 2016."
+tar_read(fc_2021_plot)
+```
 
 # Discussion {#sec-conclusion}
 

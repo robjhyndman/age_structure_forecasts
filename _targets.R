@@ -246,7 +246,6 @@ list(
   ),
   tar_target(fig24, make_fig24(census4_1, future_pop_science)),
 
-
   # Appendix
   tar_target(
     future_pop_science_2016,
@@ -261,6 +260,68 @@ list(
       h = 5,
       nsim = nsim
     )
+  ),
+  tar_target(
+    forecast_error,
+    future_pop_science_2016 |>
+      as_tibble() |>
+      filter(
+        year == 2021,
+        !stringr::str_detect(discipline, "Other")
+      ) |>
+      summarise(forecast = mean(working), .by = c(age, discipline)) |>
+      left_join(
+        census4_1 |>
+          as_tibble() |>
+          filter(year == 2021) |>
+          select(age, discipline, working),
+        by = c("age", "discipline")
+      ) |>
+      mutate(error = working - forecast)
+  ),
+  tar_target(
+    fe_20_70,
+    forecast_error |>
+      filter(age >= 20, age <= 70)
+  ),
+  tar_target(
+    mdape,
+    fe_20_70 |>
+      summarise(
+        mdape = median(100 * abs(error / working), na.rm = TRUE),
+        .by = discipline
+      ) |>
+      bind_rows(
+        tibble(
+          discipline = "Overall",
+          mdape = median(
+            100 * abs(fe_20_70$error / fe_20_70$working),
+            na.rm = TRUE
+          )
+        )
+      )
+  ),
+  tar_target(
+    fc_2021_plot,
+    forecast_error |>
+      rename(Actual = working, Forecast = forecast) |>
+      tidyr::pivot_longer(
+        c(Forecast, Actual),
+        names_to = "type",
+        values_to = "value"
+      ) |>
+      ggplot() +
+      aes(x = age, y = value, color = discipline, linetype = type) +
+      geom_line() +
+      guides(
+        color = guide_legend(title = "Discipline"),
+        linetype = guide_legend(title = "")
+      ) +
+      labs(
+        title = "Forecast vs actual population of Australian scientists in 2021",
+        x = "Age",
+        y = "Number of active scientists"
+      )
   ),
   tar_target(
     coverage,
@@ -288,12 +349,12 @@ list(
     extra_files = c("refs.bib", "preamble.tex"),
     quiet = FALSE
   ),
-  tar_quarto(
-    response,
-    "response.qmd",
-    extra_files = "refs.bib",
-    quiet = FALSE
-  ),
+  #tar_quarto(
+  #  response,
+  #  "response.qmd",
+  #  extra_files = "refs.bib",
+  #  quiet = FALSE
+  #),
   tar_quarto(
     talk,
     "age_structure_talk.qmd",
