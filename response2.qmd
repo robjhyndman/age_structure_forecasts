@@ -1,0 +1,13 @@
+---
+title: "Forecasting the age structure of the scientific workforce in Australia"
+author: Response to reviewers
+branding: false
+linestretch: 1.2
+format:
+  memo-typst: default # Use memo-pdf to use latex
+filters:
+  - reviewer.lua
+pandoc-options:
+---
+
+In this revised version, following the comment of Reviewer 2, we have added a paragraph and plot at the end of Section 4 providing an evaluation of the forecast accuracy for the last available census, using data from previous censuses.

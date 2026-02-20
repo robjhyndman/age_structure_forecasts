@@ -331,12 +331,12 @@ list(
     extra_files = c("refs.bib", "preamble.tex"),
     quiet = FALSE
   ),
-  #tar_quarto(
-  #  response,
-  #  "response.qmd",
-  #  extra_files = "refs.bib",
-  #  quiet = FALSE
-  #),
+  tar_quarto(
+    response2,
+    "response2.qmd",
+    extra_files = "refs.bib",
+    quiet = FALSE
+  ),
   tar_quarto(
     talk,
     "age_structure_talk.qmd",
